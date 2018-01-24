@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <DNG_SDK>c:\Development\dng_sdk_1_3</DNG_SDK>
+    <LCMS>c:\Development\lcms2-2.7</LCMS>
+    <MY_INCLUDES>$(DNG_SDK)\dng_sdk\source;$(LCMS)\include</MY_INCLUDES>
+    <MY_LIB_PATH>$(DNG_SDK)\dng_sdk\projects\win\dng_sdk\Win32_Validate Release;$(DNG_SDK)\XMP-SDK\public\libraries\windows\release;$(LCMS)\bin</MY_LIB_PATH>
+    <MY_LIB_PATH_DEBUG>$(DNG_SDK)\dng_sdk\projects\win\dng_sdk\Win32_Validate Debug;$(DNG_SDK)\XMP-SDK\public\libraries\windows\debug;$(LCMS)\bin</MY_LIB_PATH_DEBUG>
+    <MY_LIBS>dng_sdk.lib;XMPCoreStaticRelease.lib;lcms2.lib</MY_LIBS>
+    <MY_LIBS_DEBUG>dng_sdk.lib;XMPCoreStaticDebug.lib;lcms2d.lib</MY_LIBS_DEBUG>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="DNG_SDK">
+      <Value>$(DNG_SDK)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="LCMS">
+      <Value>$(LCMS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="MY_INCLUDES">
+      <Value>$(MY_INCLUDES)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="MY_LIB_PATH">
+      <Value>$(MY_LIB_PATH)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="MY_LIB_PATH_DEBUG">
+      <Value>$(MY_LIB_PATH_DEBUG)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="MY_LIBS">
+      <Value>$(MY_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="MY_LIBS_DEBUG">
+      <Value>$(MY_LIBS_DEBUG)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,37 @@
+listShutterMamiya:196a8 
+listApertureMamiya:192ac 
+listCompensationMamiya:19cf0 
+listShutterContax:19f40 shutterConvertMap:19bf0
+listApertureContax:19f40 
+listCompensationContax:19f50 
+apertureConvert:195a8
+
+
+000192AC listApertureMamiya
+000195A8 apertureConvert
+000196A8 listShutterMamiya
+00019BF0 shutterConvert
+00019CF0 listCompensationMamiya
+00019F40 listShutterContax
+00019F50 listCompensationContax
+
+0001A0E0 listShutterHasselblad
+
+ 
+ 
+mamiyaSerialV1:222a 
+setP1:222b 
+camSettingsReceived:21df 
+isFilmBody:21f3 
+manualLensSetting:124bc 
+camSoftOnTime:124c0 
+camSoftOnTimesStr:12588 
+camSoftOnTimes:12558 
+manualLensNames:14550
+manualLensData:14630
+mamiyaProperties:14460 
+statusScreenManualLens:014a84 
+
+cameraTaskMamiya:0137b8
+cameraMessageSetupMamiya:01312c
+cameraMessageMamiya:012a28

@@ -1,0 +1,36 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2024
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ppc2c", "ppc2c.vcxproj", "{FCAA2322-69B2-442C-8CFE-8E607AB08DA3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ppchelper", "ppchelper.vcxproj", "{9267B4F3-DDE6-41D7-870D-1EB8A0AA0C1F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+		Release-ida64|Win32 = Release-ida64|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FCAA2322-69B2-442C-8CFE-8E607AB08DA3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{FCAA2322-69B2-442C-8CFE-8E607AB08DA3}.Debug|Win32.Build.0 = Debug|Win32
+		{FCAA2322-69B2-442C-8CFE-8E607AB08DA3}.Release|Win32.ActiveCfg = Release|Win32
+		{FCAA2322-69B2-442C-8CFE-8E607AB08DA3}.Release|Win32.Build.0 = Release|Win32
+		{FCAA2322-69B2-442C-8CFE-8E607AB08DA3}.Release-ida64|Win32.ActiveCfg = Release-ida64|Win32
+		{FCAA2322-69B2-442C-8CFE-8E607AB08DA3}.Release-ida64|Win32.Build.0 = Release-ida64|Win32
+		{9267B4F3-DDE6-41D7-870D-1EB8A0AA0C1F}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9267B4F3-DDE6-41D7-870D-1EB8A0AA0C1F}.Debug|Win32.Build.0 = Debug|Win32
+		{9267B4F3-DDE6-41D7-870D-1EB8A0AA0C1F}.Release|Win32.ActiveCfg = Release|Win32
+		{9267B4F3-DDE6-41D7-870D-1EB8A0AA0C1F}.Release|Win32.Build.0 = Release|Win32
+		{9267B4F3-DDE6-41D7-870D-1EB8A0AA0C1F}.Release-ida64|Win32.ActiveCfg = Release-ida64|Win32
+		{9267B4F3-DDE6-41D7-870D-1EB8A0AA0C1F}.Release-ida64|Win32.Build.0 = Release-ida64|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {86F22ACB-96EB-4018-9D90-A21059F80EB2}
+	EndGlobalSection
+EndGlobal

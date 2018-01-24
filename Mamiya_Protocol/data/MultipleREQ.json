@@ -1,0 +1,24 @@
+{ 
+    signal: [
+        { node:   '..AB...E.........'},
+        { name: 'REQ',  
+            wave: '0.10...10....10..',  
+            node: '..CD...F.........'},
+        { name: 'MOSI', 
+            wave: '0................'},
+        { name: 'MISO', 
+            wave: '0................'},
+        { name: 'CLK',  
+            wave: '0................'}
+    ],
+    edge: [ 'A<->B 3ms',
+      		'B<->E 32ms',
+            'A-C','B-D','E-F'
+    ],
+    head:{
+       text:'Multiple requests from back to camera body',
+    },
+    foot:{
+       text:'Figure 1'
+    }
+}

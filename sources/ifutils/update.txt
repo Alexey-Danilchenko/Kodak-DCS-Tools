@@ -1,0 +1,9 @@
+2311
+{
+    col:    ISO=6, col=975, offs1=-2, offs2=2, from=0, to=0;
+    col:    ISO=6, col=3127, offs1=-2, offs2=2, from=0, to=0;
+    col:    ISO=6, col=3725, offs1=-2, offs2=2, from=0, to=0;
+    col:    ISO=6, col=3725, offs1=-2, offs2=2, from=0, to=0;
+    col:    ISO=6, col=3940, offs1=-2, offs2=2, from=0, to=0;
+    col:    ISO=6, col=3941, offs1=-2, offs2=2, from=0, to=0;
+}

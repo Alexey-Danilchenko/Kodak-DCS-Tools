@@ -1,0 +1,149 @@
+mask    3FFFFFC
+bl mask 48000001
+b mask  48000000
+bc mask FFFC
+
+beq   41820000
+bne   40820000
+blt   41800000
+ble   40810000
+bgt   41810000
+bge   40800000
+
+offset 566C 
+
+curCamSoftOnTime:21b2 
+byte curCamSoftOnTime       = 0;      // 000021B2
+
+000139BC-566c=E350
+000139BC 3D 60 00 0A                 lis       r11, loc_AAE60@h
+000139C0 61 6B AE 60                 ori       r11, r11, loc_AAE60@l
+
+0001389C 3D 60 00 07                 lis       r11, loc_7A120@h # 500000 = 0.5s
+000138A0 61 6B A1 20                 ori       r11, r11, loc_7A120@l
+
+-------------------------------------------------------------------
+cameraDataComplete patch:
+00010624-566C=AFB8
+00010624 48 00 44 18                 b         loc_14A3C
+
+00014A3C-566C=F3D0
+00014A3C 81 60 21 FC                 lwz       r11, cameraFocalLength
+00014A40 2C 0B 00 00                 cmpwi     r11, 0
+00014A44 41 82 00 18                 beq       loc_L00001
+00014A48 81 80 22 00                 lwz       r12, cameraImg
+00014A4C 39 8C 29 78                 addi      r12, r12, 0x2978
+00014A50 91 6C 00 00                 stw       r11, 0(r12)
+00014A54 39 60 00 01                 li        r11, 1
+00014A58 91 6C 00 04                 stw       r11, 4(r12)
+00014A5C 83 E0 21 B8 loc_L00001:     lwz       r31, bodyType
+00014A60 4B FF BB C8                 b         loc_10628
+
+-------------------------------------------------------------------
+
+cameraMessageSetupMamiya patch:
+0001320C-566C=DBA0:
+0001320C 60 00 00 00                 lis       r10, camSoftOnTime@h
+00013210 60 00 00 00                 ori       r10, r10, camSoftOnTime@l
+00013214 89 60 21 B2                 lbz       r11, curCamSoftOnTime
+
+-------------------------------------------------------------------
+
+
+cameraSoftPress patch:
+00012984-566C=D318
+
+00012984 94 21 FF F8                 stwu      r1, -8(r1)
+00012988 7C 08 02 A6                 mflr      r0
+0001298C 90 01 00 0C                 stw       r0, 8+arg_4(r1)
+00012990 39 80 00 01                 li        r12, 1
+00012994 99 80 21 E8                 stb       r12, camSoft
+00012998 3D 80 00 01                 lis       r12, camSoftOnTime@h
+0001299C 61 8C 24 C0                 ori       r12, r12, camSoftOnTime@l
+000129A0 81 6C 00 00                 lwz       r11, 0(r12)
+000129A4 99 60 21 B2                 stb       r11, curCamSoftOnTime
+000129A8 89 60 21 E4                 lbz       r11, alwaysEnable
+000129AC 2C 0B 00 00                 cmpwi     r11, 0
+000129B0 40 82 00 14                 bne       loc_129C4
+000129B4 38 60 00 09                 li        r3, 9
+000129B8 38 80 00 00                 li        r4, 0
+000129BC 38 A0 00 00                 li        r5, 0
+000129C0 48 02 AF B9                 bl        eventPost ; 03D978-000129C0
+000129C4 89 80 21 F1 loc_129C4:      lbz       r12, camDisable
+000129C8 2C 0C 00 00                 cmpwi     r12, 0
+000129CC 41 82 00 34                 beq       loc_12A00
+000129D0 81 80 21 D4                 lwz       r12, dialogOpenTime
+000129D4 2C 0C 00 00                 cmpwi     r12, 0
+000129D8 40 82 00 28                 bne       loc_12A00
+000129DC 48 08 45 5D                 bl        systemChecksComplete
+000129E0 2C 03 00 00                 cmpwi     r3, 0
+000129E4 41 82 00 1C                 beq       loc_12A00
+000129E8 80 60 21 D8                 lwz       r3, disableMessage
+000129EC 48 04 EC A5                 bl        imageNotOkDialogOpen ; 61690
+000129F0 2C 03 00 00                 cmpwi     r3, 0
+000129F4 41 82 00 0C                 beq       loc_12A00
+000129F8 48 08 6D 25                 bl        timeUsec     ; 9971C
+000129FC 90 60 21 D4                 stw       r3, dialogOpenTime
+00012A00 80 01 00 0C loc_12A00:      lwz       r0, 8+arg_4(r1)
+00012A04 7C 08 03 A6                 mtlr      r0
+00012A08 38 21 00 08                 addi      r1, r1, 8
+00012A0C 4E 80 00 20                 blr
+
+
+
+-------------------------------------------------------------------
+cameraShutterOpenCommon patch:
+000177C0-566C=12154
+000177C0 94 21 FF F0                 stwu      r1, -0x10(r1)
+000177C4 7C 08 02 A6                 mflr      r0
+000177C8 90 01 00 14                 stw       r0, 0x10+arg_4(r1)
+000177CC 39 80 00 01                 li        r12, 1
+000177D0 99 80 21 4A                 stb       r12, cameraShutterOpen
+000177D4 39 80 00 00                 li        r12, 0
+000177D8 99 80 21 B2                 stb       r12, curCamSoftOnTime
+000177DC 89 60 20 9B                 lbz       r11, cameraShutterPulseEnable
+000177E0 2C 0B 00 00                 cmpwi     r11, 0
+000177E4 41 82 00 88                 beq       loc_1786C
+000177E8 7C C0 00 A6                 mfmsr     r6
+000177EC 7C 11 13 A6                 mtspr     eid, r0 # External interrupt disable
+000177F0 4C 00 01 2C                 isync
+000177F4 3C A0 00 01                 lis       r5, byte_8000@ha
+000177F8 38 A5 80 00                 addi      r5, r5, byte_8000@l
+000177FC 7C C6 28 38                 and       r6, r6, r5
+00017800 7C 70 42 A6                 mfsprg0   r3
+00017804 54 63 08 3E                 rotlwi    r3, r3, 1
+00017808 7C 63 28 78                 andc      r3, r3, r5
+0001780C 7C 63 33 78                 or        r3, r3, r6
+00017810 7C 70 43 A6                 mtsprg0   r3
+00017814 38 60 FF BF                 li        r3, -0x41
+00017818 3C 80 20 00                 lis       r4, IMMR@h
+0001781C 38 84 00 00                 addi      r4, r4, IMMR@l
+00017820 81 44 0A C4                 lwz       r10, (IMMR.PBDAT - IMMR)(r4)
+00017824 7D 4A 18 38                 and       r10, r10, r3
+00017828 91 44 0A C4                 stw       r10, (IMMR.PBDAT - IMMR)(r4)
+0001782C 81 84 0A C0                 lwz       r12, (IMMR.PBODR - IMMR)(r4)
+00017830 7D 8C 18 38                 and       r12, r12, r3
+00017834 91 84 0A C0                 stw       r12, (IMMR.PBODR - IMMR)(r4)
+00017838 81 64 0A B8                 lwz       r11, (IMMR.PBDIR - IMMR)(r4)
+0001783C 61 6B 00 40                 ori       r11, r11, 0x40
+00017840 91 64 0A B8                 stw       r11, (IMMR.PBDIR - IMMR)(r4)
+00017844 81 44 0A BC                 lwz       r10, (IMMR.PBPAR - IMMR)(r4)
+00017848 55 4A 06 B0                 rlwinm    r10, r10, 0,26,24
+0001784C 91 44 0A BC                 stw       r10, (IMMR.PBPAR - IMMR)(r4)
+00017850 7C 90 42 A6                 mfsprg0   r4
+00017854 54 83 F8 3E                 rotrwi    r3, r4, 1
+00017858 7C 70 43 A6                 mtsprg0   r3
+0001785C 70 84 80 00                 andi.     r4, r4, 0x8000
+00017860 41 82 00 08                 beq       loc_17868
+00017864 7C 10 13 A6                 mtspr     eie, r0 # External interrupt enable
+00017868 4C 00 01 2C loc_17868:      isync
+0001786C 81 80 21 4C loc_1786C:      lwz       r12, cameraActuations
+00017870 39 8C 00 01                 addi      r12, r12, 1
+00017874 91 80 21 4C                 stw       r12, cameraActuations
+00017878 38 60 21 4C                 li        r3, cameraActuations
+0001787C 48 06 71 1D                 bl        propertySave
+00017880 80 01 00 14                 lwz       r0, 0x10+arg_4(r1)
+00017884 7C 08 03 A6                 mtlr      r0
+00017888 38 21 00 10                 addi      r1, r1, 0x10
+0001788C 4E 80 00 20                 blr
+

@@ -1,0 +1,7 @@
+[plugininstall]
+description=Packer plugin for Kodak cameras BIN firmware
+descriptionrus=Архивный плагин для просмотра и вытягивания внутренностей BIN фирмвари для Кодаковских камер
+type=wcx
+file=binfwdll.wcx
+defaultdir=packer
+defaultextension=bin 

@@ -1,0 +1,8 @@
+DCS Firmware loads COFF DSP file sections like this: 
+
+while (section)
+{
+    if (section.offset > 0 && section.flags & (STYP_TEXT | STYP_DATA))
+        dspWrite(section.physicalAddr, section.size, coffFile+section.offset);
+    section++;
+}

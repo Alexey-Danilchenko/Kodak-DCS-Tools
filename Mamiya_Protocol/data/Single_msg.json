@@ -1,0 +1,41 @@
+{ 
+    signal: [
+        { node:     '...Q'},
+        { node:     ''},
+        { wave:'', phase:0.5, node:     '..P.'},
+        { name: 'REQ',  
+            wave: '010|.1...|..|..|.|...|..0',  
+            node: '.WZ..E.................'},
+        { node:   '.XY....................'},
+        { name: 'CLK',  
+            wave: '0..|1.n..|.h|..|.|nnn|.h0',  
+            node: '....F................'},
+        { node:   '..D.AB...............'},
+        { name: 'MOSI', 
+            wave: '0..|1.555|50|.5|0|555|510', 
+            data: "D0 D1 D2 D7 D0 D0 D1 D2 D7",
+            node: '......I....J..S........O..'},
+        { node:   '....C.G....H..T...........'},
+        { name: 'MISO', 
+            wave: '0..|..333|30|.3|0|333|30.', 
+            data: "D0 D1 D2 D7 D0 D0 D1 D2 D7",
+            node: '......K....L..U..........'},
+        { node:   '......M....N...........R.'}
+    ],
+    edge: [ 'A<->B 6.6μs',
+            'C<->G 1.6ms',
+            'G<->H 80μs',
+            'H<->T 0.5ms',
+            'M<->R Command length: 2..16 bytes',
+            'X<->Y 3ms',
+            'D<->A 4..5ms',
+            'Q-~>P Used only when back requests data from camera',
+            'A-F','B-E','F-C','I-M','J-L','O-R','S-U','W-X','Z-Y','D-Y'
+    ],
+    head:{
+       text:'Single command sequence',
+    },
+    foot:{
+       text:'Figure 2'
+    }
+}

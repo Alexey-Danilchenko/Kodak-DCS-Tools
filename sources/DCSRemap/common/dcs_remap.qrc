@@ -1,0 +1,31 @@
+<RCC>
+  <qresource prefix="/MainForm">
+    <file>images/DCSRemap.png</file>
+    <file>images/Donate.png</file>
+    <file>images/RU.png</file>
+    <file>images/USA.png</file>
+    <file>images/Qt-logo-small.png</file>
+    <file>images/tick_small.png</file>
+    <file>images/tick_small_empty.png</file>
+    <file>images/icons/View Full Screen.png</file>
+    <file>images/icons/View Full Screen gray.png</file>
+    <file>images/icons/View Full Screen light.png</file>
+    <file>images/icons/View Restore.png</file>
+    <file>images/icons/View Restore gray.png</file>
+    <file>images/icons/View Restore light.png</file>
+    <file>images/icons/Zoom In-2.png</file>
+    <file>images/icons/Zoom In-2 gray.png</file>
+    <file>images/icons/Zoom In-2 light.png</file>
+    <file>images/icons/Zoom Out-2.png</file>
+    <file>images/icons/Zoom Out-2 gray.png</file>
+    <file>images/icons/Zoom Out-2 light.png</file>
+    <file>images/icons/logo-small-2.png</file>
+    <file>images/icons/grid-col-light.png</file>
+    <file>images/icons/grid-col-gray.png</file>
+    <file>images/icons/grid-point-light.png</file>
+    <file>images/icons/grid-point-gray.png</file>
+    <file>images/icons/grid-row-light.png</file>
+    <file>images/icons/grid-row-gray.png</file>
+    <file>dcs_remap_ru.qm</file>
+  </qresource>
+</RCC>

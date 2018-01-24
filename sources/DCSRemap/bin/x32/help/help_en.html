@@ -1,0 +1,531 @@
+<html>
+
+<head>
+<title>DCS Remap Help</title>
+<style>
+div.content {
+    width: 900px;
+    margin: 0 auto;     
+}
+div.image {
+    width: 900px;
+    margin: 0 auto;     
+}
+body {
+    font-family:Arial,Helvetica,sans-serif;
+} 
+</style>
+</head>
+
+<body>
+
+<div class="content">
+
+<h1>DCS Remap</h1>
+
+<p>This software allows to perform defective pixels, rows and
+columns remap for Kodak DCS cameras. Currently supported camera models are
+Kodak DCS Proback 645 M/C/H, Kodak DCS 14n, 14nx, SLR/n and SLR/c. Out of all
+the cameras extensive tests were done on various Probacks and 14nx and SLR/n
+models, the rest should work but not extensively tested.</p>
+
+<h4><a href="#features">Skip to help on application features.</a></h4>
+
+<p>&nbsp;</p>
+
+<h2>A few concepts</h2>
+
+<p>In Kodak cameras the sensor circuitry (here and further on
+referred to as imager) has a special individual file that describes individual
+characteristics of that imager. That file is written and stored inside an
+internal camera memory pretty much the same as firmware but in separate non
+user accessible area. It is not available openly to access from standard
+firmware and user-level menus. All the cameras have however a special firmware
+mode (called service mode from now on) where it can be accessed and modified
+via menus. This service mode can be entered in a variety of ways (entering the
+special key in DCS Camera Manager that is dependent on camera serial number and
+so on). This software however comes with a special versions of firmware for
+each camera model that enables that service mode permanently so it can be just
+uploaded for the purpose of remap and then rolled back and replaced with
+standard firmware again. The links to the service enabling firmware are below:</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="../firmware/PB645.bin">
+Kodak Proback 645 M/C/H (enables service mode and adds &quot;Save IF File&quot; menu)</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="../firmware/PRO14N.bin">
+Kodak 14n/14nx (enables service mode and service menu on Hotkey press)</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="../firmware/PROSLRN.bin">
+Kodak SLR/n (enables service mode and service menu on Hotkey press)</a></p>
+
+<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<a href="../firmware/PROSLRC.bin">
+Kodak SLR/c (enables service mode and service menu on Hotkey press)</a></p>
+
+<p>&nbsp;</p>
+
+<p>The imager file contains the information about sensor
+defects (points, columns and rows) and needs to be downloaded from the camera
+for the remap, then updated with new remap and written back again.</p>
+
+<p>&nbsp;</p>
+
+<h3>Remap procedure for Kodak Proback 645 M/C/H:</h3>
+
+<ul>
+<li>Install the above service mode firmware (twice)
+and use &quot;Save IF File&quot; menu to write imager file onto a flash card.
+The file should be called TEST.IF</li>
+
+<li>On Probacks generally the remap is better done
+on dark frames (where people can see distinct defective columns when pulling
+the shadows). To perform a remap a dark shot raw file is needed. I would
+suggest a shot at a basic ISO with the closed lens cap at around 1/2 or 1/4
+second. To improve stability of a remap, several dark shots can be made - the
+DCS Remap software can stack up to 7 raw files in a median stack leaving only
+stable defects in.</li>
+
+<li>Backup the copy of the imager file (for safety)
+and load imager file and raw file(s) in DCS Remap.</li>
+
+<li>Columns remap: adjust the exposure in a raw
+display tab to make the defects visible, switch on the column remapping and at
+high magnification mark the defective columns with the mouse. I strongly
+recommend using Composite or Grayscale raw display modes for manual remaps. </li>
+
+<li>Probacks do not support (need) rows remap so all
+rows related parts of remap in DCS Remap will be disabled.</li>
+
+<li>Points remap: these can also be done manually
+but it could be more effective to use auto remap with selected thresholds (more
+details below in the application help).</li>
+
+<li>Save the remap when satisfied, check the
+resulting TEST.IF imager file is no larger than it was and upload it via flash
+card into camera using &quot;Load IF File&quot; menu</li>
+
+<li>Test the new remap with a few shots and when
+satisfied, update firmware to the last production one (twice).</li>
+</ul>
+<p>&nbsp;</p>
+
+<h3>Remap procedure for Kodak 14n/14nx, SLR/n, SLR/c:</h3>
+<ul>
+<li>Install the above service mode firmware (twice)
+and use hotkey to get to the service menu, choose &quot;Save IF File&quot; menu
+to write imager file onto a flash card. The file should be called TEST.IF</li>
+
+<li>
+The next bit is complicated. These cameras do
+have a loss compressed raw which can hide some defects. The DCS Remap software
+will be able to handle .DCR files but may not be effective eliminating all the
+defects. In service mode firmware fortunately, a true raw uncompressed format
+can be chosen - it is referred to as .RCF files. I suggest that is used for the
+remap if using .DCR was not effective enough. That file however comes without
+any corrections so already remapped defects (those already recorded in imager
+file) will also be visible. Unlike Proback, for SLR cameras I suggest shooting
+pure white frame, uniformly lit (as much as possible) and with exposure close
+to saturation point (raw values below 3700 roughly uniform around the frame).
+If using the lens, make sure it is defocused and is at f/4 or f/5.6. Multiple raw
+of the same type can be stacked in median stack to improve stability of the
+defect appearance.</li>
+
+<li>
+Backup the copy of the imager file (for safety)
+and load imager file and raw file(s) in DCS Remap.</li>
+
+<li>
+Rows/Columns remap: adjust the exposure in a raw
+display tab to make the defects visible, switch on the column remapping and at
+high magnification mark the defective columns with the mouse. I strongly
+recommend using Composite or Grayscale raw display modes for manual remaps.</li>
+
+<li>
+Points remap: these can also be done manually
+but it could be more effective to use auto remap with selected thresholds (more
+details below in the application help). If the uniform lit frame is difficult
+to achieve (and especially when using .RCF uncorrected raw files), I would
+strongly recommend using adaptive auto remap (see below for detailed
+description of how it works).</li>
+
+<li>
+Save the remap when satisfied, check the
+resulting TEST.IF imager file is no larger than it was and upload it via flash
+card into camera using &quot;Load IF File&quot; menu</li>
+
+<li>
+Test the new remap with a few shots and when
+satisfied, update firmware to the last production one (twice).</li>
+</ul>
+
+<p>&nbsp;</p>
+
+<p>Of course the above are only recommended procedures. You can
+use manual remaps with just about anything (if the defects can be clearly
+seen). The automatic remap of defective points however will only work if the
+raw shot is uniform (i.e. roughly all of the same level - all dark or all grey
+or all white etc.).</p>
+
+<p>&nbsp;</p>
+
+<h2 id="features">The DCS Remap application features</h2>
+
+<p>The application functionality and controls is divided into two
+functional areas: one that has to do with raw file appearance and another that
+has to do with remap of defects. This can be seen on the two separate tabs to
+the left holding all the user interface for each of those areas in separate
+tab.</p>
+
+<p>All the menus (except help) are duplicated with buttons on
+the right side of the main window so I won't describe what they do here
+separately.</p>
+
+<p>Most of the user interface elements have appropriate
+tooltips to make it easier to remember the functionality.</p>
+
+<h4><a href="#defects">Defects page help</a></h4>
+<h4><a href="#raw_display">RAW Display page help</a></h4>
+
+<p>&nbsp;</p>
+
+<h3>Main window view</h3>
+</div>
+<div class="image">
+<p><img src="page0_en.jpg"></p>
+</div>
+<div class="content">
+<h4>&nbsp;</h4>
+
+<h4>Toolbar</h4>
+
+<p>Toolbar contains buttons that control zoom levels (100%, Fit
+to Window, Zoom in, Zoom level selection and Zoom out), manual defect mode
+selector buttons (columns remap, points remap and rows remap) and interface
+language selection buttons (English and Russian). </p>
+
+<p>&nbsp;</p>
+
+<p>Fit to Window zoom level is a bit different from commonly
+accepted. When selected, it will pick the largest zoom (from available list in
+drop down) with which the raw file will fit into window. It will also change it when resizing. The reason it is
+done this way is that with specifics of raw display only the selected list of
+zooms allow to do it effectively.</p>
+
+<p>&nbsp;</p>
+
+<p>The remap mode buttons are all mutually exclusive and will
+switch on the appropriate remap mode when the columns, points or rows may be
+selected with mouse cursor and either set or reset as defective. The selected
+mode has to correspond to defects selection so it will be synchronised with
+those settings. Proback does not allow rows remap so no row remap mode or row
+defects selection are available.</p>
+
+<p>&nbsp;</p>
+
+<h4>Status bar</h4>
+
+<p>This is used to display some dynamic statistics - the row
+and column under mouse cursor, the R,G,B,G2 raw channel values for pixel under
+mouse cursor (if raw file is loaded) and the total counts of currently remapped
+defects for columns, points and rows. The total defects count is affected by
+the defects selection settings.</p>
+
+<p>&nbsp;</p>
+
+<h4>Common buttons section</h4>
+
+<p>&nbsp;</p>
+
+<h4>Load IF file</h4>
+
+<p>Loads and displays imager file defects. If the raw file has
+been already loaded and does not match the imager, a message is presented
+allowing to choose what to do (load imager and discard the raw or cancel imager
+file loading).</p>
+
+<p>&nbsp;</p>
+
+<h4>Load RAW(s)</h4>
+
+<p>Loads and displays single of multiple raw files. If the
+imager file has been already loaded and does not match the raw, a message is
+presented allowing to choose what to do (load raw(s) and discard the imager
+file or cancel raw file loading). If multiple raw files are selected (up to 7),
+they all stacked into single raw file using median stack (to reduce noise and
+eliminate non stable defects).</p>
+
+<p>&nbsp;</p>
+
+<h4>Save remap</h4>
+
+<p>Saves the remapped defects back to imager file. This imager
+file is then ready to be uploaded to the camera. After successful saving the
+imager file is reloaded.</p>
+
+<p>&nbsp;</p>
+
+<h4>Reset</h4>
+
+<p>Resets all remapped defects in this session and reloads
+imager file. This effectively performs a roll back of all the changes to what
+was the last saved or loaded imager file.</p>
+
+<p>&nbsp;</p>
+
+<p>&nbsp;</p>
+
+<h3 id="defects">Main window (Defects page)</h3>
+
+<p>This page will become enabled when imager file is loaded.
+The full list if its settings and user interface elements is described in the
+following sections.</p>
+
+</div>
+<div class="image">
+<p><img src="page0_en.jpg"></p>
+</div>
+<div class="content">
+
+<h4>ISO</h4>
+
+<p>This drop down allow selecting the ISO for the remap. The
+ISOs in a drop down list for which there are already defects defined will be
+indicated by checkbox against them. This affects both selection of defects for
+display and the remap being performed. In Kodak's remapped defects recorded
+with specific ISO are applicable (and will be remapped by camera) when a shot
+is performed at that ISO or above it. As such generally applicable defects
+(i.e. for any ISO) should be recorded at smallest ISO (ISO 6 in Kodaks).
+Majority of defects in Kodak imager files are recorder against that basic ISO.
+The selection of the ISO follows the same logic - it displays all the defects
+that can be remapped at this ISO. This selection also affects the defects count
+displayed in status line.</p>
+
+<p>&nbsp;</p>
+
+<h4>Remove selected defects</h4>
+
+<p>This button will delete all the defects selected by ISO and
+defects selection checkboxes form imager file (even those existing there
+before). This may be useful to start from fresh remap.</p>
+
+<p>&nbsp;</p>
+
+<h4>Defects Colour</h4>
+
+<p>This button allows to pick the colours for displaying
+defects. The defects are always displayed on top of the raw file but this
+setting may come useful in different type of images (dark, light etc.) where a
+specific colour may be obscured by raw file.</p>
+
+<p>&nbsp;</p>
+
+<h4>Defects selection</h4>
+
+<p>This block of checkboxes allows to select what defects are
+currently displayed and being remapped. Deselecting the type of defects
+currently being remapped will also disable the remap mode (buttons in toolbar).
+The selection affects the defects count
+displayed in status line. The selection of Existing pre-remap defects is needed
+to allow only view newly remapped defects.</p>
+
+<p>&nbsp;</p>
+
+<h4>Auto remap defect thresholds</h4>
+
+<p>These define per channel thresholds used for defective
+points auto remap. The standard auto remap is performed by comparing the pixel
+values from the raw file to the calculated average value for the channel and
+marking it as defective if selected threshold is exceeded. If adaptive remap is
+selected, then the raw values are compared to a median value for the channel
+calculated within a block of pixels of selected size and marking it as
+defective if threshold for that channel is exceeded. The average standard remap
+works good for uniform shots (dark shots from Proback remap). The adaptive
+remaps work best for uncorrected .RCF files or where uniform raw file cannot be
+produced.</p>
+
+<p>&nbsp;</p>
+
+<h4>Adaptive remap</h4>
+<p>Enables adaptive auto remap. Selecting this enables block
+size drop down for adaptive remap as well. Adaptive remap will look at the
+image blocks of the indicated size and calculate median values for all channels
+for each block. The remap is then performed by comparing the raw values in the
+block against the medians to see if they are exceeding per-channels thresholds.</p>
+
+<p>&nbsp;</p>
+
+<h4>Block size</h4>
+
+<p>This drop down allows selecting the block size (in pixels)
+for adaptive remap. The blocks have an even size and range from 4x4 to 64x64.
+Larger blocks will be less localised where the bigger sample may mean more
+accurate median. Smaller blocks are nevertheless effective for remap of
+standalone pixels.</p>
+
+<p>&nbsp;</p>
+
+<h4>Detect from RAW</h4>
+
+<p>Selecting this button attempts to default (or re-default)
+thresholds from loaded raw file. It will only work for uniform 
+black and uniform white shots.</p>
+
+<p>&nbsp;</p>
+
+<h4>Auto remap</h4>
+
+<p>Pressing this button will perform standard or adaptive
+points auto remap according to the selected parameters.</p>
+
+<p>&nbsp;</p>
+
+<h4>Currently loaded RAW statistics</h4>
+
+<p>This shows statistics for loaded raw file channels - min,
+max and average values and the count of defects found that would be auto remapped
+with the current settings.</p>
+
+<p>&nbsp;</p>
+
+<h3 id="raw_display">Main window (RAW Display page)</h3>
+
+<p>This page will become enabled when raw file(s) are loaded.
+The full list if its settings and user interface elements is described in the
+following sections.</p>
+
+</div>
+<div class="image">
+<p><img src="page1_en.jpg"></p>
+</div>
+<div class="content">
+
+<p>The first group of control provides 3 options that affect
+how the raw file is displayed.</p>
+
+<p>&nbsp;</p>
+
+<h4>RGB Render</h4>
+
+<p>When selected the raw file is displayed using RGB rendering
+for each pixel. The missing colours are taken from neighbouring pixels in 2x2
+pixel block thus making this effectively display large 2x2 pixels (each 2x2
+RGBG2 block ends up being of the same colour). It is very convenient to spot
+colour differences in pixels but not very useful for remap - since every defect
+will show up as 2x2 block. For manual remap, I'd recommend to use it to spot
+defects and then witch to one of the other two methods to actually remap
+defects. Status bar in this mode shows the RGBG2 values for 2x2 block not the
+pixel.</p>
+
+<p>&nbsp;</p>
+
+<h4>Composite</h4>
+
+<p>When selected the raw file is displayed using the pixel
+colour only. For Red the pixel will be red, for Green/Green2 it will be green
+and for Blue it will be blue. With all channels selected that may make defects
+more difficult to spot so this is good for remapping itself not for searching
+for defects. </p>
+
+<p>&nbsp;</p>
+
+<h4>Grayscale</h4>
+
+<p>It is essentially the same as composite but each pixel has
+all 3 components (R, G and B) set to the underlying pixel value. It is basically
+a composite mode displayed in grayscale. It is a compromise between Composite
+and RGB Render and can be used for looking for defects as well as remapping.</p>
+
+<p>&nbsp;</p>
+
+<h4>Channel selection</h4>
+
+<p>These set of checkboxes allows to pick the raw channels to
+be displayed. The deselected channels are simply rendered black. The channels
+layout follow the Bayer pattern so columns and rows match those on a sensor
+(for easier de-selection of the even/odd rows and columns).</p>
+
+<p>&nbsp;</p>
+
+<h4>Gamma 2.2</h4>
+
+<p>This enables gamma 2.2 correction applied to raw data and
+improves the display of the raw files (and a need to apply large exposure
+correction).</p>
+
+<p>&nbsp;</p>
+
+<h4>Black level zeroed</h4>
+
+<p>This switches on a different method of applying black level.
+When selected the black levels are simply zeroed. I.e. each value up to
+selected black level in a channel is set to 0. When it is not selected, black
+levels calculated by traditional subtraction. This could be useful for spotting
+faint defective columns in dark frames for Proback and is enabled by default.</p>
+
+<p>&nbsp;</p>
+
+<h4>WB (from RAW)</h4>
+
+<p>This button sets all per-channel exposure boost settings to
+white balance multipliers extracted from raw file (if none is specified, it
+uses daylight ones provided by LibRaw). This is absolutely useless for remap
+but good to have a for playing with the raw files and analysing post remapped raw
+(to make them look more natural).</p>
+
+<p>&nbsp;</p>
+
+<h4>Reset Corrections</h4>
+
+<p>Resets all exposure, contrast and black level corrections
+when pressed.</p>
+
+<p>&nbsp;</p>
+
+<h4>Exposure Corrections</h4>
+
+<p>This set of sliders and values controls exposure
+corrections. The values for these are indicated in stops and cover the range
+from -5 to +5 stops. The number values have more precision than sliders but
+setting the exposure with sliders is faster. The exposure correction can be
+done at individual channel levels and overall. These controls should be used to
+bring up the dark raw areas in Proback remap to a visible range and make a
+defects in certain channels more prominent.</p>
+
+<p>&nbsp;</p>
+
+<h4>Contrast</h4>
+
+<p>This section has two contrast related sliders. The Contrast
+slider controls level of contrast boost applied (steepness of the slope of
+S-curve). The Midpoint slider controls the middle point of contrast S curve.
+These controls should be used to make defect more prominent (and are quite
+useful for Proback dark frame remaps).</p>
+
+<p>&nbsp;</p>
+
+<h4>Black levels</h4>
+
+<p>These control set the black levels for each channel. They
+can be used to cut out the noise when boosting exposure on dark raw files. </p>
+
+<p>&nbsp;</p>
+
+<h4>Corrections order</h4>
+
+<p>All the corrections are applied to the raw data in this
+order: <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+black levels -&gt; gamma -&gt; exposure correction -&gt; contrast.</p>
+
+<p>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

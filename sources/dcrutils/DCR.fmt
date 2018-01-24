@@ -1,0 +1,15 @@
+TIFF Header
+uint32 DirDataSize (strips offset)
+main IFD
+data
+IFD1
+data
+IFD2
+data
+IFD3
+data
+KodakIFD
+data
+Thumb
+Preview
+Main

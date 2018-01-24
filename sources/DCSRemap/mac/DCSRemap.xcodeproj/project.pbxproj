@@ -1,0 +1,502 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		5C4E789A18A95EFC009B50A0 /* libQt5Core.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4E789918A95EFC009B50A0 /* libQt5Core.a */; };
+		5C4E789C18A95F24009B50A0 /* libQt5Gui.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4E789B18A95F24009B50A0 /* libQt5Gui.a */; };
+		5C4E789E18A95F41009B50A0 /* libqcocoa.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4E789D18A95F41009B50A0 /* libqcocoa.a */; };
+		5C4E78A118A95F6E009B50A0 /* libQt5PlatformSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4E789F18A95F6E009B50A0 /* libQt5PlatformSupport.a */; };
+		5C4E78A218A95F6E009B50A0 /* libQt5Widgets.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4E78A018A95F6E009B50A0 /* libQt5Widgets.a */; };
+		5C4E78A418A95F8B009B50A0 /* libraw.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4E78A318A95F8B009B50A0 /* libraw.a */; };
+		5C4E78A718A95FC3009B50A0 /* libQt5PrintSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C4E78A518A95FA4009B50A0 /* libQt5PrintSupport.a */; };
+		5C4F091D18A9919200F16641 /* DCSRemap.icns in Resources */ = {isa = PBXBuildFile; fileRef = 5C4F091C18A9919200F16641 /* DCSRemap.icns */; };
+		5CA92CEF18006AEA00DF121A /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6665BF175968A8003B4A90 /* CoreData.framework */; };
+		5CA92CF018006AEA00DF121A /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6665C0175968A8003B4A90 /* CoreFoundation.framework */; };
+		5CA92CF118006AEA00DF121A /* CoreServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6665C1175968A8003B4A90 /* CoreServices.framework */; };
+		5CA92CF218006AEA00DF121A /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6665BD1759688B003B4A90 /* AppKit.framework */; };
+		5CA92CF318006AEA00DF121A /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6665BB17596880003B4A90 /* Carbon.framework */; };
+		5CA92CF418006AEA00DF121A /* CoreAudio.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6665B917596871003B4A90 /* CoreAudio.framework */; };
+		5CA92CF518006AEA00DF121A /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C6665B71759685E003B4A90 /* Security.framework */; };
+		5CA92CF618006AEA00DF121A /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C1089501759681F00285C74 /* Cocoa.framework */; };
+		5CA92CF718006AEA00DF121A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 5C10894E175967FB00285C74 /* libz.dylib */; };
+		5CA92D421800BD7000DF121A /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CA92D411800BD7000DF121A /* OpenGL.framework */; };
+		5CA92D441800BD9500DF121A /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5CA92D431800BD9500DF121A /* IOKit.framework */; };
+		5CF2C49118A7C9CD00565651 /* about.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C48418A7C9CD00565651 /* about.cpp */; };
+		5CF2C49318A7C9CD00565651 /* dcs_remap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C48718A7C9CD00565651 /* dcs_remap.cpp */; };
+		5CF2C49618A7C9CD00565651 /* defects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C48B18A7C9CD00565651 /* defects.cpp */; };
+		5CF2C49718A7C9CD00565651 /* ifdata.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C48D18A7C9CD00565651 /* ifdata.cpp */; };
+		5CF2C49818A7C9CD00565651 /* raw_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C48F18A7C9CD00565651 /* raw_image.cpp */; };
+		5CF2C4A318A7CCB500565651 /* moc_about.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C49D18A7CCB500565651 /* moc_about.cpp */; };
+		5CF2C4A418A7CCB500565651 /* moc_dcs_remap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C49E18A7CCB500565651 /* moc_dcs_remap.cpp */; };
+		5CF2C4A518A7CCB500565651 /* moc_raw_image.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C49F18A7CCB500565651 /* moc_raw_image.cpp */; };
+		5CF2C4A618A7CCB500565651 /* qrc_dcs_remap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5CF2C4A018A7CCB500565651 /* qrc_dcs_remap.cpp */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		5C04176318A997570067F7A8 /* DCSRemap.app */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = DCSRemap.app; path = /Users/dalex/DCSRemap/mac/../build/Mac/Release/DCSRemap.app; sourceTree = "<absolute>"; };
+		5C10894E175967FB00285C74 /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = usr/lib/libz.dylib; sourceTree = SDKROOT; };
+		5C1089501759681F00285C74 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		5C4E789918A95EFC009B50A0 /* libQt5Core.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libQt5Core.a; path = "/Developer/Qt-5.2.1/64/lib/libQt5Core.a"; sourceTree = "<absolute>"; };
+		5C4E789B18A95F24009B50A0 /* libQt5Gui.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libQt5Gui.a; path = "/Developer/Qt-5.2.1/64/lib/libQt5Gui.a"; sourceTree = "<absolute>"; };
+		5C4E789D18A95F41009B50A0 /* libqcocoa.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libqcocoa.a; path = "/Developer/Qt-5.2.1/64/plugins/platforms/libqcocoa.a"; sourceTree = "<absolute>"; };
+		5C4E789F18A95F6E009B50A0 /* libQt5PlatformSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libQt5PlatformSupport.a; path = "/Developer/Qt-5.2.1/64/lib/libQt5PlatformSupport.a"; sourceTree = "<absolute>"; };
+		5C4E78A018A95F6E009B50A0 /* libQt5Widgets.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libQt5Widgets.a; path = "/Developer/Qt-5.2.1/64/lib/libQt5Widgets.a"; sourceTree = "<absolute>"; };
+		5C4E78A318A95F8B009B50A0 /* libraw.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libraw.a; path = "../../LibRaw-0.16.0/lib/libraw.a"; sourceTree = "<group>"; };
+		5C4E78A518A95FA4009B50A0 /* libQt5PrintSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libQt5PrintSupport.a; path = "/Developer/Qt-5.2.1/64/lib/libQt5PrintSupport.a"; sourceTree = "<absolute>"; };
+		5C4F091C18A9919200F16641 /* DCSRemap.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = DCSRemap.icns; path = ../common/images/DCSRemap.icns; sourceTree = "<group>"; };
+		5C6665B71759685E003B4A90 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
+		5C6665B917596871003B4A90 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		5C6665BB17596880003B4A90 /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = System/Library/Frameworks/Carbon.framework; sourceTree = SDKROOT; };
+		5C6665BD1759688B003B4A90 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		5C6665BF175968A8003B4A90 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		5C6665C0175968A8003B4A90 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
+		5C6665C1175968A8003B4A90 /* CoreServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreServices.framework; path = System/Library/Frameworks/CoreServices.framework; sourceTree = SDKROOT; };
+		5CA92D411800BD7000DF121A /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
+		5CA92D431800BD9500DF121A /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = System/Library/Frameworks/IOKit.framework; sourceTree = SDKROOT; };
+		5CBE198A173E48F50088D6D4 /* QtCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtCore.framework; path = ../../../../Library/Frameworks/QtCore.framework; sourceTree = "<group>"; };
+		5CBE198B173E48F50088D6D4 /* QtGui.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QtGui.framework; path = ../../../../Library/Frameworks/QtGui.framework; sourceTree = "<group>"; };
+		5CF2C3A018A7C24E00565651 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		5CF2C3A318A7C24E00565651 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		5CF2C3A418A7C24E00565651 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		5CF2C3A518A7C24E00565651 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		5CF2C48418A7C9CD00565651 /* about.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = about.cpp; path = ../common/about.cpp; sourceTree = "<group>"; };
+		5CF2C48518A7C9CD00565651 /* about.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = about.h; path = ../common/about.h; sourceTree = "<group>"; };
+		5CF2C48618A7C9CD00565651 /* about.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = about.ui; path = ../common/about.ui; sourceTree = "<group>"; };
+		5CF2C48718A7C9CD00565651 /* dcs_remap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = dcs_remap.cpp; path = ../common/dcs_remap.cpp; sourceTree = "<group>"; };
+		5CF2C48818A7C9CD00565651 /* dcs_remap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = dcs_remap.h; path = ../common/dcs_remap.h; sourceTree = "<group>"; };
+		5CF2C48918A7C9CD00565651 /* dcs_remap.qrc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = dcs_remap.qrc; path = ../common/dcs_remap.qrc; sourceTree = "<group>"; };
+		5CF2C48A18A7C9CD00565651 /* dcs_remap.ui */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = dcs_remap.ui; path = ../common/dcs_remap.ui; sourceTree = "<group>"; };
+		5CF2C48B18A7C9CD00565651 /* defects.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = defects.cpp; path = ../common/defects.cpp; sourceTree = "<group>"; };
+		5CF2C48C18A7C9CD00565651 /* defects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = defects.h; path = ../common/defects.h; sourceTree = "<group>"; };
+		5CF2C48D18A7C9CD00565651 /* ifdata.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ifdata.cpp; path = ../common/ifdata.cpp; sourceTree = "<group>"; };
+		5CF2C48E18A7C9CD00565651 /* ifdata.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ifdata.h; path = ../common/ifdata.h; sourceTree = "<group>"; };
+		5CF2C48F18A7C9CD00565651 /* raw_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = raw_image.cpp; path = ../common/raw_image.cpp; sourceTree = "<group>"; };
+		5CF2C49018A7C9CD00565651 /* raw_image.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = raw_image.h; path = ../common/raw_image.h; sourceTree = "<group>"; };
+		5CF2C49918A7CA0700565651 /* DCSRemap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = DCSRemap.png; path = ../common/images/DCSRemap.png; sourceTree = "<group>"; };
+		5CF2C49B18A7CA4800565651 /* DCSRemap.ico */ = {isa = PBXFileReference; lastKnownFileType = image.ico; name = DCSRemap.ico; path = ../common/images/DCSRemap.ico; sourceTree = "<group>"; };
+		5CF2C49D18A7CCB500565651 /* moc_about.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = moc_about.cpp; path = generated/DCSRemap/moc_about.cpp; sourceTree = "<group>"; };
+		5CF2C49E18A7CCB500565651 /* moc_dcs_remap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = moc_dcs_remap.cpp; path = generated/DCSRemap/moc_dcs_remap.cpp; sourceTree = "<group>"; };
+		5CF2C49F18A7CCB500565651 /* moc_raw_image.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = moc_raw_image.cpp; path = generated/DCSRemap/moc_raw_image.cpp; sourceTree = "<group>"; };
+		5CF2C4A018A7CCB500565651 /* qrc_dcs_remap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = qrc_dcs_remap.cpp; path = generated/DCSRemap/qrc_dcs_remap.cpp; sourceTree = "<group>"; };
+		5CF2C4A118A7CCB500565651 /* ui_about.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ui_about.h; path = generated/DCSRemap/ui_about.h; sourceTree = "<group>"; };
+		5CF2C4A218A7CCB500565651 /* ui_dcs_remap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ui_dcs_remap.h; path = generated/DCSRemap/ui_dcs_remap.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		5CA92CEE18006AEA00DF121A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C4E78A418A95F8B009B50A0 /* libraw.a in Frameworks */,
+				5C4E78A118A95F6E009B50A0 /* libQt5PlatformSupport.a in Frameworks */,
+				5C4E78A218A95F6E009B50A0 /* libQt5Widgets.a in Frameworks */,
+				5C4E789E18A95F41009B50A0 /* libqcocoa.a in Frameworks */,
+				5C4E789C18A95F24009B50A0 /* libQt5Gui.a in Frameworks */,
+				5C4E789A18A95EFC009B50A0 /* libQt5Core.a in Frameworks */,
+				5C4E78A718A95FC3009B50A0 /* libQt5PrintSupport.a in Frameworks */,
+				5CA92D441800BD9500DF121A /* IOKit.framework in Frameworks */,
+				5CA92D421800BD7000DF121A /* OpenGL.framework in Frameworks */,
+				5CA92CEF18006AEA00DF121A /* CoreData.framework in Frameworks */,
+				5CA92CF018006AEA00DF121A /* CoreFoundation.framework in Frameworks */,
+				5CA92CF118006AEA00DF121A /* CoreServices.framework in Frameworks */,
+				5CA92CF218006AEA00DF121A /* AppKit.framework in Frameworks */,
+				5CA92CF318006AEA00DF121A /* Carbon.framework in Frameworks */,
+				5CA92CF418006AEA00DF121A /* CoreAudio.framework in Frameworks */,
+				5CA92CF518006AEA00DF121A /* Security.framework in Frameworks */,
+				5CA92CF618006AEA00DF121A /* Cocoa.framework in Frameworks */,
+				5CA92CF718006AEA00DF121A /* libz.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		089C166AFE841209C02AAC07 /* SimpleFormat */ = {
+			isa = PBXGroup;
+			children = (
+				5CF2C48418A7C9CD00565651 /* about.cpp */,
+				5CF2C48518A7C9CD00565651 /* about.h */,
+				5CF2C48718A7C9CD00565651 /* dcs_remap.cpp */,
+				5CF2C48818A7C9CD00565651 /* dcs_remap.h */,
+				5CF2C48B18A7C9CD00565651 /* defects.cpp */,
+				5CF2C48C18A7C9CD00565651 /* defects.h */,
+				5CF2C48D18A7C9CD00565651 /* ifdata.cpp */,
+				5CF2C48E18A7C9CD00565651 /* ifdata.h */,
+				5CF2C48F18A7C9CD00565651 /* raw_image.cpp */,
+				5CF2C49018A7C9CD00565651 /* raw_image.h */,
+				5CC45634174ECEB100EFD376 /* generated */,
+				5C613CF0173C2F1C008E7A10 /* Supporting Files */,
+				089C1671FE841209C02AAC07 /* External Frameworks and Libraries */,
+				5CF2C39F18A7C24E00565651 /* Frameworks */,
+			);
+			name = SimpleFormat;
+			sourceTree = "<group>";
+		};
+		089C1671FE841209C02AAC07 /* External Frameworks and Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				5C4E78A518A95FA4009B50A0 /* libQt5PrintSupport.a */,
+				5C4E78A318A95F8B009B50A0 /* libraw.a */,
+				5C4E789F18A95F6E009B50A0 /* libQt5PlatformSupport.a */,
+				5C4E78A018A95F6E009B50A0 /* libQt5Widgets.a */,
+				5C4E789D18A95F41009B50A0 /* libqcocoa.a */,
+				5C4E789B18A95F24009B50A0 /* libQt5Gui.a */,
+				5C4E789918A95EFC009B50A0 /* libQt5Core.a */,
+				5CA92D431800BD9500DF121A /* IOKit.framework */,
+				5CA92D411800BD7000DF121A /* OpenGL.framework */,
+				5C6665BF175968A8003B4A90 /* CoreData.framework */,
+				5C6665C0175968A8003B4A90 /* CoreFoundation.framework */,
+				5C6665C1175968A8003B4A90 /* CoreServices.framework */,
+				5C6665BD1759688B003B4A90 /* AppKit.framework */,
+				5C6665BB17596880003B4A90 /* Carbon.framework */,
+				5C6665B917596871003B4A90 /* CoreAudio.framework */,
+				5C6665B71759685E003B4A90 /* Security.framework */,
+				5C1089501759681F00285C74 /* Cocoa.framework */,
+				5C10894E175967FB00285C74 /* libz.dylib */,
+				5CBE198A173E48F50088D6D4 /* QtCore.framework */,
+				5CBE198B173E48F50088D6D4 /* QtGui.framework */,
+			);
+			name = "External Frameworks and Libraries";
+			sourceTree = "<group>";
+		};
+		5C613CF0173C2F1C008E7A10 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				5C4F091C18A9919200F16641 /* DCSRemap.icns */,
+				5CF2C49B18A7CA4800565651 /* DCSRemap.ico */,
+				5CF2C49918A7CA0700565651 /* DCSRemap.png */,
+				5CF2C48618A7C9CD00565651 /* about.ui */,
+				5CF2C48918A7C9CD00565651 /* dcs_remap.qrc */,
+				5CF2C48A18A7C9CD00565651 /* dcs_remap.ui */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5CC45634174ECEB100EFD376 /* generated */ = {
+			isa = PBXGroup;
+			children = (
+				5CF2C49D18A7CCB500565651 /* moc_about.cpp */,
+				5CF2C49E18A7CCB500565651 /* moc_dcs_remap.cpp */,
+				5CF2C49F18A7CCB500565651 /* moc_raw_image.cpp */,
+				5CF2C4A018A7CCB500565651 /* qrc_dcs_remap.cpp */,
+				5CF2C4A118A7CCB500565651 /* ui_about.h */,
+				5CF2C4A218A7CCB500565651 /* ui_dcs_remap.h */,
+			);
+			name = generated;
+			sourceTree = "<group>";
+		};
+		5CF2C39F18A7C24E00565651 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5CF2C3A018A7C24E00565651 /* Cocoa.framework */,
+				5CF2C3A218A7C24E00565651 /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		5CF2C3A218A7C24E00565651 /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5CF2C3A318A7C24E00565651 /* AppKit.framework */,
+				5CF2C3A418A7C24E00565651 /* CoreData.framework */,
+				5CF2C3A518A7C24E00565651 /* Foundation.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5CA92CDE18006AEA00DF121A /* DCSRemap Static QT 5.2.1 */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5CA92CFD18006AEA00DF121A /* Build configuration list for PBXNativeTarget "DCSRemap Static QT 5.2.1" */;
+			buildPhases = (
+				5CA92CDF18006AEA00DF121A /* ShellScript */,
+				5CA92CE018006AEA00DF121A /* Resources */,
+				5CA92CE418006AEA00DF121A /* Sources */,
+				5CA92CEE18006AEA00DF121A /* Frameworks */,
+				5CA92CFA18006AEA00DF121A /* Rez */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "DCSRemap Static QT 5.2.1";
+			productInstallPath = "$(HOME)/Library/Bundles";
+			productName = SimpleFormat;
+			productReference = 5C04176318A997570067F7A8 /* DCSRemap.app */;
+			productType = "com.apple.product-type.bundle";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		089C1669FE841209C02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0460;
+			};
+			buildConfigurationList = 4FADC23708B4156C00ABE55E /* Build configuration list for PBXProject "DCSRemap" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				en,
+			);
+			mainGroup = 089C166AFE841209C02AAC07 /* SimpleFormat */;
+			productRefGroup = 089C166AFE841209C02AAC07 /* SimpleFormat */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5CA92CDE18006AEA00DF121A /* DCSRemap Static QT 5.2.1 */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5CA92CE018006AEA00DF121A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5C4F091D18A9919200F16641 /* DCSRemap.icns in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXRezBuildPhase section */
+		5CA92CFA18006AEA00DF121A /* Rez */ = {
+			isa = PBXRezBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXRezBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		5CA92CDF18006AEA00DF121A /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "QT=$QT_DIR\n#\nGENERATED=$SRCROOT/generated/$PROJECT_NAME\nSOURCES=$SRCROOT/../common\n#\n#\nMOC=$QT/bin/moc\nUIC=$QT/bin/uic\nRCC=$QT/bin/rcc\n#\nQT_INCLUDE=$QT/include\n#\n# Start generaion\n#\nmkdir -p \"$GENERATED\"\n#\ncd \"$GENERATED\"\n#\n#\n#\necho Generating MOC files ...\n#\n$MOC -DUNICODE -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB \"-I$QT_INCLUDE\" \"-I$SOURCES\" \"-I$GENERATED\" $SOURCES/about.h -o $GENERATED/moc_about.cpp\n#\n$MOC -DUNICODE -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB \"-I$QT_INCLUDE\" \"-I$SOURCES\" \"-I$GENERATED\" $SOURCES/dcs_remap.h -o $GENERATED/moc_dcs_remap.cpp\n#\n$MOC -DUNICODE -DQT_LARGEFILE_SUPPORT -DQT_NO_DEBUG -DNDEBUG -DQT_CORE_LIB -DQT_GUI_LIB \"-I$QT_INCLUDE\" \"-I$SOURCES\" \"-I$GENERATED\" $SOURCES/raw_image.h -o $GENERATED/moc_raw_image.cpp\n#\n#\necho Generating RCC files...\n#\n$RCC -name \"dcs_remap\" -no-compress \"$SOURCES/dcs_remap.qrc\" -o $GENERATED/qrc_dcs_remap.cpp\n#\n#\n#\necho Generating UIC files...\n#\n$UIC -o \"$GENERATED/ui_about.h\" \"$SOURCES/about.ui\"\n$UIC -o \"$GENERATED/ui_dcs_remap.h\" \"$SOURCES/dcs_remap.ui\"\n#\n#\nexit 0";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		5CA92CE418006AEA00DF121A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5CF2C49118A7C9CD00565651 /* about.cpp in Sources */,
+				5CF2C49318A7C9CD00565651 /* dcs_remap.cpp in Sources */,
+				5CF2C49618A7C9CD00565651 /* defects.cpp in Sources */,
+				5CF2C49718A7C9CD00565651 /* ifdata.cpp in Sources */,
+				5CF2C49818A7C9CD00565651 /* raw_image.cpp in Sources */,
+				5CF2C4A318A7CCB500565651 /* moc_about.cpp in Sources */,
+				5CF2C4A418A7CCB500565651 /* moc_dcs_remap.cpp in Sources */,
+				5CF2C4A518A7CCB500565651 /* moc_raw_image.cpp in Sources */,
+				5CF2C4A618A7CCB500565651 /* qrc_dcs_remap.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		4FADC23808B4156C00ABE55E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_OPENMP_SUPPORT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks/QtCore.framework/Headers,
+					/Library/Frameworks/QtGui.framework/Headers,
+				);
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_VERSION = 4.7;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PKGINFO_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				OBJROOT = "$(SYMROOT)../../Objs";
+				REZ_PREFIX_FILE = "";
+				SDKROOT = macosx10.7;
+				SYMROOT = Output/Mac/Debug/;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		5C8DF30A174C13CB0053CD05 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				ENABLE_OPENMP_SUPPORT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					/Library/Frameworks/QtCore.framework/Headers,
+					/Library/Frameworks/QtGui.framework/Headers,
+				);
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_VERSION = 4.7;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_PKGINFO_FILE = YES;
+				INFOPLIST_FILE = Info.plist;
+				OBJROOT = "$(SYMROOT)../../Objs";
+				REZ_PREFIX_FILE = "";
+				SDKROOT = macosx10.7;
+				SYMROOT = Output/Mac/Release/;
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+		5CA92CFE18006AEA00DF121A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
+				COPY_PHASE_STRIP = NO;
+				ENABLE_OPENMP_SUPPORT = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks/;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(QT_DIR)/include",
+					"$(QT_DIR)/include/QtCore",
+					"$(QT_DIR)/include/QtGui",
+					"$(QT_DIR)/include/QtWidgets",
+					"$(SRCROOT)/generated/$(PROJECT_NAME)",
+					"$(SRCROOT)/../common",
+					"$(SRCROOT)",
+					/Developer/Headers/FlatCarbon,
+					"$(LIBRAW_DIR)/libraw",
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = /Applications;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @loader_path/../Plugins";
+				LIBRARY_SEARCH_PATHS = (
+					"$(QT_DIR)/lib",
+					"$(QT_DIR)/plugins/platforms",
+					"$(LIBRAW_DIR)/lib",
+				);
+				LIBRAW_DIR = "$(PROJECT_DIR)/../../LibRaw-0.16.0";
+				MACH_O_TYPE = mh_execute;
+				OBJROOT = "$(SYMROOT)/$(CONFIGURATION)/Objs";
+				OTHER_CFLAGS = "-fpermissive";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = DCSRemap;
+				QT_DIR = "/Developer/Qt-5.2.1/64";
+				REZ_PREFIX_FILE = "";
+				SDKROOT = macosx10.7;
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
+				SYMROOT = ../build/Mac;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Debug;
+		};
+		5CA92CFF18006AEA00DF121A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CONFIGURATION_TEMP_DIR = "$(PROJECT_TEMP_DIR)";
+				COPY_PHASE_STRIP = YES;
+				ENABLE_OPENMP_SUPPORT = YES;
+				FRAMEWORK_SEARCH_PATHS = /Library/Frameworks/;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = s;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "";
+				GCC_PREPROCESSOR_DEFINITIONS = "";
+				GCC_VERSION = "";
+				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(QT_DIR)/include",
+					"$(QT_DIR)/include/QtCore",
+					"$(QT_DIR)/include/QtGui",
+					"$(QT_DIR)/include/QtWidgets",
+					"$(SRCROOT)/generated/$(PROJECT_NAME)",
+					"$(SRCROOT)/../common",
+					"$(SRCROOT)",
+					/Developer/Headers/FlatCarbon,
+					"$(LIBRAW_DIR)/libraw",
+				);
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = /Applications;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @loader_path/../Plugins";
+				LIBRARY_SEARCH_PATHS = (
+					"$(QT_DIR)/lib",
+					"$(QT_DIR)/plugins/platforms",
+					"$(LIBRAW_DIR)/lib",
+				);
+				LIBRAW_DIR = "$(PROJECT_DIR)/../../LibRaw-0.16.0";
+				MACH_O_TYPE = mh_execute;
+				OBJROOT = "$(SYMROOT)/$(CONFIGURATION)/Objs";
+				OTHER_CFLAGS = "-fpermissive";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = DCSRemap;
+				QT_DIR = "/Developer/Qt-5.2.1/64";
+				REZ_PREFIX_FILE = "";
+				SDKROOT = macosx10.7;
+				STRINGS_FILE_OUTPUT_ENCODING = "UTF-8";
+				STRIP_INSTALLED_PRODUCT = YES;
+				STRIP_STYLE = all;
+				SYMROOT = ../build/Mac;
+				WRAPPER_EXTENSION = app;
+				ZERO_LINK = NO;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		4FADC23708B4156C00ABE55E /* Build configuration list for PBXProject "DCSRemap" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4FADC23808B4156C00ABE55E /* Debug */,
+				5C8DF30A174C13CB0053CD05 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		5CA92CFD18006AEA00DF121A /* Build configuration list for PBXNativeTarget "DCSRemap Static QT 5.2.1" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5CA92CFE18006AEA00DF121A /* Debug */,
+				5CA92CFF18006AEA00DF121A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 089C1669FE841209C02AAC07 /* Project object */;
+}

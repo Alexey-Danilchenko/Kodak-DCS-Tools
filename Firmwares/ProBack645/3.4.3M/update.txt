@@ -1,0 +1,1478 @@
+mask    3FFFFFC
+bl mask 48000001
+b mask  48000000
+bc mask FFFC
+
+beq   41820000
+bne   40820000
+blt   41800000
+ble   40810000
+bgt   41810000
+bge   40800000
+
+offset 566C 
+
+mlIcon = 0xFFA3
+
+
+data changes
+
+cameraSyncSpeed-->cameraManualLensSetting   // 2150 - was manualLensSetting
+cameraSyncSpeedList-->cameraManualLensNames // 5758
+cameraSyncTitle-->manualLensMenuSelection  // 20A8
+cameraSyncTitleList-->unusedSpace  // 2154
+
+cameraMessageSetupMamiya:013280 
+cameraTaskMamiya:013b90
+
+
+-------------------------------------------------------------------------------
+shutterSync mode:
+0000AD58-566C=56EC
+0000AD58     title                      
+            000A09A8 00000000  00000000 00000000
+            menuFn                       iconFn
+            00017F94 00000000  00000003 00000000
+            iconChar
+            FFFFFFA5 (A3-A5)
+            
+000A09A8-566C=9B33C
+000A09A8  4D 61 6E 75 61 6C 20 4C 65 6E 73 00 00 00 00 00  Manual Lens.....
+
+0009DB20-566C=984B4
+0009DB20 60 00 00 00 60 00 00 00 60 00 00 00
+
+-------------------------------------------------------------------------------
+data patch
+
+cameraDataComplete:000101B0
+cameraDataGet:00010328
+cameraUpdateSettingsMamiyaDigital:00010428
+cameraMamiyaMainMenu:000128DC
+
+camSoftOnTimes:000124F0 (was 12558)
+camSoftOnTimesStr:00012520 (was 12588)
+camShutterModeStr:00012550 (was 1478C)
+shutterModeMask:00012564 (was 147A0)
+mamiyaProperties[2]:00012570 (was 14460)
+manualLensProperties:10510 
+
+lensSettingData:000105DC
+manualLensMenu:010880 
+cameraLensLoadResource:010910 
+cameraLensLoad:00014500
+processLensSettings:00014650
+
+aLens%s - 000126FC (was 00012700)
+Shutter Operating Mode\a - 000126E4 (was 000147C4)
+Manual Lens Data\a - 0001082C
+
+000124F0-566C=CE84
+
+000124F0 000C3500 000F4240 001E8480 002DC6C0
+00012500 003D0900 004C4B40 005B8D80 006ACFC0
+00012510 007A1200 00895440 00989680 00000000
+00012520 00012610 00012618 00012620 00012628
+00012530 00012630 00012638 00012640 00012648
+00012540 00012650 00012658 00012660 00000000
+00012550 0001268C 000126A0 000126B8 000126CC
+00012560 00000000 00502020 00000000 00000000
+00012570 000125D0 000125E0 000124C0 000125FC 
+000124F0 00000004 00010502 00000000 0000000A
+00012590 00000000 00012520 00000000 00000000
+000125A0 00012668 00012674 000021AC 000125FC
+000125B0 00000004 00600502 00000000 00000003
+000125C0 00000000 00012550 00000000 00000000
+000125D0 63 61 6D 53 6F 66 74 4F 6E 54 69 6D 65 00 00 00  camSoftOnTime...
+000125E0 53 6F 66 74 20 50 72 65 73 73 20 43 43 44 20 41  Soft Press CCD A
+000125F0 63 74 69 76 65 20 54 69 6D 65 00 00 4D 61 6D 69  ctive Time..Mami
+00012600 79 61 2F 50 68 61 73 65 20 4F 6E 65 00 00 00 00  ya/Phase One....
+00012610 30 2E 38 20 73 65 63 00 31 20 73 65 63 00 00 00  0.8 sec.1 sec...
+00012620 32 20 73 65 63 00 00 00 33 20 73 65 63 00 00 00  2 sec...3 sec...
+00012630 34 20 73 65 63 00 00 00 35 20 73 65 63 00 00 00  4 sec...5 sec...
+00012640 36 20 73 65 63 00 00 00 37 20 73 65 63 00 00 00  6 sec...7 sec...
+00012650 38 20 73 65 63 00 00 00 39 20 73 65 63 00 00 00  8 sec...9 sec...
+00012660 31 30 20 73 65 63 00 00 73 68 75 74 74 65 72 4D  10 sec..shutterM
+00012670 6F 64 65 00 53 68 75 74 74 65 72 20 4F 70 65 72  ode.Shutter Oper
+00012680 61 74 69 6E 67 20 4D 6F 64 65 00 00 4C 65 67 61  ating Mode..Lega
+00012690 63 79 20 28 36 34 35 20 41 46 2F 41 46 44 29 00  cy (645 AF/AFD).
+000126A0 44 69 67 69 74 61 6C 20 4C 6F 6E 67 20 4C 61 74  Digital Long Lat
+000126B0 65 6E 63 79 00 00 00 00 44 69 67 69 74 61 6C 20  ency....Digital 
+000126C0 43 6F 6D 62 69 6E 65 64 00 00 00 00 44 69 67 69  Combined....Digi
+000126D0 74 61 6C 20 53 68 6F 72 74 20 4C 61 74 65 6E 63  tal Short Latenc
+000126E0 79 00 00 00 53 68 75 74 74 65 72 20 4F 70 65 72  y...Shutter Oper
+000126F0 61 74 69 6E 67 20 4D 6F 64 65 07 00 4C 65 6E 73  ating Mode..Lens
+00012700 28 4D 29 3A 20 25 73 00 4C 45 4E 53 2E 54 58 54  (M): %s.LENS.TXT
+00012710 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+
+
+new:
+
+00005758-566C=EC:
+        000105EC 00010608 00010624 00010640
+        0001065C 00010678 00010694 000106B0
+        000106CC 000106E8 00010704 00010720
+        0001073C 00010758 00010774 00010790
+        000107AC 000107C8 000107E4 00010800
+        0001081C 00000000       
+    
+
+data
+00010510-566C=AEA4
+00010510 000105A0 000105B8 00002150 0001B788
+00010520 00000004 00600502 00000000 00000014
+00010530 00000000 00005758 00000000 00000000
+00010540 000105CC 000105CC 000105DC 00000000
+00010550 00000005 00000D20 00000000 00000000
+00010560 00000250 00000000 00000000 00000000
+00010570 00000000 00000000 00000000 00000000
+00010580 00000000 00000000 00000000 00000000
+00010590 00000000 00000000 00000000 00000000
+000105A0 63 61 6D 65 72 61 4D 61 6E 75 61 6C 4C 65 6E 73  cameraManualLens
+000105B0 53 65 74 74 69 6E 67 00 4D 61 6E 75 61 6C 20 4C  Setting.Manual L
+000105C0 65 6E 73 20 44 61 74 61 00 00 00 00 6C 65 6E 73  ens Data....lens
+000105D0 53 65 74 74 69 6E 67 44 61 74 61 00 00 00 00 15  SettingData.....
+000105E0 00 00 00 00 00 00 00 00 00 00 00 00 2D 2D 2D 00  ............---.
+000105F0 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 18  ................
+00010600 00 00 00 28 00 00 00 0A 32 34 6D 6D 20 20 66 2F  ...(....24mm  f/
+00010610 34 00 00 00 00 00 00 00 00 00 00 23 00 00 00 23  4..........#...#
+00010620 00 00 00 0A 33 35 6D 6D 20 20 66 2F 33 2E 35 00  ....35mm  f/3.5.
+00010630 00 00 00 00 00 00 00 2D 00 00 00 1C 00 00 00 0A  .......-........
+00010640 34 35 6D 6D 20 20 66 2F 32 2E 38 00 00 00 00 00  45mm  f/2.8.....
+00010650 00 00 00 2D 00 00 00 23 00 00 00 0A 34 35 6D 6D  ...-...#....45mm
+00010660 20 20 66 2F 33 2E 35 00 00 00 00 00 00 00 00 2D    f/3.5........-
+00010670 00 00 00 28 00 00 00 0A 34 35 6D 6D 20 20 66 2F  ...(....45mm  f/
+00010680 34 00 00 00 00 00 00 00 00 00 00 32 00 00 00 28  4..........2...(
+00010690 00 00 00 0A 35 30 6D 6D 20 20 66 2F 34 00 00 00  ....50mm  f/4...
+000106A0 00 00 00 00 00 00 00 37 00 00 00 1C 00 00 00 0A  .......7........
+000106B0 35 35 6D 6D 20 20 66 2F 32 2E 38 00 00 00 00 00  55mm  f/2.8.....
+000106C0 00 00 00 46 00 00 00 1C 00 00 00 0A 37 30 6D 6D  ...F........70mm
+000106D0 20 20 66 2F 32 2E 38 00 00 00 00 00 00 00 00 50    f/2.8........P
+000106E0 00 00 00 13 00 00 00 0A 38 30 6D 6D 20 20 66 2F  ........80mm  f/
+000106F0 31 2E 39 00 00 00 00 00 00 00 00 50 00 00 00 1C  1.9........P....
+00010700 00 00 00 0A 38 30 6D 6D 20 20 66 2F 32 2E 38 00  ....80mm  f/2.8.
+00010710 00 00 00 00 00 00 00 50 00 00 00 28 00 00 00 0A  .......P...(....
+00010720 38 30 6D 6D 20 20 66 2F 34 00 00 00 00 00 00 00  80mm  f/4.......
+00010730 00 00 00 6E 00 00 00 1C 00 00 00 0A 31 31 30 6D  ...n........110m
+00010740 6D 20 66 2F 32 2E 38 00 00 00 00 00 00 00 00 78  m f/2.8........x
+00010750 00 00 00 28 00 00 00 0A 31 32 30 6D 6D 20 66 2F  ...(....120mm f/
+00010760 34 00 00 00 00 00 00 00 00 00 00 91 00 00 00 28  4..........‘...(
+00010770 00 00 00 0A 31 34 35 6D 6D 20 66 2F 34 00 00 00  ....145mm f/4...
+00010780 00 00 00 00 00 00 00 96 00 00 00 1C 00 00 00 0A  .......–........
+00010790 31 35 30 6D 6D 20 66 2F 32 2E 38 00 00 00 00 00  150mm f/2.8.....
+000107A0 00 00 00 96 00 00 00 28 00 00 00 0A 31 35 30 6D  ...–...(....150m
+000107B0 6D 20 66 2F 34 00 00 00 00 00 00 00 00 00 00 C8  m f/4..........È
+000107C0 00 00 00 1C 00 00 00 0A 32 30 30 6D 6D 20 66 2F  ........200mm f/
+000107D0 32 2E 38 00 00 00 00 00 00 00 00 D2 00 00 00 28  2.8........Ò...(
+000107E0 00 00 00 0A 32 31 30 6D 6D 20 66 2F 34 00 00 00  ....210mm f/4...
+000107F0 00 00 00 00 00 00 01 2C 00 00 00 1C 00 00 00 0A  .......,........
+00010800 33 30 30 6D 6D 20 66 2F 32 2E 38 00 00 00 00 00  300mm f/2.8.....
+00010810 00 00 01 F4 00 00 00 2D 00 00 00 0A 35 30 30 6D  ...ô...-....500m
+00010820 6D 20 66 2F 34 2E 35 00 00 00 00 00 4D 61 6E 75  m f/4.5.....Manu
+00010830 61 6C 20 4C 65 6E 73 20 44 61 74 61 07 00 00 00  al Lens Data\a..     
+00010840 4C 6F 61 64 20 4C 45 4E 53 2E 54 58 54 20 66 69  Load LENS.TXT fi
+00010850 6C 65 07 07 00 00 00 00 00 00 00 00 00 00 00 00  le..............
+00010860 00 00 00 00 52 65 73 65 74 20 74 6F 20 64 65 66  ....Reset to def
+00010870 61 75 6C 74 73 07 07 00 00 00 00 00 00 00 00 00  aults...........
+
+-------------------------------------------------------------------------------
+cameraBodyType patch
+
+00018200-566C=12B94
+00018200 38 60 01 00                 li        r3, 0x100
+00018204 4E 80 00 20                 blr
+00018208 00 00 00 00
+0001820C 00 00 00 00
+00018210 00 00 00 00
+00018214 00 00 00 00
+00018218 00 00 00 00
+0001821C 00 00 00 00
+00018220 00 00 00 00
+00018224 00 00 00 00
+00018228 00 00 00 00
+0001822C 00 00 00 00
+00018230 00 00 00 00
+00018234 00 00 00 00
+00018238 00 00 00 00
+0001823C 00 00 00 00
+00018240 00 00 00 00
+00018244 00 00 00 00
+00018248 00 00 00 00
+
+-------------------------------------------------------------------------------
+cameraMamiyaMainMenu:000128DC
+000128DC-566C=D270
+000128DC 94 21 FF F8                 stwu      r1,
+000128E0 7C 08 02 A6                 mflr      r0
+000128E4 90 01 00 0C                 stw       r0, 8+arg_4(r1)
+000128E8 38 60 21 AC                 li        r3, shutterMode
+000128EC 3C A0 00 01                 lis       r5, aShutterOpera_0@h # "Shutter Operating Mode\a"
+000128F0 60 A5 26 E4                 ori       r5, r5, aShutterOpera_0@l # "Shutter Operating Mode\a"
+000128F4 3C E0 00 08                 lis       r7, propertyScreen@ha
+000128F8 38 E7 F1 08                 addi      r7, r7, propertyScreen@l
+000128FC 38 80 00 00                 li        r4, 0
+00012900 38 C0 00 01                 li        r6, 1
+00012904 39 00 00 00                 li        r8, 0
+00012908 48 05 D3 0D                 bl        menuItem 
+0001290C 80 60 20 90                 lwz       r3, cameraId
+00012910 3C A0 00 01                 lis       r5, aManualLensData@h # "Manual Lens Data\a"
+00012914 60 A5 08 2C                 ori       r5, r5, aManualLensData@l # "Manual Lens Data\a"
+00012918 3C E0 00 01                 lis       r7, manualLensMenu@ha
+0001291C 38 E7 08 80                 addi      r7, r7, manualLensMenu@l
+00012920 38 80 00 00                 li        r4, 0
+00012924 38 C0 00 01                 li        r6, 1
+00012928 39 00 00 00                 li        r8, 0
+0001292C 48 05 D2 E9                 bl        menuItem 
+00012930 80 01 00 0C                 lwz       r0, 8+arg_4(r1)
+00012934 7C 08 03 A6                 mtlr      r0
+00012938 38 21 00 08                 addi      r1, r1, 8
+0001293C 4E 80 00 20                 blr
+00012940 00 00 00 00
+00012944 38 FE 29 78 loc_12944:      addi      r7, r30, 0x2978
+00012948 80 87 00 04                 lwz       r4, 4(r7)
+0001294C 2C 04 00 00                 cmpwi     r4, 0
+00012950 41 82 00 2C                 beq       loc_1297C
+00012954 80 67 00 00                 lwz       r3, 0(r7)
+00012958 1C 63 00 55                 mulli     r3, r3, 0x55
+0001295C 1C 84 00 64                 mulli     r4, r4, 0x64
+00012960 7C E3 23 96                 divwu     r7, r3, r4
+00012964 38 7F 00 00                 addi      r3, r31, 0
+00012968 3C 80 00 00                 lis       r4, off_A405@h
+0001296C 60 84 A4 05                 ori       r4, r4, off_A405@l
+00012970 38 A0 00 03                 li        r5, 3
+00012974 38 C0 00 01                 li        r6, 1
+00012978 48 08 5A E1                 bl        tiffEntryWrite 
+0001297C 38 FE 29 78 loc_1297C:      addi      r7, r30, 0x2978
+00012980 48 03 05 98                 b         loc_42F18
+
+-------------------------------------------------------------------------------
+
+fileWriteExposureInfoTags patch
+00042F14-566C=3D8A8
+00042F14 4B FC FA 30                 b         loc_12944
+
+-------------------------------------------------------------------
+imageShutterClose patch
+0006271C-566C=5D0B0
+0006271C 4B FA DC 0D                 bl        cameraDataGet 
+
+-------------------------------------------------------
+statusScreen
+00093AC0-566C=8E454
+00093AC0 94 21 FF E8                 stwu      r1, -0x18(r1)
+00093AC4 7C 08 02 A6                 mflr      r0
+00093AC8 93 81 00 08                 stw       r28, 0x18+var_10(r1)
+00093ACC 93 A1 00 0C                 stw       r29, 0x18+var_C(r1)
+00093AD0 93 C1 00 10                 stw       r30, 0x18+var_8(r1)
+00093AD4 93 E1 00 14                 stw       r31, 0x18+var_4(r1)
+00093AD8 90 01 00 1C                 stw       r0, 0x18+arg_4(r1)
+00093ADC 3B E3 00 00                 addi      r31, r3, 0
+00093AE0 3B A4 00 00                 addi      r29, r4, 0
+00093AE4 4B F9 7A 61                 bl        displayPlaneGraphic 
+00093AE8 57 FF 06 3E                 clrlwi    r31, r31, 24
+00093AEC 2C 1F 00 00                 cmpwi     r31, 0
+00093AF0 41 82 00 E0                 beq       loc_93BD0
+00093AF4 38 60 00 BE                 li        r3, 0xBE # '+'
+00093AF8 4B F9 75 21                 bl        grayColor 
+00093AFC 3B C3 00 00                 addi      r30, r3, 0
+00093B00 4B F9 74 A9                 bl        displayHeight 
+00093B04 3B E3 FF C4                 addi      r31, r3, -0x3C
+00093B08 4B F9 74 79                 bl        displayWidth 
+00093B0C 38 A3 00 00                 addi      r5, r3, 0
+00093B10 38 60 00 00                 li        r3, 0
+00093B14 38 80 00 3C                 li        r4, 0x3C # '<'
+00093B18 38 DF 00 00                 addi      r6, r31, 0
+00093B1C 38 FE 00 00                 addi      r7, r30, 0
+00093B20 4B F9 85 9D                 bl        displayBoxSolid 
+00093B24 38 60 00 BE                 li        r3, 0xBE # '+'
+00093B28 4B F9 74 F1                 bl        grayColor 
+00093B2C 3B 83 00 00                 addi      r28, r3, 0
+00093B30 38 60 00 00                 li        r3, 0
+00093B34 4B F9 74 E5                 bl        grayColor 
+00093B38 3B C3 00 00                 addi      r30, r3, 0
+00093B3C 3C 60 00 09                 lis       r3, dword_9405C@h
+00093B40 38 63 40 5C                 addi      r3, r3, dword_9405C@l
+00093B44 4B FD 41 29                 bl        localize 
+00093B48 3B E3 00 00                 addi      r31, r3, 0
+00093B4C 4B F9 74 35                 bl        displayWidth 
+00093B50 38 A3 00 00                 addi      r5, r3, 0
+00093B54 38 60 00 00                 li        r3, 0
+00093B58 38 80 00 3C                 li        r4, 0x3C # '<'
+00093B5C 38 C0 00 32                 li        r6, 0x32 # '2'
+00093B60 38 FF 00 00                 addi      r7, r31, 0
+00093B64 39 00 00 01                 li        r8, 1
+00093B68 39 3E 00 00                 addi      r9, r30, 0
+00093B6C 39 5C 00 00                 addi      r10, r28, 0
+00093B70 4B F9 40 3D                 bl        displayText 
+00093B74 38 60 00 14                 li        r3, 0x14
+00093B78 38 80 00 88                 li        r4, 0x88 # 'ê'
+00093B7C 4B FF F7 ED                 bl        statusScreenRemaining 
+00093B80 38 60 01 5E                 li        r3, 0x15E
+00093B84 38 80 00 82                 li        r4, 0x82 # 'é'
+00093B88 4B FF F9 F5                 bl        statusScreenFormat 
+00093B8C 48 00 75 4D                 bl        unitMinIso 
+00093B90 3B E3 00 00                 addi      r31, r3, 0
+00093B94 48 00 75 69                 bl        unitMaxIso 
+00093B98 7C 03 F8 40                 cmplw     r3, r31
+00093B9C 41 82 00 10                 beq       loc_93BAC
+00093BA0 38 60 00 14                 li        r3, 0x14
+00093BA4 38 80 01 3B                 li        r4, 0x13B
+00093BA8 4B FF FC 3D                 bl        statusScreenIso 
+00093BAC 38 60 00 14 loc_93BAC:      li        r3, 0x14
+00093BB0 38 80 01 86                 li        r4, 0x186
+00093BB4 4B F8 0E D1                 bl        statusScreenManualLens 
+00093BB8 38 60 00 14                 li        r3, 20
+00093BBC 38 80 00 F0 loc_93BBC:      li        r4, 0xF0 # '='
+00093BC0 4B FF FD 5D                 bl        statusScreenFolder 
+00093BC4 38 60 01 90                 li        r3, 0x190
+00093BC8 38 80 01 40                 li        r4, 0x140
+00093BCC 4B FF FE 11                 bl        statusScreenCurrent 
+00093BD0 38 60 00 DC loc_93BD0:      li        r3, 0xDC # '_'
+00093BD4 38 BD 00 00                 addi      r5, r29, 0
+00093BD8 38 80 00 82                 li        r4, 0x82 # 'é'
+00093BDC 4B FF F8 9D                 bl        statusScreenCard 
+00093BE0 38 60 01 FC                 li        r3, 0x1FC
+00093BE4 38 BD 00 00                 addi      r5, r29, 0
+00093BE8 38 80 00 94                 li        r4, 0x94 # 'ö'
+00093BEC 4B FF FB 49                 bl        statusScreenHost 
+00093BF0 38 60 01 D4                 li        r3, 0x1D4
+00093BF4 38 BD 00 00                 addi      r5, r29, 0
+00093BF8 38 80 01 04                 li        r4, 0x104
+00093BFC 4B FF F9 F9                 bl        statusScreenBattery 
+00093C00 4B F9 79 2D                 bl        displayPlaneImage 
+00093C04 83 81 00 08                 lwz       r28, arg_8(r1)
+00093C08 83 A1 00 0C                 lwz       r29, arg_C(r1)
+00093C0C 83 C1 00 10                 lwz       r30, arg_10(r1)
+00093C10 83 E1 00 14                 lwz       r31, arg_14(r1)
+00093C14 80 01 00 1C                 lwz       r0, arg_1C(r1)
+00093C18 7C 08 03 A6                 mtlr      r0
+00093C1C 38 21 00 18                 addi      r1, r1, 0x18
+00093C20 4E 80 00 20                 blr
+
+-------------------------------------------------------------------------------
+statusScreenManualLens
+00014A84-566C=F418
+00014A84 94 21 FF B8                 stwu      r1, -0x48(r1)
+00014A88 7C 08 02 A6                 mflr      r0
+00014A8C 93 A1 00 3C                 stw       r29, 0x48+var_C(r1)
+00014A90 93 C1 00 40                 stw       r30, 0x48+var_8(r1)
+00014A94 93 E1 00 44                 stw       r31, 0x48+var_4(r1)
+00014A98 90 01 00 4C                 stw       r0, 0x48+arg_4(r1)
+00014A9C 3B C3 00 00                 addi      r30, r3, 0
+00014AA0 3B A4 00 00                 addi      r29, r4, 0
+00014AA4 81 60 21 50                 lwz       r11, cameraManualLensSetting
+00014AA8 55 6B 10 3A                 slwi      r11, r11, 2
+00014AAC 39 40 57 58                 li        r10, cameraManualLensNames
+00014AB0 7C AA 58 2E                 lwzx      r5, r10, r11
+00014AB4 38 61 00 08                 addi      r3, r1, 0x48+var_40
+00014AB8 3C 80 00 01                 lis       r4, aLensMS@h # "Lens(M): %s"
+00014ABC 38 84 26 FC                 addi      r4, r4, aLensMS@l # "Lens(M): %s"
+00014AC0 48 09 19 11                 bl        sprintf 
+00014AC4 38 60 00 BE                 li        r3, 0xBE # '+'
+00014AC8 48 01 65 51                 bl        grayColor 
+00014ACC 3B E3 00 00                 addi      r31, r3, 0
+00014AD0 38 60 00 00                 li        r3, 0
+00014AD4 48 01 65 45                 bl        grayColor 
+00014AD8 39 23 00 00                 addi      r9, r3, 0
+00014ADC 38 E1 00 08                 addi      r7, r1, 0x48+var_40
+00014AE0 38 7E 00 00                 addi      r3, r30, 0
+00014AE4 38 9D 00 00                 addi      r4, r29, 0
+00014AE8 38 A0 01 F4                 li        r5, 0x1F4
+00014AEC 38 C0 00 32                 li        r6, 0x32 # '2'
+00014AF0 39 00 00 00                 li        r8, 0
+00014AF4 39 5F 00 00                 addi      r10, r31, 0
+00014AF8 48 01 30 B5                 bl        displayText 
+00014AFC 83 A1 00 3C                 lwz       r29, 0x48+var_C(r1)
+00014B00 83 C1 00 40                 lwz       r30, 0x48+var_8(r1)
+00014B04 83 E1 00 44                 lwz       r31, 0x48+var_4(r1)
+00014B08 80 01 00 4C                 lwz       r0, 0x48+arg_4(r1)
+00014B0C 7C 08 03 A6                 mtlr      r0
+00014B10 38 21 00 48                 addi      r1, r1, 0x48
+00014B14 4E 80 00 20                 blr
+00014B18 00 00 00 00
+00014B1C 00 00 00 00
+00014B20 00 00 00 00
+
+-------------------------------------------------------------------------------
+cameraDataStringBuild
+0000FFB4-566C=A948-AEA4
+0000FFB4 94 21 FF B0                 stwu      r1, -0x50(r1)
+0000FFB8 7C 08 02 A6                 mflr      r0
+0000FFBC 93 C1 00 48                 stw       r30, 0x50+var_8(r1)
+0000FFC0 93 E1 00 4C                 stw       r31, 0x50+var_4(r1)
+0000FFC4 90 01 00 54                 stw       r0, 0x50+arg_4(r1)
+0000FFC8 3B E3 00 00                 addi      r31, r3, 0
+0000FFCC 81 80 21 B8                 lwz       r12, bodyType
+0000FFD0 2C 0C 01 00                 cmpwi     r12, 0x100
+0000FFD4 40 82 01 C4                 bne       loc_10198
+0000FFD8 80 DF 07 D0                 lwz       r6, 0x7D0(r31)
+0000FFDC 38 61 00 08                 addi      r3, r1, 0x50+var_48
+0000FFE0 3C 80 00 02                 lis       r4, aSS@ha    # "%s %s\n"
+0000FFE4 38 84 C2 E0                 addi      r4, r4, aSS@l # "%s %s\n"
+0000FFE8 3C A0 00 02                 lis       r5, aCameraBody@ha # "Camera body:"
+0000FFEC 38 A5 C2 E8                 addi      r5, r5, aCameraBody@l # "Camera body:"
+0000FFF0 48 09 63 E1                 bl        sprintf 
+0000FFF4 38 7F 05 78                 addi      r3, r31, 0x578
+0000FFF8 38 81 00 08                 addi      r4, r1, 0x50+var_48
+0000FFFC 48 09 B3 F9                 bl        strcat 
+00010000 83 C0 21 FC loc_10000:      lwz       r30, cameraFocalLength
+00010004 2C 1E 00 00                 cmpwi     r30, 0
+00010008 41 82 00 2C                 beq       loc_10034
+0001000C 38 61 00 08 loc_1000C:      addi      r3, r1, 0x50+var_48
+00010010 3C 80 00 02                 lis       r4, aSDmm@ha  # "%s %dmm\n"
+00010014 38 84 C2 F8                 addi      r4, r4, aSDmm@l # "%s %dmm\n"
+00010018 3C A0 00 02                 lis       r5, aLens@ha  # "Lens:"
+0001001C 38 A5 C3 04                 addi      r5, r5, aLens@l # "Lens:"
+00010020 38 DE 00 00                 addi      r6, r30, 0
+00010024 48 09 63 AD loc_10024:      bl        sprintf 
+00010028 38 7F 05 78                 addi      r3, r31, 0x578
+0001002C 38 81 00 08 loc_1002C:      addi      r4, r1, 0x50+var_48
+00010030 48 09 B3 C5                 bl        strcat 
+00010034 3D 80 00 02 loc_10034:      lis       r12, off_196B4@ha
+00010038 39 8C 96 B4                 addi      r12, r12, off_196B4@l
+0001003C 89 7F 29 30                 lbz       r11, 0x2930(r31)
+00010040 55 6B 25 36                 clrlslwi  r11, r11, 24,4
+00010044 7C CC 58 2E                 lwzx      r6, r12, r11
+00010048 38 61 00 08                 addi      r3, r1, 0x50+var_48
+0001004C 3C 80 00 02                 lis       r4, aSS@ha    # "%s %s\n"
+00010050 38 84 C2 E0                 addi      r4, r4, aSS@l # "%s %s\n"
+00010054 3C A0 00 02                 lis       r5, aShutter@ha # "Shutter:"
+00010058 38 A5 C3 0C                 addi      r5, r5, aShutter@l # "Shutter:"
+0001005C 48 09 63 75                 bl        sprintf 
+00010060 38 7F 05 78                 addi      r3, r31, 0x578
+00010064 38 81 00 08                 addi      r4, r1, 0x50+var_48
+00010068 48 09 B3 8D                 bl        strcat 
+0001006C 3D 20 00 02                 lis       r9, off_192B8@ha
+00010070 39 29 92 B8                 addi      r9, r9, off_192B8@l
+00010074 89 7F 29 31                 lbz       r11, 0x2931(r31)
+00010078 2C 0B 00 C0                 cmpwi     r11, 0xC0
+0001007C 41 80 00 20                 blt       loc_1009C
+00010080 39 6B FF 40                 addi      r11, r11, -0xC0
+00010084 1D 6B 00 1C                 mulli     r11, r11, 0x1C
+00010088 3D 40 00 01                 lis       r10, lensSettingData.settings@h
+0001008C 61 4A 05 E0                 ori       r10, r10, lensSettingData.settings@l
+00010090 7D 4A 5A 14                 add       r10, r10, r11
+00010094 38 CA 00 12                 addi      r6, r10, 0x12
+00010098 48 00 00 0C                 b         loc_100A4
+0001009C 55 6B 25 36 loc_1009C:      clrlslwi  r11, r11, 24,4
+000100A0 7C C9 58 2E                 lwzx      r6, r9, r11
+000100A4 38 61 00 08 loc_100A4:      addi      r3, r1, 0x50+var_48
+000100A8 3C 80 00 02                 lis       r4, aSS@ha    # "%s %s\n"
+000100AC 38 84 C2 E0                 addi      r4, r4, aSS@l # "%s %s\n"
+000100B0 3C A0 00 02                 lis       r5, aAperture@ha # "Aperture:"
+000100B4 38 A5 C3 18                 addi      r5, r5, aAperture@l # "Aperture:"
+000100B8 48 09 63 19                 bl        sprintf 
+000100BC 38 7F 05 78                 addi      r3, r31, 0x578
+000100C0 38 81 00 08                 addi      r4, r1, 0x50+var_48
+000100C4 48 09 B3 31                 bl        strcat 
+000100C8 3D 40 00 02                 lis       r10, off_19118@ha
+000100CC 39 4A 91 18                 addi      r10, r10, off_19118@l
+000100D0 89 7F 29 32                 lbz       r11, 0x2932(r31)
+000100D4 55 6B 25 36                 clrlslwi  r11, r11, 24,4
+000100D8 7C CA 58 2E                 lwzx      r6, r10, r11
+000100DC 38 61 00 08                 addi      r3, r1, 0x50+var_48
+000100E0 3C 80 00 02                 lis       r4, aSS@ha    # "%s %s\n"
+000100E4 38 84 C2 E0                 addi      r4, r4, aSS@l # "%s %s\n"
+000100E8 3C A0 00 02                 lis       r5, aIsoSpeed@ha # "ISO Speed:"
+000100EC 38 A5 C3 24                 addi      r5, r5, aIsoSpeed@l # "ISO Speed:"
+000100F0 48 09 62 E1                 bl        sprintf 
+000100F4 38 7F 05 78                 addi      r3, r31, 0x578
+000100F8 38 81 00 08                 addi      r4, r1, 0x50+var_48
+000100FC 48 09 B2 F9                 bl        strcat 
+00010100 3D 20 00 02                 lis       r9, off_18E98@ha
+00010104 39 29 8E 98                 addi      r9, r9, off_18E98@l
+00010108 89 7F 29 33                 lbz       r11, 0x2933(r31)
+0001010C 55 6B 25 36                 clrlslwi  r11, r11, 24,4
+00010110 7C C9 58 2E                 lwzx      r6, r9, r11
+00010114 38 61 00 08                 addi      r3, r1, 0x50+var_48
+00010118 3C 80 00 02 loc_10118:      lis       r4, aSS@ha    # "%s %s\n"
+0001011C 38 84 C2 E0                 addi      r4, r4, aSS@l # "%s %s\n"
+00010120 3C A0 00 02                 lis       r5, aExposureMode@ha # "Exposure Mode:"
+00010124 38 A5 C3 30                 addi      r5, r5, aExposureMode@l # "Exposure Mode:"
+00010128 48 09 62 A9                 bl        sprintf 
+0001012C 38 7F 05 78                 addi      r3, r31, 0x578
+00010130 38 81 00 08                 addi      r4, r1, 0x50+var_48
+00010134 48 09 B2 C1                 bl        strcat 
+00010138 3D 40 00 02                 lis       r10, off_19CFC@ha
+0001013C 39 4A 9C FC                 addi      r10, r10, off_19CFC@l
+00010140 89 7F 29 34                 lbz       r11, 0x2934(r31)
+00010144 55 6B 25 36                 clrlslwi  r11, r11, 24,4
+00010148 7C CA 58 2E                 lwzx      r6, r10, r11
+0001014C 38 61 00 08                 addi      r3, r1, 0x50+var_48
+00010150 3C 80 00 02                 lis       r4, aSS@ha    # "%s %s\n"
+00010154 38 84 C2 E0                 addi      r4, r4, aSS@l # "%s %s\n"
+00010158 3C A0 00 02                 lis       r5, aCompensation@ha # "Compensation:"
+0001015C 38 A5 C3 40                 addi      r5, r5, aCompensation@l # "Compensation:"
+00010160 48 09 62 71                 bl        sprintf 
+00010164 38 7F 05 78 loc_10164:      addi      r3, r31, 0x578
+00010168 38 81 00 08                 addi      r4, r1, 0x50+var_48
+0001016C 48 09 B2 89                 bl        strcat 
+00010170 89 80 20 8C loc_10170:      lbz       r12, cameraWatch
+00010174 2C 0C 00 00                 cmpwi     r12, 0
+00010178 40 82 00 10                 bne       loc_10188
+0001017C 89 80 20 8D                 lbz       r12, cameraInfoWatch
+00010180 2C 0C 00 00                 cmpwi     r12, 0
+00010184 41 82 00 14                 beq       loc_10198
+00010188 3C 60 00 02 loc_10188:      lis       r3, aS_17@ha  # "%s\n"
+0001018C 38 63 C3 D0                 addi      r3, r3, aS_17@l # "%s\n"
+00010190 38 9F 05 78 loc_10190:      addi      r4, r31, 0x578
+00010194 48 09 61 45                 bl        printf 
+00010198 83 C1 00 48 loc_10198:      lwz       r30, 0x50+var_8(r1)
+0001019C 83 E1 00 4C                 lwz       r31, 0x50+var_4(r1)
+000101A0 80 01 00 54                 lwz       r0, 0x50+arg_4(r1)
+000101A4 7C 08 03 A6                 mtlr      r0
+000101A8 38 21 00 50                 addi      r1, r1, 0x50
+000101AC 4E 80 00 20                 blr
+
+-------------------------------------------------------------------------------
+cameraDataComplete:000101B0
+
+000101B0 94 21 FF F0                 stwu      r1, -0x10(r1)
+000101B4 7C 08 02 A6                 mflr      r0
+000101B8 93 E1 00 0C                 stw       r31, 0x10+var_4(r1)
+000101BC 90 01 00 14                 stw       r0, 0x10+arg_4(r1)
+000101C0 81 80 22 00                 lwz       r12, cameraImg
+000101C4 81 60 22 D4                 lwz       r11, cameraShutter
+000101C8 99 6C 29 30                 stb       r11, 0x2930(r12)
+000101CC 81 40 22 00                 lwz       r10, cameraImg
+000101D0 81 20 22 D8                 lwz       r9, cameraAperture
+000101D4 99 2A 29 31                 stb       r9, 0x2931(r10)
+000101D8 81 80 22 00                 lwz       r12, cameraImg
+000101DC 81 60 22 CC                 lwz       r11, cameraExposureMode
+000101E0 99 6C 29 33                 stb       r11, 0x2933(r12)
+000101E4 81 40 22 00                 lwz       r10, cameraImg
+000101E8 81 20 22 D0                 lwz       r9, cameraCompensation
+000101EC 99 2A 29 34                 stb       r9, 0x2934(r10)
+000101F0 81 60 21 FC                 lwz       r11, cameraFocalLength
+000101F4 2C 0B 00 00                 cmpwi     r11, 0
+000101F8 41 82 00 18                 beq       loc_10210
+000101FC 81 80 22 00                 lwz       r12, cameraImg
+00010200 39 8C 29 78                 addi      r12, r12, 0x2978
+00010204 91 6C 00 00                 stw       r11, 0(r12)
+00010208 39 60 00 01                 li        r11, 1
+0001020C 91 6C 00 04                 stw       r11, 4(r12)
+00010210 83 E0 21 B8 loc_10210:      lwz       r31, bodyType
+00010214 2C 1F 01 00                 cmpwi     r31, 0x100
+00010218 40 82 00 F0                 bne       loc_10308
+0001021C 3D 60 00 02                 lis       r11, listShutterMamiya@ha
+00010220 39 6B 96 A8                 addi      r11, r11, listShutterMamiya@l
+00010224 81 40 22 D4                 lwz       r10, cameraShutter
+00010228 55 4A 20 36                 slwi      r10, r10, 4
+0001022C 7C 6B 52 14                 add       r3, r11, r10
+00010230 89 83 00 00                 lbz       r12, 0(r3)
+00010234 2C 0C 00 F8                 cmpwi     r12, 0xF8
+00010238 40 82 00 2C                 bne       loc_10264
+0001023C 81 80 20 A4                 lwz       r12, shutterCloseTime
+00010240 81 60 20 A0                 lwz       r11, shutterOpenTime
+00010244 7D 8B 60 50                 subf      r12, r11, r12
+00010248 2C 0C 00 00                 cmpwi     r12, 0
+0001024C 41 82 00 18                 beq       loc_10264
+00010250 3C 80 00 01                 lis       r4, 186A0@h
+00010254 60 84 86 A0                 ori       r4, r4, 186A0@l
+00010258 7C 6C 23 96                 divwu     r3, r12, r4
+0001025C 38 80 00 0A                 li        r4, 0xA
+00010260 48 00 00 08                 b         loc_10268
+00010264 48 00 87 ED loc_10264:      bl        cameraRationalSetting 
+00010268 81 80 22 00 loc_10268:      lwz       r12, cameraImg
+0001026C 39 8C 29 28                 addi      r12, r12, 0x2928
+00010270 90 6C 00 00                 stw       r3, 0(r12)
+00010274 90 8C 00 04                 stw       r4, 4(r12)
+00010278 81 60 22 D8                 lwz       r11, cameraAperture
+0001027C 2C 0B 00 C0                 cmpwi     r11, 0xC0
+00010280 40 80 00 1C                 bge       loc_1029C
+00010284 3D 40 00 02                 lis       r10, listApertureMamiya@ha
+00010288 39 4A 92 AC                 addi      r10, r10, listApertureMamiya@l
+0001028C 55 6B 20 36                 slwi      r11, r11, 4
+00010290 7C 6A 5A 14                 add       r3, r10, r11
+00010294 48 00 87 BD                 bl        cameraRationalSetting 
+00010298 48 00 00 20                 b         loc_102B8
+0001029C 39 6B FF 40 loc_1029C:      addi      r11, r11, -0xC0
+000102A0 1D 6B 00 1C                 mulli     r11, r11, 0x1C
+000102A4 3D 40 00 01                 lis       r10, lensSettingData.settings@h
+000102A8 61 4A 05 E0                 ori       r10, r10, lensSettingData.settings@l
+000102AC 7D 4A 5A 14                 add       r10, r10, r11
+000102B0 80 6A 00 04                 lwz       r3, 4(r10)
+000102B4 80 8A 00 08                 lwz       r4, 8(r10)
+000102B8 81 80 22 00 loc_102B8:      lwz       r12, cameraImg
+000102BC 39 8C 29 70                 addi      r12, r12, 0x2970
+000102C0 90 6C 00 00                 stw       r3, 0(r12)
+000102C4 90 8C 00 04                 stw       r4, 4(r12)
+000102C8 83 E0 22 00                 lwz       r31, cameraImg
+000102CC 3D 20 00 02                 lis       r9, off_18E90@ha
+000102D0 39 29 8E 90                 addi      r9, r9, off_18E90@l
+000102D4 81 60 22 CC                 lwz       r11, cameraExposureMode
+000102D8 55 6B 20 36                 slwi      r11, r11, 4
+000102DC 7D 29 58 2E                 lwzx      r9, r9, r11
+000102E0 91 3F 29 AC                 stw       r9, 0x29AC(r31)
+000102E4 3D 40 00 02                 lis       r10, listCompensationMamiya@ha
+000102E8 39 4A 9C F0                 addi      r10, r10, listCompensationMamiya@l
+000102EC 81 60 22 D0                 lwz       r11, cameraCompensation
+000102F0 55 6B 20 36                 slwi      r11, r11, 4
+000102F4 7C 6A 5A 14                 add       r3, r10, r11
+000102F8 48 00 87 8D                 bl        cameraSrationalSetting 
+000102FC 39 9F 29 90                 addi      r12, r31, 0x2990
+00010300 90 6C 00 00                 stw       r3, 0(r12)
+00010304 90 8C 00 04                 stw       r4, 4(r12)
+00010308 83 E1 00 0C loc_10308:      lwz       r31, 0x10+var_4(r1)
+0001030C 80 01 00 14                 lwz       r0, 0x10+arg_4(r1)
+00010310 7C 08 03 A6                 mtlr      r0
+00010314 38 21 00 10                 addi      r1, r1, 0x10
+00010318 4E 80 00 20                 blr
+0001031C 00 00 00 00
+00010320 00 00 00 00
+00010324 00 00 00 00
+
+-------------------------------------------------------------------------------
+cameraDataGet:00010328
+
+00010328 94 21 FF E0                 stwu      r1, -0x20(r1)
+0001032C 7C 08 02 A6                 mflr      r0
+00010330 93 C1 00 18                 stw       r30, 0x20+var_8(r1)
+00010334 93 E1 00 1C                 stw       r31, 0x20+var_4(r1)
+00010338 90 01 00 24                 stw       r0, 0x20+arg_4(r1)
+0001033C 3B C3 00 00                 addi      r30, r3, 0
+00010340 93 C0 22 00                 stw       r30, cameraImg
+00010344 81 80 21 BC                 lwz       r12, exposureTime
+00010348 91 9E 29 1C                 stw       r12, 0x291C(r30)
+0001034C 81 60 21 F4                 lwz       r11, cameraMinIso
+00010350 81 40 22 24                 lwz       r10, cameraIso
+00010354 7D 6B 52 14                 add       r11, r11, r10
+00010358 99 7E 29 32                 stb       r11, 0x2932(r30)
+0001035C 3D 20 00 02                 lis       r9, listIso@ha
+00010360 39 29 8F 6C                 addi      r9, r9, listIso@l
+00010364 81 40 21 F4                 lwz       r10, cameraMinIso
+00010368 81 60 22 24                 lwz       r11, cameraIso
+0001036C 7D 4A 5A 14                 add       r10, r10, r11
+00010370 55 4A 20 36                 slwi      r10, r10, 4
+00010374 7C 69 52 14                 add       r3, r9, r10
+00010378 48 00 86 D9                 bl        cameraRationalSetting 
+0001037C 39 9E 29 20                 addi      r12, r30, 0x2920
+00010380 90 6C 00 00                 stw       r3, 0(r12)
+00010384 90 8C 00 04                 stw       r4, 4(r12)
+00010388 81 9E 29 20                 lwz       r12, 0x2920(r30)
+0001038C 81 7E 29 24                 lwz       r11, 0x2924(r30)
+00010390 7F EC 5B 96                 divwu     r31, r12, r11
+00010394 93 FE 00 08                 stw       r31, 8(r30)
+00010398 38 7F 00 00                 addi      r3, r31, 0
+0001039C 48 05 43 B5                 bl        imagerIsoCode 
+000103A0 90 7E 00 0C                 stw       r3, 0xC(r30)
+000103A4 83 E0 21 B8                 lwz       r31, bodyType
+000103A8 2C 1F 01 00 loc_103A8:      cmpwi     r31, 0x100
+000103AC 40 82 00 58                 bne       loc_10404
+000103B0 89 80 21 DD                 lbz       r12, digitalBody
+000103B4 2C 0C 00 00                 cmpwi     r12, 0
+000103B8 41 82 00 40                 beq       loc_103F8
+000103BC 89 80 22 2A                 lbz       r12, mamiyaSerialV1
+000103C0 2C 0C 00 00                 cmpwi     r12, 0
+000103C4 40 82 00 10                 bne       loc_103D4
+000103C8 3D 80 00 02 loc_103C8:      lis       r12, aMamiya645afd@ha # "Mamiya 645AFD"
+000103CC 39 8C C3 E0                 addi      r12, r12, aMamiya645afd@l # "Mamiya 645AFD"
+000103D0 48 00 00 30                 b         loc_10400
+000103D4 89 80 21 F3 loc_103D4:      lbz       r12, isFilmBody
+000103D8 2C 0C 00 00                 cmpwi     r12, 0
+000103DC 40 82 00 10                 bne       loc_103EC
+000103E0 3D 80 00 01                 lis       r12, aPhaseOneDfDf@h # "Phase One DF/DF+"
+000103E4 39 8C 24 DC                 addi      r12, r12, aPhaseOneDfDf@l # "Phase One DF/DF+"
+000103E8 48 00 00 18                 b         loc_10400
+000103EC 3D 80 00 01 loc_103EC:      lis       r12, aMamiya645AfdIi@h # "Mamiya 645 AFD II/III"
+000103F0 39 8C 24 C4                 addi      r12, r12, aMamiya645AfdIi@l # "Mamiya 645 AFD II/III"
+000103F4 48 00 00 0C                 b         loc_10400
+000103F8 3D 80 00 02 loc_103F8:      lis       r12, aMamiya645af@ha # "Mamiya 645AF"
+000103FC 39 8C C3 F0                 addi      r12, r12, aMamiya645af@l # "Mamiya 645AF"
+00010400 91 9E 07 D0 loc_10400:      stw       r12, 0x7D0(r30)
+00010404 83 C1 00 18 loc_10404:      lwz       r30, 0x20+var_8(r1)
+00010408 83 E1 00 1C                 lwz       r31, 0x20+var_4(r1)
+0001040C 80 01 00 24                 lwz       r0, 0x20+arg_4(r1)
+00010410 7C 08 03 A6                 mtlr      r0
+00010414 38 21 00 20                 addi      r1, r1, 0x20
+00010418 4E 80 00 20                 blr
+0001041C 00 00 00 00
+00010420 00 00 00 00
+00010424 00 00 00 00
+
+-------------------------------------------------------------------------------
+cameraUpdateSettingsMamiyaDigital:00010428
+
+00010428 94 21 FF F0                 stwu      r1, -0x10(r1)
+0001042C 7C 08 02 A6                 mflr      r0
+00010430 90 01 00 14                 stw       r0, 0x10+arg_4(r1)
+00010434 3C 80 00 02                 lis       r4, apertureConvert@ha
+00010438 38 84 95 A8                 addi      r4, r4, apertureConvert@l
+0001043C 88 60 22 1B                 lbz       r3, getAV
+00010440 48 00 7E CD                 bl        cameraSettingConvert 
+00010444 3C 80 00 02                 lis       r4, listApertureMamiya@ha
+00010448 38 84 92 AC                 addi      r4, r4, listApertureMamiya@l
+0001044C 48 00 86 6D                 bl        cameraFindSetting 
+00010450 90 60 22 D8                 stw       r3, cameraAperture
+00010454 88 60 22 1C                 lbz       r3, getTV
+00010458 3C 80 00 02                 lis       r4, shutterConvert@ha
+0001045C 38 84 9B F0                 addi      r4, r4, shutterConvert@l
+00010460 48 00 7E AD                 bl        cameraSettingConvert 
+00010464 3C 80 00 02                 lis       r4, listShutterMamiya@ha
+00010468 38 84 96 A8                 addi      r4, r4, listShutterMamiya@l
+0001046C 48 00 86 4D                 bl        cameraFindSetting 
+00010470 90 60 22 D4                 stw       r3, cameraShutter
+00010474 3C 80 00 02                 lis       r4, listCompensationMamiya@ha
+00010478 38 84 9C F0                 addi      r4, r4, listCompensationMamiya@l
+0001047C 88 60 22 1D                 lbz       r3, getCV
+00010480 48 00 86 39                 bl        cameraFindSetting 
+00010484 90 60 22 D0                 stw       r3, cameraCompensation
+00010488 89 20 22 21                 lbz       r9, getMD
+0001048C 55 23 06 FE                 clrlwi    r3, r9, 27
+00010490 3C 80 00 02                 lis       r4, listModesMamiyaDigital@ha
+00010494 38 84 8E 8C                 addi      r4, r4, listModesMamiyaDigital@l
+00010498 48 00 86 21                 bl        cameraFindSetting 
+0001049C 90 60 22 CC                 stw       r3, cameraExposureMode
+000104A0 89 60 22 1F                 lbz       r11, getLF1
+000104A4 55 63 07 7E                 clrlwi    r3, r11, 29
+000104A8 90 60 21 FC                 stw       r3, cameraFocalLength
+000104AC 54 6A 40 2E                 slwi      r10, r3, 8
+000104B0 89 80 22 20                 lbz       r12, getLF0
+000104B4 7D 4A 63 78                 or        r10, r10, r12
+000104B8 91 40 21 FC                 stw       r10, cameraFocalLength
+000104BC 81 60 22 D8                 lwz       r11, cameraAperture
+000104C0 2C 0B 00 00                 cmpwi     r11, 0
+000104C4 40 82 00 34                 bne       loc_104F8
+000104C8 81 60 21 50                 lwz       r11, cameraManualLensSetting
+000104CC 2C 0B 00 00                 cmpwi     r11, 0
+000104D0 41 82 00 28                 beq       loc_104F8
+000104D4 1D 6B 00 1C                 mulli     r11, r11, 0x1C
+000104D8 3D 40 00 01                 lis       r10, lensSettingData.settings@h
+000104DC 61 4A 05 E0                 ori       r10, r10, lensSettingData.settings@l
+000104E0 7D 4A 5A 14                 add       r10, r10, r11
+000104E4 80 6A 00 00                 lwz       r3, 0(r10)
+000104E8 90 60 21 FC                 stw       r3, cameraFocalLength
+000104EC 80 60 21 50                 lwz       r3, cameraManualLensSetting
+000104F0 38 63 00 C0                 addi      r3, r3, 0xC0
+000104F4 90 60 22 D8                 stw       r3, cameraAperture
+000104F8 80 01 00 14 loc_104F8:      lwz       r0, 0x10+arg_4(r1)
+000104FC 7C 08 03 A6                 mtlr      r0
+00010500 38 21 00 10                 addi      r1, r1, 0x10
+00010504 4E 80 00 20                 blr
+00010508 00 00 00 00
+0001050C 00 00 00 00
+
+-------------------------------------------------------------------------------
+
+cameraSyncMenu patch-->cameraManualLensMenu
+00017F94-566C=12928
+00017F94 94 21 FF E0                 stwu      r1, -0x20(r1)
+00017F98 7C 08 02 A6                 mflr      r0
+00017F9C 93 A1 00 14                 stw       r29, 0x20+var_C(r1)
+00017FA0 93 C1 00 18                 stw       r30, 0x20+var_8(r1)
+00017FA4 93 E1 00 1C                 stw       r31, 0x20+var_4(r1)
+00017FA8 90 01 00 24                 stw       r0, 0x20+arg_4(r1)
+00017FAC 3B A3 00 00                 addi      r29, r3, 0
+00017FB0 38 7D 00 00 loc_17FB0:      addi      r3, r29, 0
+00017FB4 48 08 81 65                 bl        userMenuBarPaint 
+00017FB8 38 7D 00 00                 addi      r3, r29, 0
+00017FBC 48 08 83 59                 bl        userMenuBarIconX 
+00017FC0 48 05 77 E5                 bl        menuDropdownStart 
+00017FC4 3B E0 00 00                 li        r31, 0
+00017FC8 3D 40 00 01                 lis       r10, lensSettingData@h
+00017FCC 61 4A 05 DC                 ori       r10, r10, lensSettingData@l
+00017FD0 83 AA 00 00                 lwz       r29, 0(r10)
+00017FD4 2C 1D 00 00                 cmpwi     r29, 0
+00017FD8 41 82 00 30                 beq       loc_18008
+00017FDC 3B C0 57 54                 li        r30, cameraManualLensNames-4
+00017FE0 84 BE 00 04 loc_17FE0:      lwzu      r5, 4(r30)
+00017FE4 39 01 00 08                 addi      r8, r1, 0x20+var_18
+00017FE8 38 7F 00 00                 addi      r3, r31, 0
+00017FEC 38 80 00 02                 li        r4, 2
+00017FF0 38 C0 00 01                 li        r6, 1
+00017FF4 38 E0 00 00                 li        r7, 0
+00017FF8 48 05 7C 1D                 bl        menuItem 
+00017FFC 3B FF 00 01                 addi      r31, r31, 1
+00018000 7C 1F E8 00                 cmpw      r31, r29
+00018004 41 80 FF DC                 blt       loc_17FE0
+00018008 83 E0 21 50 loc_18008:      lwz       r31, cameraManualLensSetting
+0001800C 93 E1 00 08                 stw       r31, 0x20+var_18(r1)
+00018010 93 E1 00 0C                 stw       r31, 0x20+var_14(r1)
+00018014 38 61 00 0C                 addi      r3, r1, 0x20+var_14
+00018018 38 80 00 00                 li        r4, 0
+0001801C 48 05 82 99                 bl        menu 
+00018020 3B E3 00 00                 addi      r31, r3, 0
+00018024 2C 1F 00 24                 cmpwi     r31, MENU_EXIT
+00018028 41 82 00 44                 beq       loc_1806C
+0001802C 2C 1F 00 1C                 cmpwi     r31, MENU_PRESS
+00018030 41 82 00 3C                 beq       loc_1806C
+00018034 2C 1F 00 1A                 cmpwi     r31, CANCEL_PRESS
+00018038 41 82 00 34                 beq       loc_1806C
+0001803C 2C 1F 00 16                 cmpwi     r31, ROCKER_LEFT
+00018040 41 82 00 2C                 beq       loc_1806C
+00018044 2C 1F 00 17                 cmpwi     r31, ROCKER_RIGHT
+00018048 41 82 00 24                 beq       loc_1806C
+0001804C 2C 1F 00 26                 cmpwi     r31, USER_MODE_CHANGE
+00018050 41 82 00 1C                 beq       loc_1806C
+00018054 2C 1F 00 18                 cmpwi     r31, OK_PRESS
+00018058 40 82 FF 58                 bne       loc_17FB0
+0001805C 81 81 00 08                 lwz       r12, 0x20+var_18(r1)
+00018060 91 80 21 50                 stw       r12, cameraManualLensSetting
+00018064 38 60 21 50                 li        r3, cameraManualLensSetting
+00018068 48 06 69 31                 bl        propertySave 
+0001806C 48 05 77 F9 loc_1806C:      bl        menuDropdownEnd 
+00018070 38 7F 00 00                 addi      r3, r31, 0
+00018074 83 A1 00 14                 lwz       r29, 0x20+var_C(r1)
+00018078 83 C1 00 18                 lwz       r30, 0x20+var_8(r1)
+0001807C 83 E1 00 1C                 lwz       r31, 0x20+var_4(r1)
+00018080 80 01 00 24                 lwz       r0, 0x20+arg_4(r1)
+00018084 7C 08 03 A6                 mtlr      r0
+00018088 38 21 00 20                 addi      r1, r1, 0x20
+0001808C 4E 80 00 20                 blr
+
+-------------------------------------------------------------------------------
+manualLensMenu:010880
+00010880-566C=B214
+
+00010880 94 21 FF F0                 stwu      r1, -0x10(r1)
+00010884 7C 08 02 A6                 mflr      r0
+00010888 93 E1 00 0C                 stw       r31, 0x10+var_4(r1)
+0001088C 90 01 00 14                 stw       r0, 0x10+arg_4(r1)
+00010890 48 05 EE 5D                 bl        menuClear 
+00010894 3C 60 00 01                 lis       r3, aManualLensData@h # "Manual Lens Data\a"
+00010898 38 63 08 2C                 addi      r3, r3, aManualLensData@l # "Manual Lens Data\a"
+0001089C 48 05 F0 95                 bl        menuTitle 
+000108A0 3C A0 00 01                 lis       r5, loadLensTxt@ha # "Load LENS.TXT file\a\a"
+000108A4 60 A5 08 40                 ori       r5, r5, loadLensTxt@l # "Load LENS.TXT file\a\a"
+000108A8 38 60 00 00                 li        r3, 0
+000108AC 38 80 00 00                 li        r4, 0
+000108B0 38 C0 00 01                 li        r6, 1
+000108B4 3C E0 00 01                 lis       r7, cameraLensLoad@h
+000108B8 60 E7 45 00                 ori       r7, r7, cameraLensLoad@l
+000108BC 39 00 00 00                 li        r8, 0
+000108C0 48 05 F3 55                 bl        menuItem 
+000108C4 3C A0 00 01                 lis       r5, aLoadIfFile@h # "Reset to defaults\a\a"
+000108C8 60 A5 08 64                 ori       r5, r5, aLoadIfFile@l # "Reset to defaults\a\a"
+000108CC 38 60 00 01                 li        r3, 1
+000108D0 38 80 00 00                 li        r4, 0
+000108D4 38 C0 00 01                 li        r6, 1
+000108D8 3C E0 00 01                 lis       r7, cameraLensLoadResource@h
+000108DC 60 E7 09 10                 ori       r7, r7, cameraLensLoadResource@l
+000108E0 39 00 00 00                 li        r8, 0
+000108E4 48 05 F3 31                 bl        menuItem 
+000108E8 38 60 20 A8                 li        r3, manualLensMenuSelection
+000108EC 38 80 00 00                 li        r4, 0
+000108F0 48 05 F9 C5                 bl        menu 
+000108F4 83 E1 00 0C                 lwz       r31, 0x10+var_4(r1)
+000108F8 80 01 00 14                 lwz       r0, 0x10+arg_4(r1)
+000108FC 7C 08 03 A6                 mtlr      r0
+00010900 38 21 00 10                 addi      r1, r1, 0x10
+00010904 4E 80 00 20                 blr
+00010908 00 00 00 00 
+0001090C 00 00 00 00 
+
+-------------------------------------------------------------------------------
+cameraLensLoadResource:010910
+00010910 94 21 FF E8                 stwu      r1, -0x18(r1)
+00010914 7C 08 02 A6                 mflr      r0
+00010918 93 C1 00 10                 stw       r30, 0x18+var_8(r1)
+0001091C 93 E1 00 14                 stw       r31, 0x18+var_4(r1)
+00010920 90 01 00 1C                 stw       r0, 0x18+arg_4(r1)
+00010924 3C 60 00 01                 lis       r3, "LENS.TXT"@h
+00010928 60 63 27 08                 ori       r3, r3, "LENS.TXT"@l
+0001092C 3B C3 00 00                 addi      r30, r3, 0
+00010930 48 03 DE 4D                 bl        firmwareLoadTempResource 
+00010934 38 7E 00 00                 addi      r3, r30, 0
+00010938 48 03 B6 CD                 bl        firmwareResourceAddress 
+0001093C 3B E3 00 00                 addi      r31, r3, 0
+00010940 38 7E 00 00                 addi      r3, r30, 0
+00010944 48 03 B7 61                 bl        firmwareResourceSize 
+00010948 38 63 FF FF                 addi      r3, r3, -1
+0001094C 7C 63 FA 14                 add       r3, r3, r31
+00010950 38 80 00 00                 li        r4, 0
+00010954 98 83 00 00                 stb       r4, 0(r3)
+00010958 38 7F 00 00                 addi      r3, r31, 0
+0001095C 48 00 3C F5                 bl        processLensSettings 
+00010960 2C 03 00 00                 cmpwi     r3, 0
+00010964 40 82 00 38                 bne       loc_1099C
+00010968 39 80 00 00                 li        r12, 0
+0001096C 91 81 00 08                 stw       r12, 0x18+var_10(r1)
+00010970 3C 60 00 01                 lis       r3, loc_109E4@h # "No valid manual lens data is found!\a\a"
+00010974 38 63 09 E4                 addi      r3, r3, loc_109E4@l # "No valid manual lens data is found!\a\a"
+00010978 3C 80 00 06                 lis       r4, aOk_3@h   # "OK"
+0001097C 38 84 63 68                 addi      r4, r4, aOk_3@l # "OK"
+00010980 38 A0 00 00                 li        r5, 0
+00010984 38 C0 00 00                 li        r6, 0
+00010988 38 E0 00 00                 li        r7, 0
+0001098C 39 00 00 00                 li        r8, 0
+00010990 39 20 00 00                 li        r9, 0
+00010994 39 40 00 00                 li        r10, 0
+00010998 48 08 F1 8D                 bl        userDialog 
+0001099C 38 7E 00 00 loc_1099C:      addi      r3, r30, 0
+000109A0 48 03 B7 A5                 bl        firmwareUnloadTempResource 
+000109A4 83 C1 00 10                 lwz       r30, 0x18+var_8(r1)
+000109A8 83 E1 00 14                 lwz       r31, 0x18+var_4(r1)
+000109AC 80 01 00 1C                 lwz       r0, 0x18+arg_4(r1)
+000109B0 7C 08 03 A6                 mtlr      r0
+000109B4 38 21 00 18                 addi      r1, r1, 0x18
+000109B8 4E 80 00 20                 blr
+000109BC 43 6F 75 6C loc_109BC:      db Could not read\nLENS.TXT\nfrom the card!, 0
+000109C0 64 20 6E 6F
+000109C4 74 20 72 65
+000109C8 61 64 0A 4C
+000109CC 45 4E 53 2E
+000109D0 54 58 54 0A
+000109D4 66 72 6F 6D
+000109D8 20 74 68 65
+000109DC 20 63 61 72
+000109E0 64 21 00 00
+000109E4 4E 6F 20 76 loc_109E4:      db No valid manual lens data is found!, 0
+000109E8 61 6C 69 64
+000109EC 20 6D 61 6E
+000109F0 75 61 6C 20
+000109F4 6C 65 6E 73
+000109F8 20 64 61 74
+000109FC 61 20 69 73
+00010A00 20 66 6F 75
+00010A04 6E 64 21 00
+00010A08 20 25 75 6D loc_10A08:      .string ' %umm f/%u.%u ', 0, 0
+00010A0C 6D 20 66 2F
+00010A10 25 75 2E 25
+00010A14 75 20 00 00
+00010A18 20 25 75 6D loc_10A18:      .string ' %umm f/%u ', 0
+00010A1C 6D 20 66 2F
+00010A20 25 75 20 00
+00010A24 25 33 75 6D loc_10A24:      .string '%3umm f/%u.%u', 0, 0, 0
+00010A28 6D 20 66 2F
+00010A2C 25 75 2E 25
+00010A30 75 00 00 00
+00010A34 25 33 75 6D loc_10A34:      .string '%3umm f/%u', 0, 0
+00010A38 6D 20 66 2F 
+00010A3C 25 75 00 00 
+
+-------------------------------------------------------------------------------
+cameraLensLoad:00014500
+00014500-566C=EE94
+00014500 94 21 FF E8                 stwu      r1, -0x18(r1)
+00014504 7C 08 02 A6                 mflr      r0
+00014508 93 C1 00 10                 stw       r30, 0x18+var_8(r1)
+0001450C 93 E1 00 14                 stw       r31, 0x18+var_4(r1)
+00014510 90 01 00 1C                 stw       r0, 0x18+arg_4(r1)
+00014514 38 60 07 D0                 li        r3, 2000
+00014518 38 80 00 00                 li        r4, 0
+0001451C 38 A0 00 00                 li        r5, 0
+00014520 48 05 D5 C1                 bl        memoryReserveExt 
+00014524 3B E3 00 00                 addi      r31, r3, 0
+00014528 2C 1F 00 00                 cmpwi     r31, 0
+0001452C 40 82 00 3C                 bne       loc_14568
+00014530 39 80 00 00                 li        r12, 0
+00014534 91 81 00 08                 stw       r12, 0x18+var_10(r1)
+00014538 3C 60 00 06                 lis       r3, aOutOfMemory__0@h # "Out of memory.\a\a"
+0001453C 38 63 65 40                 addi      r3, r3, aOutOfMemory__0@l # "Out of memory.\a\a"
+00014540 3C 80 00 06                 lis       r4, aOk_3@h   # "OK"
+00014544 38 84 63 68                 addi      r4, r4, aOk_3@l # "OK"
+00014548 38 A0 00 00                 li        r5, 0
+0001454C 38 C0 00 00                 li        r6, 0
+00014550 38 E0 00 00                 li        r7, 0
+00014554 39 00 00 00                 li        r8, 0
+00014558 39 20 00 00                 li        r9, 0
+0001455C 39 40 00 00                 li        r10, 0
+00014560 48 08 B5 C5                 bl        userDialog 
+00014564 48 00 00 B4                 b         loc_14618
+00014568 38 7F 00 00 loc_14568:      addi      r3, r31, 0
+0001456C 38 80 00 00                 li        r4, 0
+00014570 38 A0 07 D0                 li        r5, 2000
+00014574 48 09 6D 81                 bl        memset 
+00014578 3C 60 00 01                 lis       r3, "LENS.TXT"@h
+0001457C 60 63 27 08                 ori       r3, r3, "LENS.TXT"@l
+00014580 38 9F 00 00                 addi      r4, r31, 0
+00014584 38 A0 07 CF                 li        r5, 1999
+00014588 48 03 DB 31                 bl        folderFileLoad 
+0001458C 2C 03 00 00                 cmpwi     r3, 0
+00014590 41 82 00 3C                 beq       loc_145CC
+00014594 39 80 00 00                 li        r12, 0
+00014598 91 81 00 08                 stw       r12, 0x18+var_10(r1)
+0001459C 3C 60 00 01                 lis       r3, loc_109BC@h # "Could not read LENS.TXT from the card!\a\a"
+000145A0 38 63 09 BC                 addi      r3, r3, loc_109BC@l # "Could not read LENS.TXT from the card!\a\a"
+000145A4 3C 80 00 06                 lis       r4, aOk_3@h   # "OK"
+000145A8 38 84 63 68                 addi      r4, r4, aOk_3@l # "OK"
+000145AC 38 A0 00 00                 li        r5, 0
+000145B0 38 C0 00 00                 li        r6, 0
+000145B4 38 E0 00 00                 li        r7, 0
+000145B8 39 00 00 00                 li        r8, 0
+000145BC 39 20 00 00                 li        r9, 0
+000145C0 39 40 00 00                 li        r10, 0
+000145C4 48 08 B5 61                 bl        userDialog 
+000145C8 48 00 00 48                 b         loc_14610
+000145CC 38 7F 00 00 loc_145CC:      addi      r3, r31, 0
+000145D0 48 00 00 81                 bl        processLensSettings 
+000145D4 2C 03 00 00                 cmpwi     r3, 0
+000145D8 40 82 00 38                 bne       loc_14610
+000145DC 39 80 00 00                 li        r12, 0
+000145E0 91 81 00 08                 stw       r12, 0x18+var_10(r1)
+000145E4 3C 60 00 01                 lis       r3, loc_109E4@h # "No valid manual lens data is found!\a\a"
+000145E8 38 63 09 E4                 addi      r3, r3, loc_109E4@l # "No valid manual lens data is found!\a\a"
+000145EC 3C 80 00 06                 lis       r4, aOk_3@h   # "OK"
+000145F0 38 84 63 68                 addi      r4, r4, aOk_3@l # "OK"
+000145F4 38 A0 00 00                 li        r5, 0
+000145F8 38 C0 00 00                 li        r6, 0
+000145FC 38 E0 00 00                 li        r7, 0
+00014600 39 00 00 00                 li        r8, 0
+00014604 39 20 00 00                 li        r9, 0
+00014608 39 40 00 00                 li        r10, 0
+0001460C 48 08 B5 19                 bl        userDialog 
+00014610 38 7F 00 00 loc_14610:      addi      r3, r31, 0
+00014614 48 05 D2 59                 bl        memoryRelease 
+00014618 83 C1 00 10 loc_14618:      lwz       r30, 0x18+var_8(r1)
+0001461C 83 E1 00 14                 lwz       r31, 0x18+var_4(r1)
+00014620 80 01 00 1C                 lwz       r0, 0x18+arg_4(r1)
+00014624 7C 08 03 A6                 mtlr      r0
+00014628 38 21 00 18                 addi      r1, r1, 0x18
+0001462C 4E 80 00 20                 blr
+00014630 00 00 00 00
+00014634 00 00 00 00
+00014638 00 00 00 00
+0001463C 00 00 00 00
+00014640 00 00 00 00
+00014644 00 00 00 00
+00014648 00 00 00 00
+0001464C 00 00 00 00
+
+-------------------------------------------------------------------------------
+processLensSettings:00014650
+00014650-566C=EFE4
+
+00014650 94 21 FF E0                 stwu      r1, -0x20(r1)
+00014654 7C 08 02 A6                 mflr      r0
+00014658 93 81 00 10                 stw       r28, 0x20+var_10(r1)
+0001465C 93 A1 00 14                 stw       r29, 0x20+var_C(r1)
+00014660 93 C1 00 18                 stw       r30, 0x20+var_8(r1)
+00014664 93 E1 00 1C                 stw       r31, 0x20+var_4(r1)
+00014668 90 01 00 24                 stw       r0, 0x20+arg_4(r1)
+0001466C 3B A3 00 00                 addi      r29, r3, 0
+00014670 38 60 02 50                 li        r3, 0x250
+00014674 38 80 00 00                 li        r4, 0
+00014678 38 A0 00 00                 li        r5, 0
+0001467C 48 05 D4 65                 bl        memoryReserveExt 
+00014680 3B E3 00 00                 addi      r31, r3, 0
+00014684 2C 1F 00 00                 cmpwi     r31, 0
+00014688 40 82 00 40                 bne       loc_146C8
+0001468C 39 80 00 00                 li        r12, 0
+00014690 91 81 00 08                 stw       r12, 0x20+var_18(r1)
+00014694 3C 60 00 06                 lis       r3, aOutOfMemory__0@h # "Out of memory.\a\a"
+00014698 38 63 65 40                 addi      r3, r3, aOutOfMemory__0@l # "Out of memory.\a\a"
+0001469C 3C 80 00 06                 lis       r4, aOk_3@h   # "OK"
+000146A0 38 84 63 68                 addi      r4, r4, aOk_3@l # "OK"
+000146A4 38 A0 00 00                 li        r5, 0
+000146A8 38 C0 00 00                 li        r6, 0
+000146AC 38 E0 00 00                 li        r7, 0
+000146B0 39 00 00 00                 li        r8, 0
+000146B4 39 20 00 00                 li        r9, 0
+000146B8 39 40 00 00                 li        r10, 0
+000146BC 48 08 B4 69                 bl        userDialog 
+000146C0 38 60 00 01                 li        r3, 1
+000146C4 48 00 01 D0                 b         loc_14894
+000146C8 38 7F 00 00 loc_146C8:      addi      r3, r31, 0
+000146CC 38 80 00 00                 li        r4, 0
+000146D0 38 A0 02 50                 li        r5, 0x250
+000146D4 48 09 6C 21                 bl        memset 
+000146D8 38 7F 00 04                 addi      r3, r31, 4
+000146DC 3C 80 00 01                 lis       r4, 0x105E0@h
+000146E0 38 84 05 E0                 addi      r4, r4, 0x105E0@l
+000146E4 38 A0 00 1C                 li        r5, 0x1C
+000146E8 48 09 6A C9                 bl        memcpy 
+000146EC 3B C0 00 01                 li        r30, 1
+000146F0 2C 1E 00 15 loc_146F0:      cmpwi     r30, 21
+000146F4 40 80 01 48                 bge       loc_1483C
+000146F8 88 7D 00 00                 lbz       r3, 0(r29)
+000146FC 2C 03 00 00                 cmpwi     r3, 0
+00014700 41 82 01 3C                 beq       loc_1483C
+00014704 3B 9D 00 00                 addi      r28, r29, 0
+00014708 88 7D 00 00 loc_14708:      lbz       r3, 0(r29)
+0001470C 2C 03 00 00                 cmpwi     r3, 0
+00014710 41 82 00 1C                 beq       loc_1472C
+00014714 2C 03 00 0D                 cmpwi     r3, 0xD
+00014718 41 82 00 14                 beq       loc_1472C
+0001471C 2C 03 00 0A                 cmpwi     r3, 0xA
+00014720 41 82 00 0C                 beq       loc_1472C
+00014724 3B BD 00 01                 addi      r29, r29, 1
+00014728 4B FF FF E0                 b         loc_14708
+0001472C 88 7D 00 00 loc_1472C:      lbz       r3, 0(r29)
+00014730 2C 03 00 00                 cmpwi     r3, 0
+00014734 41 82 00 10                 beq       loc_14744
+00014738 38 60 00 00                 li        r3, 0
+0001473C 98 7D 00 00                 stb       r3, 0(r29)
+00014740 3B BD 00 01                 addi      r29, r29, 1
+00014744 88 7C 00 00 loc_14744:      lbz       r3, 0(r28)
+00014748 2C 03 00 00                 cmpwi     r3, 0
+0001474C 41 82 FF A4                 beq       loc_146F0
+00014750 38 7C 00 00                 addi      r3, r28, 0
+00014754 3C 80 00 01                 lis       r4, loc_10A08@h    # " %umm f/%u.%u "
+00014758 38 84 0A 08                 addi      r4, r4, loc_10A08@l # " %umm f/%u.%u "
+0001475C 38 BF 00 04                 addi      r5, r31, 4
+00014760 1C DE 00 1C                 mulli     r6, r30, 0x1C
+00014764 7C A5 32 14                 add       r5, r5, r6
+00014768 38 C1 00 08                 addi      r6, r1, 0x20+var_18
+0001476C 38 E1 00 0C                 addi      r7, r1, 0x20+var_14
+00014770 48 09 34 E9                 bl        sscanf 
+00014774 2C 03 00 03                 cmpwi     r3, 3
+00014778 41 82 00 34                 beq       loc_147AC
+0001477C 38 7C 00 00                 addi      r3, r28, 0
+00014780 39 80 00 00                 li        r12, 0
+00014784 91 81 00 0C                 stw       r12, 0x20+var_14(r1)
+00014788 3C 80 00 01                 lis       r4, loc_10A18@h    # " %umm f/%u "
+0001478C 38 84 0A 18                 addi      r4, r4, loc_10A18@l # " %umm f/%u "
+00014790 38 BF 00 04                 addi      r5, r31, 4
+00014794 1C DE 00 1C                 mulli     r6, r30, 0x1C
+00014798 7C A5 32 14                 add       r5, r5, r6
+0001479C 38 C1 00 08                 addi      r6, r1, 0x20+var_18
+000147A0 48 09 34 B9                 bl        sscanf 
+000147A4 2C 03 00 02                 cmpwi     r3, 2
+000147A8 40 82 FF 48                 bne       loc_146F0
+000147AC 38 7F 00 04 loc_147AC:      addi      r3, r31, 4
+000147B0 1C DE 00 1C                 mulli     r6, r30, 0x1C
+000147B4 7C 63 32 14                 add       r3, r3, r6
+000147B8 80 A3 00 00                 lwz       r5, 0(r3)
+000147BC 81 81 00 08                 lwz       r12, 0x20+var_18(r1)
+000147C0 1C 8C 00 0A                 mulli     r4, r12, 10
+000147C4 81 81 00 0C                 lwz       r12, 0x20+var_14(r1)
+000147C8 7C 84 62 14                 add       r4, r4, r12
+000147CC 2C 05 00 00                 cmpwi     r5, 0
+000147D0 40 81 FF 20                 ble       loc_146F0
+000147D4 2C 05 03 E8                 cmpwi     r5, 1000
+000147D8 40 80 FF 18                 bge       loc_146F0
+000147DC 2C 04 00 00                 cmpwi     r4, 0
+000147E0 40 81 FF 10                 ble       loc_146F0
+000147E4 2C 04 03 84                 cmpwi     r4, 900
+000147E8 41 81 FF 08                 bgt       loc_146F0
+000147EC 2C 0C 00 00                 cmpwi     r12, 0
+000147F0 41 80 FF 00                 blt       loc_146F0
+000147F4 2C 0C 00 0A                 cmpwi     r12, 10
+000147F8 40 80 FE F8                 bge       loc_146F0
+000147FC 90 83 00 04                 stw       r4, 4(r3)
+00014800 39 40 00 0A                 li        r10, 10
+00014804 91 43 00 08                 stw       r10, 8(r3)
+00014808 38 63 00 0C                 addi      r3, r3, 0xC
+0001480C 7C C4 53 96                 divwu     r6, r4, r10
+00014810 7C E6 51 D6                 mullw     r7, r6, r10
+00014814 7C E7 20 50                 subf      r7, r7, r4
+00014818 3C 80 00 01                 lis       r4, loc_10A24@ha  # "%3umm f/%u.%u"
+0001481C 38 84 0A 24                 addi      r4, r4, loc_10A24@l # "%3umm f/%u.%u"
+00014820 2C 07 00 00                 cmpwi     r7, 0
+00014824 40 82 00 0C                 bne       loc_14830
+00014828 3C 80 00 01                 lis       r4, loc_10A34@ha  # "%3umm f/%u"
+0001482C 38 84 0A 34                 addi      r4, r4, loc_10A34@l # "%3umm f/%u"
+00014830 48 09 1B A1 loc_14830:      bl        sprintf 
+00014834 3B DE 00 01                 addi      r30, r30, 1
+00014838 4B FF FE B8                 b         loc_146F0
+0001483C 2C 1E 00 01 loc_1483C:      cmpwi     r30, 1
+00014840 40 81 00 3C                 ble       loc_1487C
+00014844 3C 60 00 01                 lis       r3, lensSettingData@h
+00014848 38 63 05 DC                 addi      r3, r3, lensSettingData@l
+0001484C 38 9F 00 00                 addi      r4, r31, 0
+00014850 93 C4 00 00                 stw       r30, 0(r4)
+00014854 38 A0 02 50                 li        r5, 0x250
+00014858 48 09 69 59                 bl        memcpy 
+0001485C 39 80 00 00                 li        r12, 0
+00014860 91 80 21 50                 stw       r12, cameraManualLensSetting
+00014864 3C 60 00 01                 lis       r3, lensSettingData@h
+00014868 38 63 05 DC                 addi      r3, r3, lensSettingData@l
+0001486C 48 06 A1 2D                 bl        propertySave 
+00014870 38 60 21 50                 li        r3, cameraManualLensSetting
+00014874 38 9E 00 00                 addi      r4, r30, 0
+00014878 48 06 A6 E1                 bl        propertyMaxSet 
+0001487C 38 7F 00 00 loc_1487C:      addi      r3, r31, 0
+00014880 48 05 CF ED                 bl        memoryRelease 
+00014884 38 60 00 00                 li        r3, 0
+00014888 2C 1E 00 01 loc_14888:      cmpwi     r30, 1
+0001488C 40 81 00 08                 ble       loc_14894
+00014890 38 60 00 01                 li        r3, 1
+00014894 83 81 00 10 loc_14894:      lwz       r28, 0x20+var_10(r1)
+00014898 83 A1 00 14                 lwz       r29, 0x20+var_C(r1)
+0001489C 83 C1 00 18                 lwz       r30, 0x20+var_8(r1)
+000148A0 83 E1 00 1C                 lwz       r31, 0x20+var_4(r1)
+000148A4 80 01 00 24                 lwz       r0, 0x20+arg_4(r1)
+000148A8 7C 08 03 A6                 mtlr      r0
+000148AC 38 21 00 20                 addi      r1, r1, 0x20
+000148B0 4E 80 00 20                 blr
+
+
+-------------------------------------------------------------------------------
+cameraTask
+00016D5C-566C=116F0
+00016D5C 94 21 FF F0                 stwu      r1, -0x10(r1)
+00016D60 7C 08 02 A6                 mflr      r0
+00016D64 90 01 00 14                 stw       r0, 0x10+arg_4(r1)
+00016D68 48 00 14 99                 bl        cameraBodyType 
+00016D6C 90 60 21 B8                 stw       r3, bodyType
+00016D70 2C 03 01 00                 cmpwi     r3, 0x100
+00016D74 40 82 00 1C                 bne       loc_16D90
+00016D78 38 60 01 00                 li        r3, 0x100
+00016D7C 48 08 43 A5                 bl        unitModelFeatures 
+00016D80 2C 03 00 00                 cmpwi     r3, 0
+00016D84 41 82 00 0C                 beq       loc_16D90
+00016D88 38 60 00 00                 li        r3, 0
+00016D8C 4B FF CE 05                 bl        cameraTaskMamiya 
+00016D90 39 80 00 00 loc_16D90:      li        r12, 0
+00016D94 91 81 00 08                 stw       r12, 0x10+var_8(r1)
+00016D98 3C 60 00 02                 lis       r3, aConfigurationE@ha # "Configuration Error\a\a"
+00016D9C 38 63 C7 F4                 addi      r3, r3, aConfigurationE@l # "Configuration Error\a\a"
+00016DA0 3C 80 00 02                 lis       r4, aOk_7@ha  # "OK"
+00016DA4 38 84 C6 DC                 addi      r4, r4, aOk_7@l # "OK"
+00016DA8 38 A0 00 00                 li        r5, 0
+00016DAC 38 C0 00 00                 li        r6, 0
+00016DB0 38 E0 00 00                 li        r7, 0
+00016DB4 39 00 00 00                 li        r8, 0
+00016DB8 39 20 00 00                 li        r9, 0
+00016DBC 39 40 00 00                 li        r10, 0
+00016DC0 48 08 8D 65                 bl        userDialog 
+00016DC4 38 60 03 E8 loc_16DC4:      li        r3, 0x3E8
+00016DC8 48 08 2B 1D                 bl        waitMsec 
+00016DCC 4B FF FF F8                 b         loc_16DC4
+00016DD0 80 01 00 14                 lwz       r0, 0x14(r1)
+00016DD4 7C 08 03 A6                 mtlr      r0
+00016DD8 38 21 00 10                 addi      r1, r1, 0x10
+00016DDC 4E 80 00 20                 blr
+00016DE0 00 00 00 00
+00016DE4 00 00 00 00
+00016DE8 00 00 00 00
+00016DEC 00 00 00 00
+00016DF0 00 00 00 00
+00016DF4 00 00 00 00
+00016DF8 00 00 00 00
+00016DFC 00 00 00 00
+00016E00 00 00 00 00
+00016E04 00 00 00 00
+00016E08 00 00 00 00
+00016E0C 00 00 00 00
+00016E10 00 00 00 00
+00016E14 00 00 00 00
+00016E18 00 00 00 00
+00016E1C 00 00 00 00
+00016E20 00 00 00 00
+00016E24 00 00 00 00
+         00 00 00 00
+         00 00 00 00
+
+-------------------------------------------------------------------------------
+camera_Start patch:
+00018098-566C=12A2C
+00018098 94 21 FF E0                 stwu      r1, -0x20(r1)
+0001809C 7C 08 02 A6                 mflr      r0
+000180A0 93 81 00 10                 stw       r28, 0x20+var_10(r1)
+000180A4 93 A1 00 14                 stw       r29, 0x20+var_C(r1)
+000180A8 93 C1 00 18                 stw       r30, 0x20+var_8(r1)
+000180AC 93 E1 00 1C                 stw       r31, 0x20+var_4(r1)
+000180B0 90 01 00 24                 stw       r0, 0x20+arg_4(r1)
+000180B4 3B E3 00 00                 addi      r31, r3, 0
+000180B8 93 E0 20 90                 stw       r31, cameraId
+000180BC 3C 60 20 00                 lis       r3, 0x2000
+000180C0 48 08 33 E9                 bl        unitBoardTest 
+000180C4 2C 03 00 00                 cmpwi     r3, 0
+000180C8 40 82 00 70                 bne       loc_18138
+000180CC 3C 60 00 01                 lis       r3, manualLensProperties@h
+000180D0 38 63 05 10                 addi      r3, r3, manualLensProperties@l
+000180D4 38 80 00 02                 li        r4, 2
+000180D8 48 06 4E 79                 bl        propertyRegister 
+000180DC 38 60 56 98 loc_180DC:      li        r3, 0x5698
+000180E0 38 80 00 04                 li        r4, 4
+000180E4 48 06 4E 6D                 bl        propertyRegister 
+000180E8 3C 60 00 02                 lis       r3, aCamera@ha # "camera"
+000180EC 38 63 C9 00                 addi      r3, r3, aCamera@l # "camera"
+000180F0 3C 80 00 01                 lis       r4, cameraTask@h
+000180F4 38 84 6D 5C                 addi      r4, r4, cameraTask@l
+000180F8 39 00 20 94                 li        r8, 0x2094
+000180FC 38 A0 00 00                 li        r5, 0
+00018100 38 C0 00 A1                 li        r6, 0xA1 # 'í'
+00018104 38 E0 1F 40                 li        r7, 0x1F40
+00018108 48 05 FC 75                 bl        osTaskCreate 
+0001810C 3B E3 00 00                 addi      r31, r3, 0
+00018110 2C 1F 00 00                 cmpwi     r31, 0
+00018114 41 82 00 0C                 beq       loc_18120
+00018118 38 7F 00 00                 addi      r3, r31, 0
+0001811C 48 00 00 20                 b         loc_1813C
+00018120 4B FF F4 65 loc_18120:      bl        cameraStart 
+00018124 3B E3 00 00                 addi      r31, r3, 0
+00018128 2C 1F 00 00                 cmpwi     r31, 0
+0001812C 41 82 00 0C                 beq       loc_18138
+00018130 38 7F 00 00                 addi      r3, r31, 0
+00018134 48 00 00 08                 b         loc_1813C
+00018138 38 60 00 00 loc_18138:      li        r3, 0
+0001813C 83 81 00 10 loc_1813C:      lwz       r28, 0x20+var_10(r1)
+00018140 83 A1 00 14                 lwz       r29, 0x20+var_C(r1)
+00018144 83 C1 00 18                 lwz       r30, 0x20+var_8(r1)
+00018148 83 E1 00 1C                 lwz       r31, 0x20+var_4(r1)
+0001814C 80 01 00 24                 lwz       r0, 0x20+arg_4(r1)
+00018150 7C 08 03 A6                 mtlr      r0
+00018154 38 21 00 20                 addi      r1, r1, 0x20
+00018158 4E 80 00 20                 blr
+0001815C 00 00 00 00
+00018160 00 00 00 00
+00018164 00 00 00 00
+00018168 00 00 00 00
+0001816C 00 00 00 00
+00018170 00 00 00 00
+00018174 00 00 00 00
+00018178 00 00 00 00
+0001817C 00 00 00 00
+00018180 00 00 00 00
+00018184 00 00 00 00
+00018188 00 00 00 00
+0001818C 00 00 00 00
+00018190 00 00 00 00
+00018194 00 00 00 00
+00018198 00 00 00 00
+0001819C 00 00 00 00
+000181A0 00 00 00 00
+000181A4 00 00 00 00
+000181A8 00 00 00 00
+000181AC 00 00 00 00
+000181B0 00 00 00 00
+000181B4 00 00 00 00
+000181B8 00 00 00 00
+000181BC 00 00 00 00
+000181C0 00 00 00 00
+000181C4 00 00 00 00
+000181C8 00 00 00 00
+000181CC 00 00 00 00
+000181D0 00 00 00 00
+000181D4 00 00 00 00
+000181D8 00 00 00 00
+000181DC 00 00 00 00
+000181E0 00 00 00 00
+000181E4 00 00 00 00
+000181E8 00 00 00 00
+000181EC 00 00 00 00
+000181F0 00 00 00 00
+
+cameraStart:
+00017584-566C=11F18
+00017584 94 21 FF F0                 stwu      r1, -0x10(r1)
+00017588 7C 08 02 A6                 mflr      r0
+0001758C 93 E1 00 0C                 stw       r31, 0x10+var_4(r1)
+00017590 90 01 00 14                 stw       r0, 0x10+arg_4(r1)
+00017594 7C C0 00 A6                 mfmsr     r6
+00017598 7C 11 13 A6                 mtspr     eid, r0 # External interrupt disable
+0001759C 4C 00 01 2C                 isync
+000175A0 3C A0 00 01                 lis       r5, byte_8000@ha
+000175A4 38 A5 80 00                 addi      r5, r5, byte_8000@l
+000175A8 7C C6 28 38                 and       r6, r6, r5
+000175AC 7C 70 42 A6                 mfsprg0   r3
+000175B0 54 63 08 3E                 rotlwi    r3, r3, 1
+000175B4 7C 63 28 78                 andc      r3, r3, r5
+000175B8 7C 63 33 78                 or        r3, r3, r6
+000175BC 7C 70 43 A6                 mtsprg0   r3
+000175C0 3F E0 20 00                 lis       r31, IMMR@h
+000175C4 3B FF 00 00                 addi      r31, r31, IMMR@l
+000175C8 A1 7F 09 56                 lhz       r11, (IMMR.PADAT - IMMR)(r31)
+000175CC 61 6B 00 40                 ori       r11, r11, 0x40
+000175D0 B1 7F 09 56                 sth       r11, (IMMR.PADAT - IMMR)(r31)
+000175D4 A1 5F 09 54                 lhz       r10, (IMMR.PAODR - IMMR)(r31)
+000175D8 55 4A 06 B0                 rlwinm    r10, r10, 0,26,24
+000175DC B1 5F 09 54                 sth       r10, (IMMR.PAODR - IMMR)(r31)
+000175E0 A1 9F 09 50                 lhz       r12, (IMMR.PADIR - IMMR)(r31)
+000175E4 61 8C 00 40                 ori       r12, r12, 0x40
+000175E8 B1 9F 09 50                 sth       r12, (IMMR.PADIR - IMMR)(r31)
+000175EC A1 7F 09 52                 lhz       r11, (IMMR.PAPAR - IMMR)(r31)
+000175F0 55 6B 06 B0                 rlwinm    r11, r11, 0,26,24
+000175F4 B1 7F 09 52                 sth       r11, (IMMR.PAPAR - IMMR)(r31)
+000175F8 7C 90 42 A6                 mfsprg0   r4
+000175FC 54 83 F8 3E                 rotrwi    r3, r4, 1
+00017600 7C 70 43 A6                 mtsprg0   r3
+00017604 70 84 80 00                 andi.     r4, r4, 0x8000
+00017608 41 82 00 08                 beq       loc_17610
+0001760C 7C 10 13 A6                 mtspr     eie, r0 # External interrupt enable
+00017610 4C 00 01 2C loc_17610:      isync
+00017614 7C C0 00 A6                 mfmsr     r6
+00017618 7C 11 13 A6                 mtspr     eid, r0 # External interrupt disable
+0001761C 4C 00 01 2C                 isync
+00017620 3C A0 00 01                 lis       r5, byte_8000@ha
+00017624 38 A5 80 00                 addi      r5, r5, byte_8000@l
+00017628 7C C6 28 38                 and       r6, r6, r5
+0001762C 7C 70 42 A6                 mfsprg0   r3
+00017630 54 63 08 3E                 rotlwi    r3, r3, 1
+00017634 7C 63 28 78                 andc      r3, r3, r5
+00017638 7C 63 33 78                 or        r3, r3, r6
+0001763C 7C 70 43 A6                 mtsprg0   r3
+00017640 A1 5F 09 56                 lhz       r10, (IMMR.PADAT - IMMR)(r31)
+00017644 55 4A 06 6E                 rlwinm    r10, r10, 0,25,23
+00017648 B1 5F 09 56                 sth       r10, (IMMR.PADAT - IMMR)(r31)
+0001764C A1 9F 09 54                 lhz       r12, (IMMR.PAODR - IMMR)(r31)
+00017650 55 8C 06 6E                 rlwinm    r12, r12, 0,25,23
+00017654 B1 9F 09 54                 sth       r12, (IMMR.PAODR - IMMR)(r31)
+00017658 A1 7F 09 50                 lhz       r11, (IMMR.PADIR - IMMR)(r31)
+0001765C 61 6B 00 80                 ori       r11, r11, 0x80
+00017660 B1 7F 09 50                 sth       r11, (IMMR.PADIR - IMMR)(r31)
+00017664 A1 5F 09 52                 lhz       r10, (IMMR.PAPAR - IMMR)(r31)
+00017668 55 4A 06 6E                 rlwinm    r10, r10, 0,25,23
+0001766C B1 5F 09 52                 sth       r10, (IMMR.PAPAR - IMMR)(r31)
+00017670 7C 90 42 A6                 mfsprg0   r4
+00017674 54 83 F8 3E                 rotrwi    r3, r4, 1
+00017678 7C 70 43 A6                 mtsprg0   r3
+0001767C 70 84 80 00                 andi.     r4, r4, 0x8000
+00017680 41 82 00 08                 beq       loc_17688
+00017684 7C 10 13 A6                 mtspr     eie, r0 # External interrupt enable
+00017688 4C 00 01 2C loc_17688:      isync
+0001768C 3C 80 00 02                 lis       r4, cameraSpiIsr@ha
+00017690 38 84 88 1C                 addi      r4, r4, cameraSpiIsr@l
+00017694 3C A0 00 02                 lis       r5, aCameraspi@ha # "cameraSpi"
+00017698 38 A5 C8 14                 addi      r5, r5, aCameraspi@l # "cameraSpi"
+0001769C 38 60 00 05                 li        r3, 5
+000176A0 48 07 F7 35                 bl        systemSetInterrupt 
+000176A4 3C 80 00 02                 lis       r4, cameraReqIsr@ha
+000176A8 38 84 87 DC                 addi      r4, r4, cameraReqIsr@l
+000176AC 3C A0 00 02                 lis       r5, aCamerareq@ha # "cameraReq"
+000176B0 38 A5 C8 20                 addi      r5, r5, aCamerareq@l # "cameraReq"
+000176B4 38 60 00 09                 li        r3, 9
+000176B8 48 07 F7 1D                 bl        systemSetInterrupt 
+000176BC A1 3F 09 68                 lhz       r9, (IMMR.PCINT - IMMR)(r31)
+000176C0 55 29 06 2C                 rlwinm    r9, r9, 0,24,22
+000176C4 B1 3F 09 68                 sth       r9, (IMMR.PCINT - IMMR)(r31)
+000176C8 81 9F 09 48                 lwz       r12, (IMMR.CIMR - IMMR)(r31)
+000176CC 61 8C 02 00                 ori       r12, r12, 0x200
+000176D0 91 9F 09 48                 stw       r12, (IMMR.CIMR - IMMR)(r31)
+000176D4 3C 80 00 02                 lis       r4, cameraMainMenu@ha
+000176D8 38 84 89 80                 addi      r4, r4, cameraMainMenu@l
+000176DC 38 60 00 28                 li        r3, 0x28 # '('
+000176E0 48 02 70 41                 bl        eventHook 
+000176E4 4B FF FD D1 loc_176E4:      bl        cameraIsoSetup 
+000176E8 38 60 58 54                 li        r3, 0x5854
+000176EC 38 80 00 03                 li        r4, 3
+000176F0 48 06 58 61                 bl        propertyRegister 
+000176F4 3C 60 00 02                 lis       r3, aCameraspiwatch@ha # "cameraSpiWatch"
+000176F8 38 63 C8 2C                 addi      r3, r3, aCameraspiwatch@l # "cameraSpiWatch"
+000176FC 3C 80 00 02                 lis       r4, cameraSpiWatchTask@ha
+00017700 38 84 82 78                 addi      r4, r4, cameraSpiWatchTask@l
+00017704 39 00 21 A4                 li        r8, 0x21A4
+00017708 38 A0 00 00                 li        r5, 0
+0001770C 38 C0 00 64                 li        r6, 0x64 # 'd'
+00017710 38 E0 1F 40                 li        r7, 0x1F40
+00017714 48 06 06 69                 bl        osTaskCreate 
+00017718 3B E3 00 00                 addi      r31, r3, 0
+0001771C 2C 1F 00 00                 cmpwi     r31, 0
+00017720 41 82 00 0C                 beq       loc_1772C
+00017724 38 7F 00 00                 addi      r3, r31, 0
+00017728 48 00 00 08                 b         loc_17730
+0001772C 38 60 00 00 loc_1772C:      li        r3, 0
+00017730 83 E1 00 0C loc_17730:      lwz       r31, 0x10+var_4(r1)
+00017734 80 01 00 14                 lwz       r0, 0x10+arg_4(r1)
+00017738 7C 08 03 A6                 mtlr      r0
+0001773C 38 21 00 10                 addi      r1, r1, 0x10
+00017740 4E 80 00 20                 blr
+00017744 00 00 00 00
+00017748 00 00 00 00
+0001774C 00 00 00 00
+00017750 00 00 00 00
+00017754 00 00 00 00
+00017758 00 00 00 00
+0001775C 00 00 00 00
+00017760 00 00 00 00
+00017764 00 00 00 00
+00017768 00 00 00 00
+0001776C 00 00 00 00
+00017770 00 00 00 00
+00017774 00 00 00 00
+00017778 00 00 00 00
+0001777C 00 00 00 00
+00017780 00 00 00 00
+00017784 00 00 00 00
+00017788 00 00 00 00
+0001778C 00 00 00 00
+00017790 00 00 00 00
+00017794 00 00 00 00
+00017798 00 00 00 00
+0001779C 00 00 00 00
+000177A0 00 00 00 00
+000177A4 00 00 00 00
+000177A8 00 00 00 00
+000177AC 00 00 00 00

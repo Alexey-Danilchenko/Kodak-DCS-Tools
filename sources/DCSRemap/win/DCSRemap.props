@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros">
+    <LIBRAW_DIR>c:\Development\LibRaw-0.18.7</LIBRAW_DIR>
+    <LIBRAW64_DIR>c:\Development\LibRaw-0.18.7.x64</LIBRAW64_DIR>
+    <LIBRAW_LIB>libraw.lib</LIBRAW_LIB>
+    <QT_LIB_PREFIX>Qt5</QT_LIB_PREFIX>
+    <QT_VERSION>5.10.0</QT_VERSION>
+    <QT64>c:\Development\Qt\5.10.0\5.10.0\msvc2017_64</QT64>
+    <QT>c:\Development\Qt\5.10.0\5.10.0\msvc2015\</QT>
+    <QT_LIBS>qtmain.lib;opengl32.lib;$(QT_LIB_PREFIX)ThemeSupport.lib;$(QT_LIB_PREFIX)Core.lib;$(QT_LIB_PREFIX)Gui.lib;$(QT_LIB_PREFIX)Widgets.lib;$(QT_LIB_PREFIX)Network.lib;$(QT_LIB_PREFIX)Xml.lib;$(QT_LIB_PREFIX)XmlPatterns.lib</QT_LIBS>
+    <QT_LIBS_DEBUG>$(QT_LIBS)</QT_LIBS_DEBUG>
+  </PropertyGroup>
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.27130.2020</_ProjectFileVersion>
+  </PropertyGroup>
+  <ItemDefinitionGroup />
+  <ItemGroup>
+    <BuildMacro Include="LIBRAW_DIR">
+      <Value>$(LIBRAW_DIR)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="LIBRAW_LIB">
+      <Value>$(LIBRAW_LIB)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="QT_LIB_PREFIX">
+      <Value>$(QT_LIB_PREFIX)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="QT_VERSION">
+      <Value>$(QT_VERSION)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="QT">
+      <Value>$(QT)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="QT64">
+      <Value>$(QT64)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="QT_LIBS">
+      <Value>$(QT_LIBS)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+    <BuildMacro Include="QT_LIBS_DEBUG">
+      <Value>$(QT_LIBS_DEBUG)</Value>
+      <EnvironmentVariable>true</EnvironmentVariable>
+    </BuildMacro>
+  </ItemGroup>
+</Project>

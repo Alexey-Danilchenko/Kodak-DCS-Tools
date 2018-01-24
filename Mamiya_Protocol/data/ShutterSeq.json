@@ -1,0 +1,36 @@
+{ 
+    signal: [
+        { node:   '.K...L................'},
+        { name: 'REQ',  
+            wave: '01.0.101.01.01.0.|..101.01.0',  
+            node: '.I...JA........M.....C.'},
+        { node:   '......................'},
+        { name: 'MOSI', 
+            wave: '05.0...5.05.05.01|.0..5.05.0', 
+         data: 'Cmd:82.5 Msg:03 Msg:83 Msg:84 Msg:03 Cmd:82.2',
+            node: '.......B........E..G..D..'},
+        { node:   '................F..H....'},
+        { name: 'MISO', 
+            wave: '03.0...3.03.03.0.|....3.03.0', 
+         data: 'Ack Req:83.5 Cmd:83.5 Ack Req:82.2 Ack',
+            node: '.........................'},
+        { node:   '.........................'},
+        { name: 'CLK',  
+            wave: '0x.0...x.0x.0x.0......x.0x.0',  
+            node: '.....................'},
+        { node:   '.....................'}
+    ],
+    edge: [ 'A|->B Camera responds',
+            'C|->D Camera responds',
+            'F<->H Shutter opened',
+            'K<->L Typically 32ms',
+            'M-~>E Varies:8-30ms',
+            'E-F','G-H','I-K','J-L'
+    ],
+    head:{
+       text:'Typical shutter command sequence',
+    },
+    foot:{
+       text:'Figure 5'
+    }
+}

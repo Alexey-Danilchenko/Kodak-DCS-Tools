@@ -1,0 +1,32 @@
+{ 
+    signal: [
+        { name: 'REQ',  
+            wave: '0101............0',  
+            node: '.....................'},
+        { node:   '...G.H.................'},
+        { name: 'MOSI', 
+            wave: '0..55555555555550', 
+            data: '7E 00 01 00 03 00 00 00 00 00 00 01 AA',
+            node: '...E.F'},
+        { node:   '....AB...............', phase:0.5},
+        { node:   '....CD...............', phase:0.5},
+        { name: 'MISO', 
+            wave: '0..33333333333330', 
+            data: '00 01 00 01 81 03 00 03 10 83 54 46 00',
+            node: '.......M......NO..........'},
+        { node:   '.......K......LP..........'},
+        { name: 'CLK',  
+            wave: '0..x............0'}
+    ],
+    edge: [ 'C->A','D->B', 'G-E', 'H-F', 'M-K', 'N-L','O-P',
+            'G<->H Resp.Header',
+            'K<->L Bytes XORed',
+            'L<->P Chksum'
+    ],
+    head:{
+       text:'Example message in response to back issuing a REQ',
+    },
+    foot:{
+       text:'Figure 3'
+    }
+}

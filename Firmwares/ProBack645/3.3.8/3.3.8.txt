@@ -1,0 +1,123 @@
+mask    3FFFFFC
+bl mask 48000001
+b mask  48000000
+
+
+_code:0000AAE8                 .long aUnittestkey      # "unitTestKey"
+_code:0000AAEC                 .long aTestKey          # "Test Key"
+_code:0000AAF0                 .long unitTestKey
+_code:0000AAF4                 .long aSystem_4         # "System"
+_code:0000AAF8                 .long 1, 0x10502, 0, 0, 0, 0
+_code:0000AB10                 .long unitPropertySet
+_code:0000AB14                 .long 0
+
+547C(file):
+00 09 CA 80 00 09 C1 78 00 00 4E 6C 00 09 CA 44
+00 00 00 01 00 01 05 02 00 00 00 00 00 00 00 00
+00 00 00 00 00 00 00 00 00 09 C1 B8 00 00 00 00
+
+
+
+_code:0000A610                 .long aHightemperatur   # "highTemperature"
+_code:0000A614                 .long aHighTempLimit    # "High Temp Limit"
+_code:0000A618                 .long highTemperature
+_code:0000A61C                 .long aPower_1          # "Power"
+_code:0000A620                 .long 1, 0x10502, 0, 0, 0, 0, 0, 0
+
+
+
+mask    3FFFFFC
+bl mask 48000001
+b mask  48000000
+
+New:
+imagerMenu (file offset 607DC):
+_code:00065E48  48 03 56 14    b         0009B45C
+_code:00065E4C  3F E0 00 06 
+
+_code:0009B448 unitTest:
+_code:0009B448
+_code:0009B448  88 60 4E 6C    lbz       r3, serviceMode (unitTestKey)
+_code:0009B44C  2C 03 00 00    cmpwi     r3, 0
+_code:0009B450  40 82 00 08    bne       0009B458
+_code:0009B454  88 60 4C B8    lbz       r3, serviceMode (unitTestOverride)
+_code:0009B458  4E 80 00 20    blr
+_code:0009B45C  4B FD 44 D5    bl        menuTitle   ; 0006F930
+_code:0009B460  3F E0 00 06    lis       r31, imagerFileSave@h
+_code:0009B464  3B FF 56 9C    addi      r31, r31, imagerFileSave@l
+_code:0009B468  3C A0 00 0A    lis       r5, aSaveIfFile@ha
+_code:0009B46C  38 A5 B4 8C    addi      r5, r5, aSaveIfFile@l
+_code:0009B470  38 60 00 00    li        r3, 0
+_code:0009B474  38 80 00 00    li        r4, 0
+_code:0009B478  38 C0 00 01    li        r6, 1
+_code:0009B47C  38 FF 00 00    addi      r7, r31, 0
+_code:0009B480  39 00 00 00    li        r8, 0
+_code:0009B484  4B FD 47 91    bl        menuItem         ; 0006FC14
+_code:0009B488  4B FC A9 C4    b         00065E4C
+                               aSaveIfFile:    .string "Save IF File\a\a"
+_code:0009B48C  53 61 76 65
+_code:0009B490  20 49 46 20 
+_code:0009B490  46 69 6C 65  
+_code:0009B494  07 07 00 00  
+_code:0009B498  00 00 00 00   
+_code:0009B49C  00 00 00 00  
+_code:0009B4A0  00 00 00 00 
+_code:0009B4A4  00 00 00 00 
+
+95DDC(file):
+88 60 4E 6C 2C 03 00 00 40 82 00 08 88 60 4C B8
+4E 80 00 20 4B FD 44 D5 3F E0 00 06 3B FF 56 9C
+3C A0 00 0A 38 A5 B4 8C 38 60 00 00 38 80 00 00
+38 C0 00 01 38 FF 00 00 39 00 00 00 4B FD 47 91
+4B FC A9 C4 53 61 76 65 20 49 46 20 46 69 6C 65
+07 07 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+00 00 00 00
+
+
+
+
+
+
+
+mask    3FFFFFC
+bl mask 48000001
+b mask  48000000
+
+_code:0009C144                 .globl unitTestSet
+_code:0009C144 unitTestSet:                            # CODE XREF: systemInit+168p
+_code:0009C144                                         # unitPropertySet+44p
+_code:0009C144
+_code:0009C144 .set arg_4,  4
+_code:0009C144
+_code:0009C144  94 21 FF F0    stwu      r1, -0x10(r1)
+_code:0009C148  7C 08 02 A6    mflr      r0
+_code:0009C14C  90 01 00 14    stw       r0, 0x10+arg_4(r1)
+_code:0009C150  54 63 06 3E    clrlwi    r3, r3, 24
+_code:0009C154  98 60 4E 6C    stb       r3, unitTestKey
+_code:0009C158  38 60 4E 6C    li        r3, 0x4E6C
+_code:0009C15C  4B FE 28 3D    bl        propertySave      ;  0007E998
+_code:0009C160  38 60 4E 6C    li        r3, 0x4E6C
+_code:0009C164  48 00 00 55    bl        unitPropertySet   ;  0009C1B8
+_code:0009C168  80 01 00 14    lwz       r0, 0x10+arg_4(r1)
+_code:0009C16C  7C 08 03 A6    mtlr      r0
+_code:0009C170  38 21 00 10    addi      r1, r1, 0x10
+_code:0009C174  4E 80 00 20    blr
+_code:0009C178
+                               Enable Service Mode 
+_code:0009C178  45 6E 61 62 
+                6C 65 20 53  
+                65 72 76 69  
+                63 65 20 4D  
+                6F 64 65 00  
+                00 00 00 00 
+                00 00 00 00 
+
+
+96AD8(file):
+94 21 FF F0 7C 08 02 A6 90 01 00 14 54 63 06 3E
+98 60 4E 6C 38 60 4E 6C 4B FE 28 3D 38 60 4E 6C
+48 00 00 55 80 01 00 14 7C 08 03 A6 38 21 00 10
+4E 80 00 20 45 6E 61 62 6C 65 20 53 65 72 76 69  
+63 65 20 4D 6F 64 65 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 
+00 00 00 00 00 00 00 00

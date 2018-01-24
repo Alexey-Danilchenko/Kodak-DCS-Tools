@@ -1,0 +1,53 @@
+400h change to 1000h
+MVK     .S2    400h,  B6        03 02 00 2A
+MVK     .S2    1000h, B6        03 08 00 2A  
+
+3FFh change to FFFh
+MVK     .S1    3FFh, A3         01 81 FF A8
+MVK     .S1    FFFh, A3         01 87 FF A8
+
+
+1A82+1A19C=1BC1E   8001A19C: 400       MVK     .S2    400h, B6     03 02 00 2A
+1A82+1A270=1BCF2   8001A270: 400       MVK     .S1    400h, A4     02 02 00 29
+1A82+1B320=1CDA2   8001B320: 400       MVK     .S2    400h, B6     03 02 00 2A
+1A82+1B3F4=1CE76   8001B3F4: 400       MVK     .S1    400h, A4     02 02 00 29
+        
+1A82+1E47C=1FEFE   8001E47C: 400       MVK     .S2    400h, B6     03 02 00 2A
+1A82+1E550=1FFD2   8001E550: 400       MVK     .S1    400h, A4     02 02 00 29
+
+1A82+585BC=5A03E   800585BC: 400       MVK     .S2    400h, B4     02 02 00 2A
+1A82+585C4=5A046   800585C4: 3FF [!B0] MVK     .S1    3FFh, A4     32 01 FF A8
+    
+1A82+705D8=7205A   800705D8: 3FF       MVK     .S1    3FFh, A3     01 81 FF A8
+1A82+705E4=72066   800705E4: 400       MVK     .S2    400h, B7     03 82 00 2B  
+
+1A82+707F8=7227A   800707F8: 3FF [B0]  MVK     .S1    3FFh, A3     21 81 FF A8
+1A82+707FC=7227E   800707FC: 400 [B0]  MVK     .S1    400h, A9     24 82 00 28
+        
+1A82+5A528=5BFAA   8005A528: 400       MVK     .S2    400h, B6     03 02 00 2A
+
+1A82+692EC=6AD6E   800692EC: 400       MVK     .S2    400h, B6     03 02 00 2A
+        
+1A82+716B0=73132   800716B0: 400       MVK     .S2    400h, B6     03 02 00 2A
+
+--------------
+
+1A82+1A32C=1BDAE   8001A32C: E74       MVK     .S2    0E74h, B6    03 07 3A 2A      03 07 FF AA
+1A82+1C45C=1DEDE   8001C45C:           MVK     .S2    0E74h, B5    02 87 3A 2A      02 87 FF AA
+1A82+1E60C=2008E   8001E60C:           MVK     .S2    0E74h, B6    03 07 3A 2A      03 07 FF AA
+
+--------------
+
+1A82+5FDAC=6182E   8005FDAC: 3FF       MVK     .S1    3FFh, A4     02 01 FF A8
+
+1A82+60280=61D02   80060280: 3FF [!B0] MVK     .S2    3FFh, B4     32 01 FF AA 
+    
+1A82+672FC=68D7E   800672FC: 3FF       MVK     .S1    3FFh, A3     01 81 FF A8
+1A82+67354=68DD6   80067354: 3FF [B0]  MVK     .S1    3FFh, A3     21 81 FF A8 
+   
+1A82+70690=72112   80070690: 3FF       MVK     .S1    3FFh, A3     01 81 FF A8 
+1A82+70694=72116   80070694: 3FF0000   MVKH    .S1    3FF0000h, A3 01 81 FF E8 
+
+--------------
+
+1A82+60564=61FE6   80060564: 3FF       MVK     .S2    3FFh, B4     02 01 FF AA 
