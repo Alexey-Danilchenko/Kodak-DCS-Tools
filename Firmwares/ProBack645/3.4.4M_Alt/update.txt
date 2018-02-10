@@ -1,0 +1,138 @@
+
+Data changes
+
+cameraTxData:2198
+cameraRxBytes:219c
+msgHeaderLength:219d
+cameraMessageLength:219e
+backState:219f
+cameraReqCmd:21a0
+cameraMsgChksum:21a1
+cameraSpiIsr:014f60
+cameraReqIsr:014cb8
+
+-------------------------------------------------------------------------------
+cameraStart patch:
+0001768C-566C=12020
+0001768C 3C 80 00 01                 lis       r4, cameraSpiIsr@ha
+00017690 38 84 4F 60                 addi      r4, r4, cameraSpiIsr@l
+
+000176A4-566C=12038
+000176A4 3C 80 00 01                 lis       r4, cameraReqIsr@ha
+000176A8 38 84 4C B8                 addi      r4, r4, cameraReqIsr@l
+-------------------------------------------------------------------------------
+
+cameraRegisterSettings patch
+00010A94-566C=B428
+00010A94 94 21 FF 98                 stwu      r1, -0x68(r1)
+00010A98 7C 08 02 A6                 mflr      r0
+00010A9C BF 21 00 4C                 stmw      r25, 0x68+var_1C(r1)
+00010AA0 90 01 00 6C                 stw       r0, 0x68+arg_4(r1)
+00010AA4 81 80 21 B8                 lwz       r12, bodyType
+00010AA8 2C 0C 01 00                 cmpwi     r12, 0x100
+00010AAC 40 82 00 24                 bne       loc_10AD0
+00010AB0 3B C0 59 00 loc_10AB0:      li        r30, cameraSettingMamiya
+00010AB4 3B 60 00 04                 li        r27, 4
+00010AB8 3D 40 00 01                 lis       r10, cameraSettingSet@h
+00010ABC 39 4A 72 DC                 addi      r10, r10, cameraSettingSet@l
+00010AC0 91 41 00 30                 stw       r10, 0x68+var_38(r1)
+00010AC4 3D 20 00 01                 lis       r9, cameraSettingGet@h
+00010AC8 39 29 71 F0                 addi      r9, r9, cameraSettingGet@l
+00010ACC 91 21 00 34                 stw       r9, 0x68+var_34(r1)
+00010AD0 3B A0 00 00 loc_10AD0:      li        r29, 0
+00010AD4 2C 1B 00 00                 cmpwi     r27, 0
+00010AD8 41 82 01 40                 beq       loc_10C18
+00010ADC 3B 40 22 78                 li        r26, 0x2278
+00010AE0 3B 80 00 00                 li        r28, 0
+00010AE4 3B 20 00 04                 li        r25, 4
+00010AE8 3F E0 00 11                 lis       r31, settingStringList@h
+00010AEC 3B FF 6B 18                 addi      r31, r31, settingStringList@l
+00010AF0 81 9E 00 0C loc_10AF0:      lwz       r12, 0xC(r30)
+00010AF4 91 81 00 08                 stw       r12, 0x68+var_60(r1)
+00010AF8 81 7E 00 10                 lwz       r11, 0x10(r30)
+00010AFC 91 61 00 0C                 stw       r11, 0x68+var_5C(r1)
+00010B00 80 9E 00 14                 lwz       r4, 0x14(r30)
+00010B04 90 81 00 10                 stw       r4, 0x68+var_58(r1)
+00010B08 3D 20 00 02                 lis       r9, aCameraSettings@ha # "Camera Settings"
+00010B0C 39 29 C4 10                 addi      r9, r9, aCameraSettings@l # "Camera Settings"
+00010B10 91 21 00 14                 stw       r9, 0x68+var_54(r1)
+00010B14 89 9E 00 00                 lbz       r12, 0(r30)
+00010B18 2C 0C 00 00                 cmpwi     r12, 0
+00010B1C 41 82 00 10                 beq       loc_10B2C
+00010B20 39 80 00 02                 li        r12, 2
+00010B24 91 81 00 1C                 stw       r12, 0x68+var_4C(r1)
+00010B28 48 00 00 0C                 b         loc_10B34
+00010B2C 39 80 00 01 loc_10B2C:      li        r12, 1
+00010B30 91 81 00 1C                 stw       r12, 0x68+var_4C(r1)
+00010B34 93 21 00 18 loc_10B34:      stw       r25, 0x68+var_50(r1)
+00010B38 93 81 00 20                 stw       r28, 0x68+var_48(r1)
+00010B3C 93 81 00 24                 stw       r28, 0x68+var_44(r1)
+00010B40 93 81 00 28                 stw       r28, 0x68+var_40(r1)
+00010B44 81 80 22 04                 lwz       r12, nextSettingString
+00010B48 55 8C 10 3A                 slwi      r12, r12, 2
+00010B4C 7C 7F 62 14                 add       r3, r31, r12
+00010B50 90 61 00 2C                 stw       r3, 0x68+var_3C(r1)
+00010B54 80 DE 00 1C                 lwz       r6, 0x1C(r30)
+00010B58 89 46 00 00                 lbz       r10, 0(r6)
+00010B5C 2C 0A 00 FF                 cmpwi     r10, 0xFF
+00010B60 40 80 00 84                 bge       loc_10BE4
+00010B64 80 A0 22 04 loc_10B64:      lwz       r5, nextSettingString
+00010B68 28 05 03 E8                 cmplwi    r5, 0x3E8
+00010B6C 41 80 00 18                 blt       loc_10B84
+00010B70 38 60 00 96                 li        r3, ERROR_EVENT
+00010B74 38 80 00 00                 li        r4, 0
+00010B78 38 A0 02 88                 li        r5, 0x288
+00010B7C 48 02 CD FD                 bl        eventPost 
+00010B80 48 00 00 98                 b         loc_10C18
+00010B84 54 AC 10 3A loc_10B84:      slwi      r12, r5, 2
+00010B88 81 66 00 0C                 lwz       r11, 0xC(r6)
+00010B8C 7D 7F 61 2E                 stwx      r11, r31, r12
+00010B90 81 40 22 04                 lwz       r10, nextSettingString
+00010B94 39 4A 00 01                 addi      r10, r10, 1
+00010B98 91 40 22 04                 stw       r10, nextSettingString
+00010B9C 81 21 00 24                 lwz       r9, 0x68+var_44(r1)
+00010BA0 39 29 00 01                 addi      r9, r9, 1
+00010BA4 91 21 00 24                 stw       r9, 0x68+var_44(r1)
+00010BA8 39 80 22 24                 li        r12, cameraIso
+00010BAC 7C 0C 20 40                 cmplw     r12, r4
+00010BB0 40 82 00 24                 bne       loc_10BD4
+00010BB4 89 86 00 00                 lbz       r12, 0(r6)
+00010BB8 3D 60 00 02                 lis       r11, listIsoSet@ha
+00010BBC 39 6B 91 0C                 addi      r11, r11, listIsoSet@l
+00010BC0 81 40 21 F8                 lwz       r10, cameraMaxIso
+00010BC4 55 4A 20 36                 slwi      r10, r10, 4
+00010BC8 7D 6B 50 AE                 lbzx      r11, r11, r10
+00010BCC 7C 0C 58 00                 cmpw      r12, r11
+00010BD0 41 82 00 14                 beq       loc_10BE4
+00010BD4 38 C6 00 10 loc_10BD4:      addi      r6, r6, 0x10
+00010BD8 89 86 00 00                 lbz       r12, 0(r6)
+00010BDC 2C 0C 00 FF                 cmpwi     r12, 0xFF
+00010BE0 41 80 FF 84                 blt       loc_10B64
+00010BE4 81 81 00 24 loc_10BE4:      lwz       r12, 0x68+var_44(r1)
+00010BE8 39 8C FF FF                 addi      r12, r12, -1
+00010BEC 91 81 00 24                 stw       r12, 0x68+var_44(r1)
+00010BF0 94 7A 00 04                 stwu      r3, 4(r26)
+00010BF4 81 7E 00 18                 lwz       r11, 0x18(r30)
+00010BF8 91 64 00 00                 stw       r11, 0(r4)
+00010BFC 38 61 00 08                 addi      r3, r1, 0x68+var_60
+00010C00 38 80 00 01                 li        r4, 1
+00010C04 48 06 C3 4D                 bl        propertyRegister 
+00010C08 3B DE 00 24                 addi      r30, r30, 0x24
+00010C0C 3B BD 00 01                 addi      r29, r29, 1
+00010C10 7C 1D D8 40                 cmplw     r29, r27
+00010C14 41 80 FE DC                 blt       loc_10AF0
+00010C18 BB 21 00 4C loc_10C18:      lmw       r25, 0x68+var_1C(r1)
+00010C1C 80 01 00 6C                 lwz       r0, 0x68+arg_4(r1)
+00010C20 7C 08 03 A6                 mtlr      r0
+00010C24 38 21 00 68                 addi      r1, r1, 0x68
+00010C28 4E 80 00 20                 blr
+00010C2C
+00010C30
+00010C34
+00010C38
+00010C3C
+00010C40
+00010C44
+00010C48
+00010C4C
+00010C50

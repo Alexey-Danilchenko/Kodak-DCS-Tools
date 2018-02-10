@@ -1,0 +1,164 @@
+cameraReqIsr:
+00014CB8-566C=F64C
+00014CB8 94 21 FF F8                 stwu      r1, 
+00014CBC 7C 08 02 A6                 mflr      r0
+00014CC0 90 01 00 0C                 stw       r0, 8+arg_4(r1)
+00014CC4 3D 80 20 00                 lis       r12, IMMR
+00014CC8 39 60 02 00                 li        r11, 0x200
+00014CCC 91 6C 09 4C                 stw       r11, IMMR.CISR@l(r12)
+00014CD0 A1 6C 09 66                 lhz       r11, IMMR.PCDAT(r12)
+00014CD4 55 6B 05 EF                 rlwinm.   r11, r11, 0,23,23 # r11 = r11 & 0x100
+00014CD8 41 82 01 74                 beq       loc_14E4C
+00014CDC 89 60 21 9F                 lbz       r11, backState
+00014CE0 2C 0B 00 00                 cmpwi     r11, 0
+00014CE4 40 82 02 40                 bne       loc_14F24
+00014CE8 81 6C 0A C4                 lwz       r11, IMMR.PBDAT@l(r12)
+00014CEC 55 6B 07 7B                 rlwinm.   r11, r11, 0,29,29 # r11 = r11 & 4
+00014CF0 41 82 02 34                 beq       loc_14F24
+00014CF4 39 60 00 01                 li        r11, 1
+00014CF8 99 60 21 9F                 stb       r11, backState
+00014CFC 39 60 00 00                 li        r11, 0
+00014D00 99 60 21 9C                 stb       r11, cameraRxBytes
+00014D04 99 60 21 9D                 stb       r11, msgHeaderLength
+00014D08 99 60 21 A1                 stb       r11, cameraMsgChksum
+00014D0C 39 60 00 08                 li        r11, 8
+00014D10 99 60 21 9E                 stb       r11, cameraMessageLength
+00014D14 39 60 31 70                 li        r11, 0x3170
+00014D18 B1 6C 0A A0                 sth       r11, immr.SPMODE(r12)
+00014D1C 3C 60 20 00                 lis       r3, cameraRxBd@h
+00014D20 60 63 20 00                 ori       r3, r3, cameraRxBd@l
+00014D24 39 4C 20 00                 addi      r10, r12, 0x2000
+00014D28 7D 4A 18 50                 subf      r10, r10, r3
+00014D2C B1 4C 3D 80                 sth       r10, immr.SPI_RBASE(r12)
+00014D30 3C 80 20 00                 lis       r4, cameraTxBd@h
+00014D34 60 84 20 18                 ori       r4, r4, cameraTxBd@l
+00014D38 39 4C 20 00                 addi      r10, r12, 0x2000
+00014D3C 7D 4A 20 50                 subf      r10, r10, r4
+00014D40 B1 4C 3D 82                 sth       r10, immr.SPI_TBASE(r12)
+00014D44 39 60 00 18                 li        r11, 0x18
+00014D48 99 6C 3D 84                 stb       r11, immr.SPI_RFCR(r12)
+00014D4C 99 6C 3D 85                 stb       r11, immr.SPI_TFCR(r12)
+00014D50 39 60 00 51                 li        r11, 0x51
+00014D54 B1 6C 09 C0                 sth       r11, immr.CPCR(r12)
+00014D58 38 A0 00 01                 li        r5, 1
+00014D5C B0 AC 3D 86                 sth       r5, immr.SPI_MRBLR(r12)
+00014D60 39 60 00 00                 li        r11, 0
+00014D64 B1 63 00 02                 sth       r11, SPIBufDescr.dataLength(r3)
+00014D68 3D 60 00 00                 lis       r11, B000@h
+00014D6C 61 6B B0 00                 ori       r11, r11, B000@l
+00014D70 B1 63 00 00                 sth       r11, SPIBufDescr.ctrl(r3)
+00014D74 3D 60 20 00                 lis       r11, cameraRxBuffer@h
+00014D78 61 6B 20 20                 ori       r11, r11, cameraRxBuffer@l
+00014D7C 91 63 00 04                 stw       r11, SPIBufDescr.bufPtr(r3)
+00014D80 91 60 21 98                 stw       r11, cameraTxData
+00014D84 39 40 00 00                 li        r10, 0
+00014D88 99 4B 00 00                 stb       r10, 0(r11)
+00014D8C 3D 60 20 00                 lis       r11, cameraTxBuffer@h
+00014D90 61 6B 20 60                 ori       r11, r11, cameraTxBuffer@l
+00014D94 99 4B 00 00                 stb       r10, 0(r11)
+00014D98 91 64 00 04                 stw       r11, SPIBufDescr.bufPtr(r4)
+00014D9C B0 A4 00 02                 sth       r5, SPIBufDescr.dataLength(r4)
+00014DA0 3D 60 00 00                 lis       r11, A800@h
+00014DA4 61 6B A8 00                 ori       r11, r11, A800@l
+00014DA8 B1 64 00 00                 sth       r11, SPIBufDescr.ctrl(r4)
+00014DAC 39 60 00 FF                 li        r11, 0xFF
+00014DB0 99 6C 0A A6                 stb       r11, immr.SPIE(r12)
+00014DB4 39 60 00 01                 li        r11, 1
+00014DB8 99 6C 0A AA                 stb       r11, immr.SPIM(r12)
+00014DBC 81 6C 09 48                 lwz       r11,immr.CIMR(r12)
+00014DC0 61 6B 00 20                 ori       r11, r11, 0x20
+00014DC4 91 6C 09 48                 stw       r11, immr.CIMR(r12)
+00014DC8 7C C0 00 A6                 mfmsr     r6
+00014DCC 7C 11 13 A6                 mtspr     eid, r0 # External interrupt disable
+00014DD0 4C 00 01 2C                 isync
+00014DD4 3C A0 00 01                 lis       r5, byte_8000@ha
+00014DD8 38 A5 80 00                 addi      r5, r5, byte_8000@l
+00014DDC 7C C6 28 38                 and       r6, r6, r5
+00014DE0 7C 70 42 A6                 mfsprg0   r3
+00014DE4 54 63 08 3E                 rotlwi    r3, r3, 1
+00014DE8 7C 63 28 78                 andc      r3, r3, r5
+00014DEC 7C 63 33 78                 or        r3, r3, r6
+00014DF0 7C 70 43 A6                 mtsprg0   r3
+00014DF4 81 6C 0A C4                 lwz       r11, immr.PBDAT(r12)
+00014DF8 55 6B 00 3C                 clrrwi    r11, r11, 1   # r11 = r11 & 0xFFFFFFFE
+00014DFC 91 6C 0A C4                 stw       r11, immr.PBDAT(r12)
+00014E00 81 6C 0A C0                 lwz       r11, immr.PBODR(r12)
+00014E04 55 6B 00 3C                 clrrwi    r11, r11, 1   # r11 = r11 & 0xFFFFFFFE
+00014E08 91 6C 0A C0                 stw       r11, immr.PBODR(r12)
+00014E0C 81 6C 0A B8                 lwz       r11, immr.PBDIR(r12)
+00014E10 55 6B 00 3C                 clrrwi    r11, r11, 1   # r11 = r11 & 0xFFFFFFFE
+00014E14 91 6C 0A B8                 stw       r11, immr.PBDIR(r12)
+00014E18 81 6C 0A BC                 lwz       r11, immr.PBPAR(r12)
+00014E1C 61 6B 00 01                 ori       r11, r11, 1
+00014E20 91 6C 0A BC                 stw       r11, immr.PBPAR(r12)
+00014E24 7C 90 42 A6                 mfsprg0   r4
+00014E28 54 83 F8 3E                 rotrwi    r3, r4, 1
+00014E2C 7C 70 43 A6                 mtsprg0   r3
+00014E30 70 84 80 00                 andi.     r4, r4, 0x8000
+00014E34 41 82 00 08                 beq       loc_14E3C
+00014E38 7C 10 13 A6                 mtspr     eie, r0 # External interrupt enable
+00014E3C 4C 00 01 2C loc_14E3C:      isync
+00014E40 39 60 00 80                 li        r11, 0x80
+00014E44 99 6C 0A AD                 stb       r11, immr.SPCOM(r12)
+00014E48 48 00 00 DC                 b         loc_14F24
+00014E4C 89 60 21 9F loc_14E4C:      lbz       r11, backState
+00014E50 2C 0B 00 01                 cmpwi     r11, 1
+00014E54 40 82 00 D0                 bne       loc_14F24
+00014E58 7C C0 00 A6                 mfmsr     r6
+00014E5C 7C 11 13 A6                 mtspr     eid, r0 # External interrupt disable
+00014E60 4C 00 01 2C                 isync
+00014E64 3C A0 00 01                 lis       r5, byte_8000@ha
+00014E68 38 A5 80 00                 addi      r5, r5, byte_8000@l
+00014E6C 7C C6 28 38                 and       r6, r6, r5
+00014E70 7C 70 42 A6                 mfsprg0   r3
+00014E74 54 63 08 3E                 rotlwi    r3, r3, 1
+00014E78 7C 63 28 78                 andc      r3, r3, r5
+00014E7C 7C 63 33 78                 or        r3, r3, r6
+00014E80 7C 70 43 A6                 mtsprg0   r3
+00014E84 A1 6C 09 60                 lhz       r11, IMMR.PCDIR(r12)
+00014E88 55 6B 05 EF                 rlwinm.   r11, r11, 0,23,23 # r11 = r11 & 0x100
+00014E8C 40 82 00 98                 bne       loc_14F24
+00014E90 81 6C 0A C4                 lwz       r11, IMMR.PBDAT(r12)
+00014E94 61 6B 00 01                 ori       r11, r11, 1
+00014E98 91 6C 0A C4                 stw       r11, IMMR.PBDAT@l(r12)
+00014E9C 81 6C 0A C0                 lwz       r11, IMMR.PBODR(r12)
+00014EA0 55 6B 00 3C                 clrrwi    r11, r11, 1   # r11 = r11 & 0xFFFFFFFE
+00014EA4 91 6C 0A C0                 stw       r11, IMMR.PBODR(r12)
+00014EA8 81 6C 0A B8                 lwz       r11, IMMR.PBDIR(r12)
+00014EAC 61 6B 00 01                 ori       r11, r11, 1
+00014EB0 91 6C 0A B8                 stw       r11, IMMR.PBDIR@l(r12)
+00014EB4 81 6C 0A BC                 lwz       r11, IMMR.PBPAR(r12)
+00014EB8 55 6B 00 3C                 clrrwi    r11, r11, 1   # r11 = r11 & 0xFFFFFFFE
+00014EBC 91 6C 0A BC                 stw       r11, IMMR.PBPAR(r12)
+00014EC0 81 6C 0A B8                 lwz       r11, IMMR.PBDIR(r12)
+00014EC4 55 6B 07 76                 rlwinm    r11, r11, 0,29,27 # r11 = r11 & 0xFFFFFFF7
+00014EC8 91 6C 0A B8                 stw       r11, IMMR.PBDIR@l(r12)
+00014ECC 81 6C 0A C0                 lwz       r11, IMMR.PBODR(r12)
+00014ED0 55 6B 07 76                 rlwinm    r11, r11, 0,29,27 # r11 = r11 & 0xFFFFFFF7
+00014ED4 91 6C 0A C0                 stw       r11, IMMR.PBODR(r12)
+00014ED8 81 6C 0A C4                 lwz       r11, IMMR.PBDAT(r12)
+00014EDC 55 6B 07 76                 rlwinm    r11, r11, 0,29,27 # r11 = r11 & 0xFFFFFFF7
+00014EE0 91 6C 0A C4                 stw       r11, IMMR.PBDAT@l(r12)
+00014EE4 81 6C 0A BC                 lwz       r11, IMMR.PBPAR(r12)
+00014EE8 55 6B 07 76                 rlwinm    r11, r11, 0,29,27 # r11 = r11 & 0xFFFFFFF7
+00014EEC 91 6C 0A BC                 stw       r11, IMMR.PBPAR(r12)
+00014EF0 7C 90 42 A6                 mfsprg0   r4
+00014EF4 54 83 F8 3E                 rotrwi    r3, r4, 1
+00014EF8 7C 70 43 A6                 mtsprg0   r3
+00014EFC 70 84 80 00                 andi.     r4, r4, 0x8000
+00014F00 41 82 00 08                 beq       loc_14F08
+00014F04 7C 10 13 A6                 mtspr     eie, r0 # External interrupt enable
+00014F08 4C 00 01 2C loc_14F08:      isync
+00014F0C 89 60 21 9C                 lbz       r11, cameraRxBytes
+00014F10 39 80 00 00                 li        r12, 0
+00014F14 2C 0B 00 00                 cmpwi     r11, 0
+00014F18 41 82 00 08                 beq       loc_14F20
+00014F1C 39 80 00 02                 li        r12, 2
+00014F20 99 80 21 9F loc_14F20:      stb       r12, backState
+00014F24 80 60 20 94 loc_14F24:      lwz       r3, cameraTaskId
+00014F28 38 80 00 01                 li        r4, 1
+00014F2C 48 06 44 1D                 bl        osEvPost 
+00014F30 80 01 00 0C                 lwz       r0, 8+arg_4(r1)
+00014F34 7C 08 03 A6                 mtlr      r0
+00014F38 38 21 00 08                 addi      r1, r1, 8
+00014F3C 4E 80 00 20                 blr

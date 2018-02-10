@@ -1,0 +1,298 @@
+cameraSpiIsr:
+00014F60-566C=F8F4
+00014F60 94 21 FF F0                 stwu      r1, -0x10(r1)
+00014F64 7C 08 02 A6                 mflr      r0
+00014F68 90 01 00 14                 stw       r0, 0x10+arg_4(r1)
+00014F6C 89 60 21 9F                 lbz       r11, backState
+00014F70 2C 0B 00 01                 cmpwi     r11, 1
+00014F74 40 82 04 68                 bne       loc_153DC
+00014F78 3C 80 20 00                 lis       r4, cameraRxBd@h
+00014F7C 60 84 20 00                 ori       r4, r4, cameraRxBd@l
+00014F80 A1 64 00 00                 lhz       r11, 0(r4)
+00014F84 38 60 00 00                 li        r3, 0
+00014F88 55 6B 04 21                 rlwinm.   r11, r11, 0,16,16 # r11 = r11 & 0x8000
+00014F8C 40 82 00 0C                 bne       loc_14F98
+00014F90 81 64 00 04                 lwz       r11, SPIBufDescr.bufPtr(r4)
+00014F94 88 6B 00 00                 lbz       r3, 0(r11)
+00014F98 81 64 00 04 loc_14F98:      lwz       r11, SPIBufDescr.bufPtr(r4)
+00014F9C 39 6B 00 01                 addi      r11, r11, 1
+00014FA0 91 64 00 04                 stw       r11, SPIBufDescr.bufPtr(r4)
+00014FA4 3C 80 20 00                 lis       r4, cameraTxBd@h
+00014FA8 60 84 20 18                 ori       r4, r4, cameraTxBd@l
+00014FAC 81 64 00 04                 lwz       r11, SPIBufDescr.bufPtr(r4)
+00014FB0 39 6B 00 01                 addi      r11, r11, 1
+00014FB4 91 64 00 04                 stw       r11, SPIBufDescr.bufPtr(r4)
+00014FB8 88 A0 21 9C                 lbz       r5, cameraRxBytes
+00014FBC 38 A5 00 01                 addi      r5, r5, 1
+00014FC0 98 A0 21 9C                 stb       r5, cameraRxBytes
+00014FC4 38 80 00 00                 li        r4, 0
+00014FC8 2C 05 00 01                 cmpwi     r5, 1
+00014FCC 40 82 00 98                 bne       loc_15064
+00014FD0 2C 03 00 7E                 cmpwi     r3, 0x7E
+00014FD4 40 82 00 90                 bne       loc_15064
+00014FD8 38 80 00 01                 li        r4, 1
+00014FDC 39 60 00 02                 li        r11, 2
+00014FE0 99 60 21 9D                 stb       r11, msgHeaderLength
+00014FE4 7D 40 00 A6                 mfmsr     r10
+00014FE8 7C 11 13 A6                 mtspr     eid, r0 # External interrupt disable
+00014FEC 4C 00 01 2C                 isync
+00014FF0 3D 80 00 01                 lis       r12, byte_8000@ha
+00014FF4 39 8C 80 00                 addi      r12, r12, byte_8000@l
+00014FF8 7D 4A 60 38                 and       r10, r10, r12
+00014FFC 7D 70 42 A6                 mfsprg0   r11
+00015000 55 6B 08 3E                 rotlwi    r11, r11, 1
+00015004 7D 6B 60 78                 andc      r11, r11, r12
+00015008 7D 6B 53 78                 or        r11, r11, r10
+0001500C 7D 70 43 A6                 mtsprg0   r11
+00015010 3D 80 20 00                 lis       r12, IMMR
+00015014 81 6C 0A C4                 lwz       r11, IMMR.PBDAT(r12)
+00015018 55 6B 07 76                 rlwinm    r11, r11, 0,29,27 # r11 = r11 & 0xFFFFFFF7
+0001501C 91 6C 0A C4                 stw       r11, IMMR.PBDAT@l(r12)
+00015020 81 6C 0A C0                 lwz       r11, IMMR.PBODR(r12)
+00015024 55 6B 07 76                 rlwinm    r11, r11, 0,29,27 # r11 = r11 & 0xFFFFFFF7
+00015028 91 6C 0A C0                 stw       r11, IMMR.PBODR(r12)
+0001502C 81 6C 0A B8                 lwz       r11, IMMR.PBDIR(r12)
+00015030 61 6B 00 08                 ori       r11, r11, 8
+00015034 91 6C 0A B8                 stw       r11, IMMR.PBDIR@l(r12)
+00015038 81 6C 0A BC                 lwz       r11, IMMR.PBPAR(r12)
+0001503C 61 6B 00 08                 ori       r11, r11, 8
+00015040 91 6C 0A BC                 stw       r11, IMMR.PBPAR(r12)
+00015044 7D 50 42 A6                 mfsprg0   r10
+00015048 55 4B F8 3E                 rotrwi    r11, r10, 1
+0001504C 7D 70 43 A6                 mtsprg0   r11
+00015050 71 4A 80 00                 andi.     r10, r10, 0x8000
+00015054 41 82 00 08                 beq       loc_1505C
+00015058 7C 10 13 A6                 mtspr     eie, r0 # External interrupt enable
+0001505C 4C 00 01 2C loc_1505C:      isync
+00015060 48 00 03 00                 b         loc_15360
+00015064 89 60 21 9D loc_15064:      lbz       r11, msgHeaderLength
+00015068 7C 05 58 00                 cmpw      r5, r11
+0001506C 40 81 02 F4                 ble       loc_15360
+00015070 7C CB 28 50                 subf      r6, r11, r5
+00015074 2C 06 00 01                 cmpwi     r6, 1
+00015078 40 82 00 B4                 bne       loc_1512C
+0001507C 2C 03 00 01                 cmpwi     r3, 1
+00015080 40 82 00 98                 bne       loc_15118
+00015084 7D 40 00 A6                 mfmsr     r10
+00015088 7C 11 13 A6                 mtspr     eid, r0 # External interrupt disable
+0001508C 4C 00 01 2C                 isync
+00015090 3D 80 00 01                 lis       r12, byte_8000@ha
+00015094 39 8C 80 00                 addi      r12, r12, byte_8000@l
+00015098 7D 4A 60 38                 and       r10, r10, r12
+0001509C 7D 70 42 A6                 mfsprg0   r11
+000150A0 55 6B 08 3E                 rotlwi    r11, r11, 1
+000150A4 7D 6B 60 78                 andc      r11, r11, r12
+000150A8 7D 6B 53 78                 or        r11, r11, r10
+000150AC 7D 70 43 A6                 mtsprg0   r11
+000150B0 3D 80 20 00                 lis       r12, IMMR
+000150B4 81 6C 0A C4                 lwz       r11, IMMR.PBDAT(r12)
+000150B8 55 6B 07 76                 rlwinm    r11, r11, 0,29,27 # r11 = r11 & 0xFFFFFFF7
+000150BC 91 6C 0A C4                 stw       r11, IMMR.PBDAT@l(r12)
+000150C0 81 6C 0A C0                 lwz       r11, IMMR.PBODR(r12)
+000150C4 55 6B 07 76                 rlwinm    r11, r11, 0,29,27 # r11 = r11 & 0xFFFFFFF7
+000150C8 91 6C 0A C0                 stw       r11, IMMR.PBODR(r12)
+000150CC 81 6C 0A B8                 lwz       r11, IMMR.PBDIR(r12)
+000150D0 61 6B 00 08                 ori       r11, r11, 8
+000150D4 91 6C 0A B8                 stw       r11, IMMR.PBDIR@l(r12)
+000150D8 81 6C 0A BC                 lwz       r11, IMMR.PBPAR(r12)
+000150DC 61 6B 00 08                 ori       r11, r11, 8
+000150E0 91 6C 0A BC                 stw       r11, IMMR.PBPAR(r12)
+000150E4 7D 50 42 A6                 mfsprg0   r10
+000150E8 55 4B F8 3E                 rotrwi    r11, r10, 1
+000150EC 7D 70 43 A6                 mtsprg0   r11
+000150F0 71 4A 80 00                 andi.     r10, r10, 0x8000
+000150F4 41 82 00 08                 beq       loc_150FC
+000150F8 7C 10 13 A6                 mtspr     eie, r0 # External interrupt enable
+000150FC 4C 00 01 2C loc_150FC:      isync
+00015100 3D 60 20 00                 lis       r11, cameraRxBuffer@h
+00015104 61 6B 20 20                 ori       r11, r11, cameraRxBuffer@l
+00015108 89 80 21 9D                 lbz       r12, msgHeaderLength
+0001510C 7D 6B 62 14                 add       r11, r11, r12
+00015110 91 60 21 98                 stw       r11, cameraTxData
+00015114 48 00 00 30                 b         loc_15144
+00015118 2C 03 00 7D loc_15118:      cmpwi     r3, 0x7D
+0001511C 40 82 02 44                 bne       loc_15360
+00015120 39 60 00 02                 li        r11, 2
+00015124 99 60 21 9E                 stb       r11, cameraMessageLength
+00015128 48 00 02 38                 b         loc_15360
+0001512C 3C E0 20 00 loc_1512C:      lis       r7, cameraRxBuffer@h
+00015130 60 E7 20 20                 ori       r7, r7, cameraRxBuffer@l
+00015134 89 60 21 9D                 lbz       r11, msgHeaderLength
+00015138 7D 6B 38 AE                 lbzx      r11, r11, r7
+0001513C 2C 0B 00 01                 cmpwi     r11, 1
+00015140 40 82 02 20                 bne       loc_15360
+00015144 81 60 21 98 loc_15144:      lwz       r11, cameraTxData
+00015148 88 8B 00 00                 lbz       r4, 0(r11)
+0001514C 2C 06 00 02                 cmpwi     r6, 2
+00015150 40 82 00 38                 bne       loc_15188
+00015154 81 80 21 AC                 lwz       r12, shutterMode
+00015158 2C 0C 00 00                 cmpwi     r12, 0
+0001515C 40 82 00 24                 bne       loc_15180
+00015160 81 80 21 E0                 lwz       r12, backMessageCount
+00015164 28 0C 00 02                 cmplwi    r12, 2
+00015168 41 80 00 18                 blt       loc_15180
+0001516C 89 80 21 DD                 lbz       r12, digitalBody
+00015170 2C 0C 00 00                 cmpwi     r12, 0
+00015174 40 82 00 0C                 bne       loc_15180
+00015178 38 80 00 11                 li        r4, 0x11
+0001517C 48 00 01 C4                 b         loc_15340
+00015180 38 80 00 81 loc_15180:      li        r4, 0x81
+00015184 48 00 01 BC                 b         loc_15340
+00015188 2C 06 00 04 loc_15188:      cmpwi     r6, 4
+0001518C 40 82 01 8C                 bne       loc_15318
+00015190 89 60 21 9D                 lbz       r11, msgHeaderLength
+00015194 7C E7 5A 14                 add       r7, r7, r11
+00015198 89 67 00 03                 lbz       r11, 3(r7)
+0001519C 39 6B 00 08                 addi      r11, r11, 8
+000151A0 99 60 21 9E                 stb       r11, cameraMessageLength
+000151A4 89 67 00 02                 lbz       r11, 2(r7)
+000151A8 2C 0B 00 03                 cmpwi     r11, 3
+000151AC 40 82 01 14                 bne       loc_152C0
+000151B0 39 80 00 00                 li        r12, 0
+000151B4 99 80 21 EF                 stb       r12, camReplyDelay
+000151B8 81 80 21 AC                 lwz       r12, shutterMode
+000151BC 2C 0C 00 00                 cmpwi     r12, 0
+000151C0 40 82 00 28                 bne       loc_151E8
+000151C4 89 60 21 DD                 lbz       r11, digitalBody
+000151C8 2C 0B 00 00                 cmpwi     r11, 0
+000151CC 40 82 00 1C                 bne       loc_151E8
+000151D0 39 60 58 18                 li        r11, msg03f
+000151D4 91 60 21 98                 stw       r11, cameraTxData
+000151D8 89 6B 00 01                 lbz       r11, 1(r11)
+000151DC 39 6B 00 08                 addi      r11, r11, 8
+000151E0 99 60 21 9E                 stb       r11, cameraMessageLength
+000151E4 48 00 00 D0                 b         loc_152B4
+000151E8 89 00 21 A0 loc_151E8:      lbz       r8, cameraReqCmd
+000151EC 55 0B 06 F7                 rlwinm.   r11, r8, 0,27,27 # r11 = r8 & 0x10
+000151F0 41 82 00 40                 beq       loc_15230
+000151F4 55 08 07 3E                 clrlwi    r8, r8, 28    # r8 = r8 & 0xF
+000151F8 39 60 58 1B                 li        r11, msg03d
+000151FC 39 80 00 82                 li        r12, 0x82
+00015200 99 8B 00 03                 stb       r12, 3(r11)
+00015204 3D 20 00 00                 lis       r9, command@h
+00015208 39 29 73 D8                 addi      r9, r9, command@l
+0001520C 1D 88 00 34                 mulli     r12, r8, 0x34
+00015210 7D 29 60 AE                 lbzx      r9, r9, r12
+00015214 55 29 06 36                 rlwinm    r9, r9, 0,24,27 # r9 = r9 & 0xF0
+00015218 99 2B 00 04                 stb       r9, 4(r11)
+0001521C 91 60 21 98                 stw       r11, cameraTxData
+00015220 89 6B 00 01                 lbz       r11, 1(r11)
+00015224 39 6B 00 08                 addi      r11, r11, 8
+00015228 99 60 21 9E                 stb       r11, cameraMessageLength
+0001522C 48 00 00 88                 b         loc_152B4
+00015230 2C 08 00 00 loc_15230:      cmpwi     r8, 0
+00015234 40 82 00 08                 bne       loc_1523C
+00015238 39 00 00 01                 li        r8, 1
+0001523C 39 60 58 1B loc_1523C:      li        r11, msg03d
+00015240 39 80 00 83                 li        r12, 0x83
+00015244 99 8B 00 03                 stb       r12, 3(r11)
+00015248 3D 20 00 00                 lis       r9, command@h
+0001524C 39 29 73 D8                 addi      r9, r9, command@l
+00015250 1D 88 00 34                 mulli     r12, r8, 0x34
+00015254 7D 29 62 14                 add       r9, r9, r12
+00015258 89 49 00 00                 lbz       r10, 0(r9)
+0001525C 99 4B 00 04                 stb       r10, 4(r11)
+00015260 91 60 21 98                 stw       r11, cameraTxData
+00015264 89 6B 00 01                 lbz       r11, 1(r11)
+00015268 39 6B 00 08                 addi      r11, r11, 8
+0001526C 99 60 21 9E                 stb       r11, cameraMessageLength
+00015270 39 60 58 29                 li        r11, msg83
+00015274 99 4B 00 02                 stb       r10, 2(r11)
+00015278 55 4A 07 7E                 clrlwi    r10, r10, 29  # r10 = r10 & 7
+0001527C 39 4A 00 01                 addi      r10, r10, 1
+00015280 99 4B 00 01                 stb       r10, 1(r11)
+00015284 39 40 00 00                 li        r10, 0
+00015288 39 29 00 18                 addi      r9, r9, 0x18
+0001528C 85 89 00 04 loc_1528C:      lwzu      r12, 4(r9)
+00015290 39 60 00 00                 li        r11, 0
+00015294 2C 0C 00 00                 cmpwi     r12, 0
+00015298 41 82 00 08                 beq       loc_152A0
+0001529C 89 6C 00 00                 lbz       r11, 0(r12)
+000152A0 39 80 58 2C loc_152A0:      li        r12, msg83+3
+000152A4 7D 6C 51 AE                 stbx      r11, r12, r10
+000152A8 39 4A 00 01                 addi      r10, r10, 1
+000152AC 28 0A 00 06                 cmplwi    r10, 6
+000152B0 41 80 FF DC                 blt       loc_1528C
+000152B4 39 60 00 00 loc_152B4:      li        r11, 0
+000152B8 99 60 21 A0                 stb       r11, cameraReqCmd
+000152BC 48 00 00 44                 b         loc_15300
+000152C0 39 0B 00 00 loc_152C0:      addi      r8, r11, 0
+000152C4 81 60 58 34                 lwz       r11, messageList
+000152C8 2C 0B 00 00                 cmpwi     r11, 0
+000152CC 41 82 00 34                 beq       loc_15300
+000152D0 39 20 58 34                 li        r9, messageList
+000152D4 89 8B 00 00 loc_152D4:      lbz       r12, 0(r11)
+000152D8 7C 0C 40 00                 cmpw      r12, r8
+000152DC 40 82 00 18                 bne       loc_152F4
+000152E0 91 60 21 98                 stw       r11, cameraTxData
+000152E4 89 6B 00 01                 lbz       r11, 1(r11)
+000152E8 39 6B 00 08                 addi      r11, r11, 8
+000152EC 99 60 21 9E                 stb       r11, cameraMessageLength
+000152F0 48 00 00 10                 b         loc_15300
+000152F4 85 69 00 04 loc_152F4:      lwzu      r11, 4(r9)
+000152F8 2C 0B 00 00                 cmpwi     r11, 0
+000152FC 40 82 FF D8                 bne       loc_152D4
+00015300 89 60 21 9E loc_15300:      lbz       r11, cameraMessageLength
+00015304 2C 0B 00 20                 cmpwi     r11, 0x20
+00015308 40 81 00 38                 ble       loc_15340
+0001530C 39 60 00 20                 li        r11, 0x20
+00015310 99 60 21 9E                 stb       r11, cameraMessageLength
+00015314 48 00 00 2C                 b         loc_15340
+00015318 89 60 21 9E loc_15318:      lbz       r11, cameraMessageLength
+0001531C 7D 66 58 50                 subf      r11, r6, r11
+00015320 2C 0B 00 02                 cmpwi     r11, 2
+00015324 40 82 00 0C                 bne       loc_15330
+00015328 88 80 21 A1                 lbz       r4, cameraMsgChksum
+0001532C 48 00 00 28                 b         loc_15354
+00015330 2C 0B 00 02 loc_15330:      cmpwi     r11, 2
+00015334 41 81 00 0C                 bgt       loc_15340
+00015338 38 80 00 00                 li        r4, 0
+0001533C 48 00 00 18                 b         loc_15354
+00015340 2C 06 00 02 loc_15340:      cmpwi     r6, 2
+00015344 41 80 00 10                 blt       loc_15354
+00015348 89 60 21 A1                 lbz       r11, cameraMsgChksum
+0001534C 7D 6B 22 78                 xor       r11, r11, r4
+00015350 99 60 21 A1                 stb       r11, cameraMsgChksum
+00015354 81 60 21 98 loc_15354:      lwz       r11, cameraTxData
+00015358 39 6B 00 01                 addi      r11, r11, 1
+0001535C 91 60 21 98                 stw       r11, cameraTxData
+00015360 2C 05 00 20 loc_15360:      cmpwi     r5, 0x20
+00015364 40 80 00 78                 bge       loc_153DC
+00015368 89 60 21 9E                 lbz       r11, cameraMessageLength
+0001536C 89 80 21 9D                 lbz       r12, msgHeaderLength
+00015370 7D 6B 62 14                 add       r11, r11, r12
+00015374 7C 05 58 00                 cmpw      r5, r11
+00015378 40 80 00 64                 bge       loc_153DC
+0001537C 3D 80 20 00                 lis       r12, IMMR
+00015380 A1 6C 09 66                 lhz       r11, IMMR.PCDAT(r12)
+00015384 55 6B 05 EF                 rlwinm.   r11, r11, 0,23,23 # r11 = r11 & 0x100
+00015388 41 82 00 54                 beq       loc_153DC
+0001538C 2C 03 00 AA                 cmpwi     r3, 0xAA
+00015390 41 82 00 4C                 beq       loc_153DC
+00015394 3C 60 20 00                 lis       r3, cameraRxBd@h
+00015398 60 63 20 00                 ori       r3, r3, cameraRxBd@l
+0001539C 3D 60 00 00                 lis       r11, B000@h
+000153A0 61 6B B0 00                 ori       r11, r11, B000@l
+000153A4 B1 63 00 00                 sth       r11, SPIBufDescr.ctrl(r3)
+000153A8 81 63 00 04                 lwz       r11, SPIBufDescr.bufPtr(r3)
+000153AC 38 60 00 00                 li        r3, 0
+000153B0 98 6B 00 00                 stb       r3, 0(r11)
+000153B4 3C 60 20 00                 lis       r3, cameraTxBd@h
+000153B8 60 63 20 18                 ori       r3, r3, cameraTxBd@l
+000153BC 3D 60 00 00                 lis       r11, A800@h
+000153C0 61 6B A8 00                 ori       r11, r11, A800@l
+000153C4 B1 63 00 00                 sth       r11, SPIBufDescr.ctrl(r3)
+000153C8 81 63 00 04                 lwz       r11, SPIBufDescr.bufPtr(r3)
+000153CC 98 8B 00 00                 stb       r4, 0(r11)
+000153D0 3D 80 20 00                 lis       r12, IMMR
+000153D4 39 60 00 80                 li        r11, 0x80
+000153D8 99 6C 0A AD                 stb       r11, immr.SPCOM(r12)
+000153DC 3C 60 20 00 loc_153DC:      lis       r3, IMMR@h
+000153E0 39 60 00 FF                 li        r11, 0xFF
+000153E4 99 63 0A A6                 stb       r11, immr.SPIE(r3)
+000153E8 39 40 00 20                 li        r10, 0x20 # ' '
+000153EC 91 43 09 4C                 stw       r10, immr.CISR(r3)
+000153F0 80 01 00 14                 lwz       r0, 0x10+arg_4(r1)
+000153F4 7C 08 03 A6                 mtlr      r0
+000153F8 38 21 00 10                 addi      r1, r1, 0x10
+000153FC 4E 80 00 20                 blr
