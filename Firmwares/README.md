@@ -22,10 +22,13 @@ This firmware is an alternative implementation of the 3.4.3.M firmware and deliv
 These firmwares add the following features to the 3.4.2.MH and 3.3.10.C accordingly: add the ability to set metadata for manual lenses (with correct EXIF population) on all 3 Proback supported cameras. This functionality is new for Contax and Hassleblad Probacks and for Mamiya it was enhanced to support new setting system and user loadable list of lenses. Firmware [sources are here](ProBack645/3.4.3M). The overall list of enhancements:
 
 * Manual lenses are selected on the main screen in a similar way to white balances - via drop-down menu (it is faster and more convenient in a field):
+
 ![Lens](http://www.aletan.com/img/s/v-3/p2700542434-2.jpg "image1")
 
 * The data for the selected lens is always present on the status screen (in this respect the layout of the screen has changed slightly to accommodate it):
+
 ![Lens](http://www.aletan.com/img/s/v-3/p2700542431-2.jpg "image2")
+
 * You can make up and load your own list of lenses (up to 20 in total). The list can be loaded from _lens.txt_ file that has the following textual format (example):
 
 ```
@@ -36,8 +39,11 @@ These firmwares add the following features to the 3.4.2.MH and 3.3.10.C accordin
 ```
 The file should be copied to the CF card's root directory and loaded by selecting the appropriate menu item (see below)
 * Added menu Manual Lens Data (modified for Mamiya firmware)
+
 ![Lens](http://www.aletan.com/img/s/v-3/p2700542429-2.jpg "image3")
+
 this now contains the options for loading user's manual lens list and resetting the list to the default configuration
+
 ![Lens](http://www.aletan.com/img/s/v-3/p2700542428-2.jpg "image4")
 
 __WARNING__: Starting from these versions, the firmwares are recombined - Mamia firmware will be released separately and Contax combined with Hasselblad. This is due to the lack of space in the Mamiya version of firmware for this and further updates (since I have no sources extending binary files is limited).
