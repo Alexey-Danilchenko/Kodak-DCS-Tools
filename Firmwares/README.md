@@ -6,7 +6,9 @@ Most patches if applied to main firmware are applied to _code segment, otherwise
 
 # Custom firmwares (build by me)
 
-_WARNING_: firmwares when updated in all Kodak cameras have to be updated twice (just like production firmwares). 
+All the firmwares below can be downloaded by clicking on firmware title.
+
+__WARNING__: firmwares when updated in all Kodak cameras have to be updated twice (just like production firmwares). 
 
 Firmwares with standalone service mode is no longer published here - they are still available as a part of DCSRemap and can be downloaded from there. Firmwares for ProBack 645 starting from version 3.3.8 support enabling service mode directly in camera and no longer need special firmware for remap.
 
@@ -16,7 +18,7 @@ Firmwares with standalone service mode is no longer published here - they are st
 This firmware adds the following features to the 3.4.3.M firmware: it fixes "Image Capture Error" that can appear with fast camera communicatons. This was easy to cause in fast cameras like Phase One DF/DF+ and could appear occasionally in older Mamiya 645 AFD cameras. On Phase One DF/DF+ the problem appeared in **Digital Combined** and **Digital Short Latency** shutter modes and this firmware makes those modes fully opertional. The error was caused by a bug in original Kodak firmware handling image capturing state where image readout stage was not considered _busy_ time for a camera and could lead to a shot attempted whilst capturing. Firmware [sources are here](ProBack645/3.4.4M). 
 
 ### [Firmware 3.4.4A.M for Proback 645 Mamiya](ProBack645/3.4.4M_Alt/PB645.bin) 
-This firmware is an alternative implementation of the 3.4.3.M firmware and delivers the same functionality. For more details see [firmware sources here](ProBack645/3.4.4M_Alt). 
+This firmware is an alternative implementation of the 3.4.3.M firmware and delivers the same functionality. For more details see [firmware sources here](ProBack645/3.4.4M_Alt). It is only here for the curious and to show that a different approach operating firmware is very functional. For all normal users - use the standard 3.4.4.M firmware above.
 
 ### [Firmware 3.4.3.M for Proback 645 Mamiya](https://drive.google.com/open?id=1Q4mIz1aos9wumnZDpdeLSlm5z32Svo1z) and [Firmware 3.4.0.CH for Proback 645 Contax/Hasselblad](https://drive.google.com/open?id=1l-_l9BQmKuJeVKslYlQg1K6n2kEW3bLw) 
 These firmwares add the following features to the 3.4.2.MH and 3.3.10.C accordingly: add the ability to set metadata for manual lenses (with correct EXIF population) on all 3 Proback supported cameras. This functionality is new for Contax and Hassleblad Probacks and for Mamiya it was enhanced to support new setting system and user loadable list of lenses. Firmware [sources are here](ProBack645/3.4.3M). The overall list of enhancements:
@@ -56,8 +58,8 @@ This adds the support for Mamiya AFD III, Mamiya/Phase One DF and Phase One DF+ 
 * Several shutter modes have been added. Available via the Shutter Operating Mode option in the main menu. The following modes are implemented:
     * __Legacy (645 AF / AFD)__ - compatibility mode. It works just like in firmware 3.3.x except for configurable CCD active time. This mode works with cameras up to Mamiya 645 AFD II (inclusive). It is the only mode that will work with film body like Mamiya 645 AF.
     * __Digital Long Latency__ - the sensor is activated only when the shutter is pressed and remains active for the duration of the exposure. Since the sensor activation takes time, this mode exhibits a noticeable delay and blackout when you press the shutter (0.4 seconds approximately - the delay happens in the camera body not in the back). This mode corresponds to Phase One Pnn+ backs Long Latency mode and is the only one which supports full set of modes for ProBack on Phase One DF/DF+. The battery consumption in this mode is the most optimal - the sensor is only turned on when needed.
-    * __Digital Combined__ - the combined mode between Long and Short latencies. The sensor is activated when the shutter is half-pressed and remains active for a time set by Soft Press CCD Active Time or until exposing a frame (whichever comes earlier). There are no delays in shooting for sensor activation and minimal viewfinder blackout. It does not however work in the following modes - Continuous shooting mode (when the camera takes pictures continuously whilst shutter is pressed), timer mode (with the timer mode it will work, provided that the timer is set to be less than Soft Press CCD Active Time). The battery consumption is somewhat more than in Digital Long Latency mode - exact consumption will depend on usage patterns.
-    * __Digital Short Latency__ - the sensor is activated the first time the shutter is pressed and remains active until the camera goes to sleep (in Phase One DF/DF+ this period is configurable in the camera). There are no delays in the shooting for sensor activation. It exhibits one problem in Continuous shooting mode where (unavoidable I am afraid - Pro Back architecture is too slow for Phase One DF cameras) which results in series of several frames at a time with capture error after that. This mode corresponds more or less to Phase One P+ backs Short Latency mode. Battery consumption is the largest of all modes.
+    * __Digital Combined__ - the combined mode between Long and Short latencies. The sensor is activated when the shutter is half-pressed and remains active for a time set by Soft Press CCD Active Time or until exposing a frame (whichever comes earlier). There are no delays in shooting for sensor activation and minimal viewfinder blackout. It does not however work in the following modes: ~~Continuous shooting mode~~ (fixed and fully working in firmware 3.4.4.M - see above), timer mode (with the timer mode it will work, provided that the timer is set to be less than Soft Press CCD Active Time). The battery consumption is somewhat more than in Digital Long Latency mode - exact consumption will depend on usage patterns.
+    * __Digital Short Latency__ - the sensor is activated the first time the shutter is pressed and remains active until the camera goes to sleep (in Phase One DF/DF+ this period is configurable in the camera). There are no delays in the shooting for sensor activation. ~~It exhibits one problem in Continuous shooting mode where (unavoidable I am afraid - Pro Back architecture is too slow for Phase One DF cameras) which results in series of several frames at a time with capture error after that~~ (fixed and fully working in firmware 3.4.4.M - see above). This mode corresponds more or less to Phase One P+ backs Short Latency mode. Battery consumption is the largest of all modes.
 * Added support for Bulb mode and correct calculation of shutter speed in Bulb mode
 * Added ability to set metadata for manual lenses (used for EXIF ​​and image info). This is available on the main menu as Manual Lens Data option.
 * The focal length is written in EXIF ​​- Adobe ACR/LR will now recognise it correctly.
@@ -98,7 +100,9 @@ This firmware adds the following to the stock Kodak 3.2.9 firmware:
 Here you will find a custom build firmwares for the above Kodak cameras with modifications to fix or remove certain limitations. Installation procedure for all these is the same as for standard Kodak firmwares - it needs to be copied on card and updated twice from the camera menus. Firmware [sources are here](SLRs). 
 
 [Firmware 5.4.10 for Kodak DCS Pro 14n(x)](https://drive.google.com/open?id=0Bw2ZohnbXtyAdkFGYjN0cnZaRGs)
+
 [Firmware 5.4.10 for Kodak DCS Pro SLR/n](https://drive.google.com/open?id=0Bw2ZohnbXtyAcFlwTjJUdlpaeFU)
+
 [Firmware 5.4.10 for Kodak DCS Pro SLR/c](https://drive.google.com/open?id=0Bw2ZohnbXtyATko1aWtBc2xtX2s)
 
 This firmwares have two changes:
