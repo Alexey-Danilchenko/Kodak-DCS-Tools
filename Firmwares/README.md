@@ -13,18 +13,19 @@ Firmwares with standalone service mode is no longer published here - they are st
 ## Proback Firmwares
 
 ### [Firmware 3.4.4.M for Proback 645 Mamiya](https://drive.google.com/open?id=1324Lww3DexPK7RqckA9R5KxUrMNfGtSL) 
-This firmware adds the following features to the 3.4.3.M firmware: it fixes "Image Capture Error" that can appear with fast camera communicatons. This was easy to cause in fast cameras like Phase One DF/DF+ and could appear occasionally in older Mamiya 645 AFD cameras. On Phase One DF/DF+ the problem appeared in **Digital Combined** and **Digital Short Latency** shutter modes and this firmware makes those modes fully opertional. The error was caused by a bug in original Kodak firmware handling image capturing state where image readout stage was not considered _busy_ time for a camera and could lead to a shot attempted whilst capturing.[Firmware sources are here](ProBack645/3.4.4M). 
+This firmware adds the following features to the 3.4.3.M firmware: it fixes "Image Capture Error" that can appear with fast camera communicatons. This was easy to cause in fast cameras like Phase One DF/DF+ and could appear occasionally in older Mamiya 645 AFD cameras. On Phase One DF/DF+ the problem appeared in **Digital Combined** and **Digital Short Latency** shutter modes and this firmware makes those modes fully opertional. The error was caused by a bug in original Kodak firmware handling image capturing state where image readout stage was not considered _busy_ time for a camera and could lead to a shot attempted whilst capturing. Firmware [sources are here](ProBack645/3.4.4M). 
 
 ### [Firmware 3.4.4A.M for Proback 645 Mamiya](ProBack645/3.4.4M_Alt/PB645.bin) 
 This firmware is an alternative implementation of the 3.4.3.M firmware and delivers the same functionality. For more details see [firmware sources here](ProBack645/3.4.4M_Alt). 
 
 ### [Firmware 3.4.3.M for Proback 645 Mamiya](https://drive.google.com/open?id=1Q4mIz1aos9wumnZDpdeLSlm5z32Svo1z) and [Firmware 3.4.0.CH for Proback 645 Contax/Hasselblad](https://drive.google.com/open?id=1l-_l9BQmKuJeVKslYlQg1K6n2kEW3bLw) 
-These firmwares add the following features to the 3.4.2.MH and 3.3.10.C accordingly: add the ability to set metadata for manual lenses (with correct EXIF population) on all 3 Proback supported cameras. This functionality is new for Contax and Hassleblad Probacks and for Mamiya it was enhanced to support new setting system and user loadable list of lenses. The overall list of enhancements:
+These firmwares add the following features to the 3.4.2.MH and 3.3.10.C accordingly: add the ability to set metadata for manual lenses (with correct EXIF population) on all 3 Proback supported cameras. This functionality is new for Contax and Hassleblad Probacks and for Mamiya it was enhanced to support new setting system and user loadable list of lenses. Firmware [sources are here](ProBack645/3.4.3M). The overall list of enhancements:
 
 * Manual lenses are selected on the main screen in a similar way to white balances - via drop-down menu (it is faster and more convenient in a field):
-[](http://www.aletan.com/img/s/v-3/p2700542434-2.jpg)
+![Lens](http://www.aletan.com/img/s/v-3/p2700542434-2.jpg "image1")
+
 * The data for the selected lens is always present on the status screen (in this respect the layout of the screen has changed slightly to accommodate it):
-[](http://www.aletan.com/img/s/v-3/p2700542431-2.jpg)
+![Lens](http://www.aletan.com/img/s/v-3/p2700542431-2.jpg "image2")
 * You can make up and load your own list of lenses (up to 20 in total). The list can be loaded from _lens.txt_ file that has the following textual format (example):
 
 ```
@@ -35,14 +36,14 @@ These firmwares add the following features to the 3.4.2.MH and 3.3.10.C accordin
 ```
 The file should be copied to the CF card's root directory and loaded by selecting the appropriate menu item (see below)
 * Added menu Manual Lens Data (modified for Mamiya firmware)
-[](http://www.aletan.com/img/s/v-3/p2700542429-2.jpg)
+![Lens](http://www.aletan.com/img/s/v-3/p2700542429-2.jpg "image3")
 this now contains the options for loading user's manual lens list and resetting the list to the default configuration
-[](http://www.aletan.com/img/s/v-3/p2700542428-2.jpg)
+![Lens](http://www.aletan.com/img/s/v-3/p2700542428-2.jpg "image4")
 
 __WARNING__: Starting from these versions, the firmwares are recombined - Mamia firmware will be released separately and Contax combined with Hasselblad. This is due to the lack of space in the Mamiya version of firmware for this and further updates (since I have no sources extending binary files is limited).
 
 ### [Firmware 3.4.2.MH for Proback 645 Mamiya/Hasselblad](https://drive.google.com/open?id=1jeM1908Q3r0P20EU9ByPIroyTbEe0w6Z)
-This adds the support for Mamiya AFD III, Mamiya/Phase One DF and Phase One DF+ to 3.3.10.MH as well as support for manual lenses on Mamiya cameras:
+This adds the support for Mamiya AFD III, Mamiya/Phase One DF and Phase One DF+ to 3.3.10.MH as well as support for manual lenses on Mamiya cameras.  Firmware [sources are here](ProBack645/3.4.2MH). The overall list of enhancements:
 
 * Completely rewritten communication interface with the camera to support newer digital cameras such as Mamiya AFD II/III and Phase One DF/DF+.
 * Added Soft Press CCD Active Time property - allows you to set the time period for which the sensor is activated when half-pressed to the shutter (in the original Kodak firmware this is hardcoded to 0.8 seconds).
@@ -65,16 +66,17 @@ This adds the support for Mamiya AFD III, Mamiya/Phase One DF and Phase One DF+ 
 
 ### Firmwares [3.3.10.MH (Mamiya, Hasselblad)](https://drive.google.com/open?id=0Bw2ZohnbXtyATjRfbnVWelBVSm8) and [3.3.10.C (Contax)](https://drive.google.com/open?id=0Bw2ZohnbXtyAOGhjWXgycldreFE)
 
-These firmwares extend range of allowed dates for Pro Backs to 2099.
+These firmwares extend range of allowed dates for Pro Backs to 2099. Firmware [sources are here](ProBack645/3.3.10MH). 
 
 ### [Firmware 3.3.9.MH for Proback 645 Mamiya/Hasselblad](https://drive.google.com/open?id=0Bw2ZohnbXtyAV2FVRklFYy1YOTg) 
-This firmware adds the following features to the 3.3.8 firmware: correctly works with Mamiya AFD II camera - camera shutter speeds and f-number are recognized correctly for all new 1/3 steps. Auto-exposure (that can have intermediate 1/8 exposure steps) mapped correctly as well.
+This firmware adds the following features to the 3.3.8 firmware: correctly works with Mamiya AFD II camera - camera shutter speeds and f-number are recognized correctly for all new 1/3 steps. Auto-exposure (that can have intermediate 1/8 exposure steps) mapped correctly as well. Firmware [sources are here](ProBack645/3.3.9MH). 
 
 ### [Firmware 3.3.9.C for Proback 645 Contax](https://drive.google.com/file/d/0Bw2ZohnbXtyAaUpuNmh4dUNiT1pjY1VJWkxlbmlielhPTmd3/view?usp=sharing) 
 This firmware adds the following features to the 3.3.8 firmware: fully supports recording of focal length in metadata. For zoom lenses the longer focal length is used (i.e. for 45-90 zoom, the 90mm will be recorded).
+Firmware [sources are here](ProBack645/3.3.9). 
 
 ### [Firmware 3.3.8 for Proback 645](https://drive.google.com/file/d/0Bw2ZohnbXtyAdExkZ1ZiX1YzdFU/view?usp=sharing)
-This firmware adds the following features to the stock Kodak 3.3.7 firmware:
+This firmware ([sources are here](ProBack645/3.3.8)) adds the following features to the stock Kodak 3.3.7 firmware:
 
 * Service mode can be enabled/disabled via public property Enable Service Mode (in Properties menu). When change the mode from service mode enabled to normal, it is recommended to reboot Pro Back by replacing the battery. This property eliminates the need for special firmware used for DCS Remap - use this instead (the Save IF File in imager menu is also present in this firmware).
 * The maximum allowed temperature for the sensor is configurable via Max Temp Limit public property (in Properties menu). It is by default set to the temperature that Kodak originally programmed for your ProBack type (50 degrees C for Mamiya and 65 for the Contax/Hasselblad). Setting this property to 101 degrees disables the check altogether. This allows user to control the well known "Camera too hot" error preventing the shoot or broken frames.
@@ -83,12 +85,11 @@ This firmware adds the following features to the stock Kodak 3.3.7 firmware:
 
 This firmware adds the following to the stock Kodak 3.2.9 firmware:
 
-* Enables shooting with the [following manual trigger](http://wowcamera.info/viewtopic.php?p=86748#p86748) (link is in Russian please use Google translate) for Pro Back used on Hasseldlad 200/2000. Removes modal synchronization errors display that prevent normal shooting with this trigger.
-
+* Enables shooting with the [following manual trigger](http://wowcamera.info/viewtopic.php?p=86748#p86748) (link is in Russian please use Google translate) for Pro Back used on Hasseldlad 200/2000. Removes modal synchronization errors display that prevent normal shooting with this trigger. 
 
 ## Firmwares for Kodak DCS 14nx, SLR/n и SLR/c
 
-Here you will find a custom build firmwares for the above Kodak cameras with modifications to fix or remove certain limitations. Installation procedure for all these is the same as for standard Kodak firmwares - it needs to be copied on card and updated twice from the camera menus.
+Here you will find a custom build firmwares for the above Kodak cameras with modifications to fix or remove certain limitations. Installation procedure for all these is the same as for standard Kodak firmwares - it needs to be copied on card and updated twice from the camera menus. Firmware [sources are here](SLRs). 
 
 [Firmware 5.4.10 for Kodak DCS Pro 14n(x)](https://drive.google.com/open?id=0Bw2ZohnbXtyAdkFGYjN0cnZaRGs)
 [Firmware 5.4.10 for Kodak DCS Pro SLR/n](https://drive.google.com/open?id=0Bw2ZohnbXtyAcFlwTjJUdlpaeFU)

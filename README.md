@@ -10,7 +10,7 @@ The following is the contents:
 
 * [All the source code](sources)
 * [Detailed description of Mamiya/Phase One camera to digital back communication protocol](Mamiya_Protocol)
-* [Sources of most of the custom firmwares I produced](Firmwares)
+* [Custom firmwares for Kodak cameras that I have build](Firmwares)
 * [Sources of some of the code that I reverse engineered from firmwares and DSP](Firmwares/Reversed_Sources)
 
 The details of some of these explorations are published [here](https://dalex-257.livejournal.com/) and in more details [here (in Russian)](http://wowcamera.info/viewtopic.php?f=18&t=283)
