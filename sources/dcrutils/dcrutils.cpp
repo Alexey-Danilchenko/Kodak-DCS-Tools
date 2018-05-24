@@ -933,8 +933,11 @@ void main(int argc, char* argv[])
 
             TTiffHeader* dcsHeader = (TTiffHeader*)inBuf;
             
-            if (dcsHeader->magic != TIFF_BIGENDIAN || 
-                fromBigEndian16(dcsHeader->version) != TIFF_VERSION_CLASSIC)
+            if (dcsHeader->magic == TIFF_BIGENDIAN)
+                setByteOrder(BIG_ENDIAN);
+            else if (dcsHeader->magic == TIFF_LITTLEENDIAN)
+                setByteOrder(LITTLE_ENDIAN);
+            else
             {
                 printf("The %s is not a DCR file!\n", dcrFileName);
                 delete[] inBuf;

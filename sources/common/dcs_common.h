@@ -35,6 +35,12 @@ typedef unsigned long long uint64;
 
 typedef unsigned char byte;
 
+enum BYTE_ORDER 
+{
+    BIG_ENDIAN = 0,
+    LITTLE_ENDIAN = 1
+};
+
 // ------------------------------------
 //           functions
 // ------------------------------------
@@ -49,6 +55,8 @@ uint16 fromBigEndian16(uint16 ulValue);
 uint32 fromBigEndian(uint32 ulValue);
 
 uint64 fromBigEndian64(uint64 ulValue);
+
+void setByteOrder(BYTE_ORDER byteOrder);
 
 #endif
 

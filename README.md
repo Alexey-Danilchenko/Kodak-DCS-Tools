@@ -6,11 +6,14 @@ I have mostly concentrated on Kodak ProBack 645M/C/H and SLRs Kodak DCS 14n, SLR
 
 All software on this site is released free and under GPL license and in hope that it will be useful to other reverse engineers and Kodak camera explorers and users. 
 
-The following is the contents:
+The following is the list of topics:
 
-* [All the source code](sources)
+* [All the source code (defective pixels remap tools, IDA plugins, profile extraction, etc)](sources)
 * [Detailed description of Mamiya/Phase One camera to digital back communication protocol](Mamiya_Protocol)
 * [Custom firmwares for Kodak cameras that I have build](Firmwares)
 * [Sources of some of the code that I reverse engineered from firmwares and DSP](Firmwares/Reversed_Sources)
+* [Camera profiles and profile extraction for Kodak cameras](profiles.md)
+* [Kodak ProBack 645M/C/H hardware info - viewfinder masks, IR filters etc](hardware.md)
+* [Tools (compiled versions of the sources above)](tools.md)
 
-The details of some of these explorations are published [here](https://dalex-257.livejournal.com/) and in more details [here (in Russian)](http://wowcamera.info/viewtopic.php?f=18&t=283)
+The details of some of these explorations are published [here](https://dalex-257.livejournal.com/) and [here (in Russian)](http://wowcamera.info/viewtopic.php?f=18&t=283). The latter link is now dormant - I am not involved there any longer.
