@@ -15,11 +15,12 @@ The best commercially available alternative that is close to those specification
 
 ## Mamiya viewfinder masks for Kodak DCS ProBack 645M
 
-These cameras have 36x36mm square sensor so the Mamiya 645 AFD and Phase One DF cameras viewfinder is quite a bit bigger. Fortunately it is fairly easy to make a viewfinder mask and I have prepared  templates just for that:
+These cameras have 36x36mm square sensor so the Mamiya 645 AFD and Phase One DF cameras viewfinder is quite a bit bigger. Fortunately it is fairly easy to make a viewfinder mask and I have prepared  templates just for that below:
 
 * [Whole transparent version](https://docs.google.com/file/d/0Bw2ZohnbXtyAbDV1NFYyd3ZuUmQ4aHVLOWpER0xvSWNydHE4/view?usp=sharing). This mask is intended to be cut out at external dimensions and placed as is in viewfinder.
 
 * [Transparent mask with central cutout](https://docs.google.com/file/d/0Bw2ZohnbXtyAQXdHWFprdkk1WUlQeDNtNkttUmRhekRCLV9F/view?usp=sharing). This mask is intended to be cut out at external dimensions and have the middle see-through cutout to allow maximum transparency. Central cutout is expected in the middle of the thick outline to  make results more neat.
 
-_How to use instructions_. Pring selected PDF with masks without scaling on laser or inkjet printer onto a transparent sheet. Cut out one of the selected templates on the outside frame and for the version with cut out also cut out the inside part.на лазернике или струйнике на прозрачные печатные листы (для презентиаций - обычно есть в любом оффисном магазине). After that install it under camera focussing screen - for the instruction how [see this video](https://www.youtube.com/watch?v=R4JBCJcvV64).
+_How to use instructions_. Print selected PDF with masks without scaling on laser or inkjet printer onto a transparent sheet. Cut out one of the selected templates on the outside frame and for the version with cut out also cut out the inside part. After that install it under camera focussing screen - for the instruction how [see this video](https://www.youtube.com/watch?v=R4JBCJcvV64).
 
+_NOTE_: These masks do not alter the focus (and masks with internal cutouts do not alter visibility) as some idiots on various forums seem to suggest. The cutouts on the sides of the masks (just like the similar masks for Phase One Leaf backs for Mamiya/Phase One cameras) ensure the masks sits above the focusing screen in available gap in the holding frame and does not alter the focusing screen plane at all.
