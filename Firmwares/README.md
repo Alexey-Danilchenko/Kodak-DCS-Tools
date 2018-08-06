@@ -14,7 +14,13 @@ Firmwares with standalone service mode is no longer published here - they are st
 
 ## Proback Firmwares
 
-### [Firmware 3.4.4.M for Proback 645 Mamiya](https://drive.google.com/open?id=1324Lww3DexPK7RqckA9R5KxUrMNfGtSL) 
+### [Firmware 3.4.5.M for Proback 645 Mamiya](ProBack645/3.4.5M/PB645.bin) 
+This firmware adds the following features to the 3.4.4.M firmware: it fixes some of the rare occurences of the broken capture that can occur in **Digital Combined** shutter mode when CCD sensor has not been reset. The fix essentially does not remove CCD activation immediately after capture so CCD stays active in this mode for the time specified by Soft Press CCD Active Time property. Firmware [sources are here](ProBack645/3.4.5M). 
+
+### [Firmware 3.4.5A.M for Proback 645 Mamiya](ProBack645/3.4.5M_Alt/PB645.bin) 
+This firmware is an alternative implementation of the 3.4.5.M firmware and delivers the same functionality. It also changes a bit logic of state transitioning from 3.4.4A.M firmware to allow for earlier back availability to capture next message (that should help a bit with rapid nature of 645 DF/DF+ cameras). For more details see [firmware sources here](ProBack645/3.4.5M_Alt). It is only here for the curious and to show that a different approach operating firmware is very functional. For all normal users - use the standard 3.4.5.M firmware above. I however had used this firmware extensively without any problems.
+
+### [Firmware 3.4.4.M for Proback 645 Mamiya](ProBack645/3.4.4M/PB645.bin) 
 This firmware adds the following features to the 3.4.3.M firmware: it fixes "Image Capture Error" that can appear with fast camera communicatons. This was easy to cause in fast cameras like Phase One DF/DF+ and could appear occasionally in older Mamiya 645 AFD cameras. On Phase One DF/DF+ the problem appeared in **Digital Combined** and **Digital Short Latency** shutter modes and this firmware makes those modes fully opertional. The error was caused by a bug in original Kodak firmware handling image capturing state where image readout stage was not considered _busy_ time for a camera and could lead to a shot attempted whilst capturing. Firmware [sources are here](ProBack645/3.4.4M). 
 
 ### [Firmware 3.4.4A.M for Proback 645 Mamiya](ProBack645/3.4.4M_Alt/PB645.bin) 

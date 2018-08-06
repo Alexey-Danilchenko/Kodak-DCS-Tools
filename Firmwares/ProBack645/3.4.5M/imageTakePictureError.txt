@@ -1,0 +1,163 @@
+imageTakePictureError: 
+00061360-566C=5BCF4
+00061360 94 21 FF E8                 stwu      r1, -0x18(r1)
+00061364 7C 08 02 A6                 mflr      r0
+00061368 93 C1 00 10                 stw       r30, 0x18+var_8(r1)
+0006136C 93 E1 00 14                 stw       r31, 0x18+var_4(r1)
+00061370 90 01 00 1C                 stw       r0, 0x18+arg_4(r1)
+00061374 3B C3 00 00                 addi      r30, r3, 0
+00061378 48 03 5B D5                 bl        systemChecksOk 
+0006137C 2C 03 00 00                 cmpwi     r3, 0
+00061380 40 82 00 0C                 bne       loc_6138C
+00061384 3C 60 00 1C                 lis       r3, 0x1C
+00061388 48 00 02 44                 b         loc_615CC
+0006138C 48 01 B3 79 loc_6138C:      bl        powerBatteryOk 
+00061390 2C 03 00 00                 cmpwi     r3, 0
+00061394 40 82 00 18                 bne       loc_613AC
+00061398 48 01 B3 BD                 bl        powerAdapterOn 
+0006139C 2C 03 00 00                 cmpwi     r3, 0
+000613A0 40 82 00 0C                 bne       loc_613AC
+000613A4 3C 60 00 1B                 lis       r3, 0x1B
+000613A8 48 00 02 24                 b         loc_615CC
+000613AC 48 01 B3 05 loc_613AC:      bl        powerTemperatureOk 
+000613B0 2C 03 00 00                 cmpwi     r3, 0
+000613B4 40 82 00 0C                 bne       loc_613C0
+000613B8 3C 60 00 1D                 lis       r3, 0x1D
+000613BC 48 00 02 10                 b         loc_615CC
+000613C0 89 80 34 20 loc_613C0:      lbz       r12, disableCapture
+000613C4 2C 0C 00 00                 cmpwi     r12, 0
+000613C8 41 82 00 0C                 beq       loc_613D4
+000613CC 3C 60 00 27                 lis       r3, 0x27 # '''
+000613D0 48 00 01 FC                 b         loc_615CC
+000613D4 81 80 33 00 loc_613D4:      lwz       r12, imagePreviewFileHandle
+000613D8 2C 0C 00 00                 cmpwi     r12, 0
+000613DC 41 82 00 18                 beq       loc_613F4
+000613E0 89 80 32 EC                 lbz       r12, imageCaptureEnable
+000613E4 2C 0C 00 00                 cmpwi     r12, 0
+000613E8 40 82 00 0C                 bne       loc_613F4
+000613EC 3C 60 00 2D                 lis       r3, 0x2D # '-'
+000613F0 48 00 01 DC                 b         loc_615CC
+000613F4 89 80 32 F4 loc_613F4:      lbz       r12, imageSave
+000613F8 2C 0C 00 00                 cmpwi     r12, 0
+000613FC 41 82 00 68                 beq       loc_61464
+00061400 80 60 33 08                 lwz       r3, imageFileSizeMaximum
+00061404 3B E3 00 00                 addi      r31, r3, 0
+00061408 89 60 32 EA                 lbz       r11, imageExposing
+0006140C 2C 0B 00 00                 cmpwi     r11, 0
+00061410 41 82 00 08                 beq       loc_61418
+00061414 7F E3 1A 14                 add       r31, r3, r3
+00061418 89 80 32 EB loc_61418:      lbz       r12, imageCapturing
+0006141C 2C 0C 00 00                 cmpwi     r12, 0
+00061420 41 82 00 08                 beq       loc_61428
+00061424 7F FF 1A 14                 add       r31, r31, r3
+00061428 38 60 00 00 loc_61428:      li        r3, 0
+0006142C 4B FE FE B5                 bl        folderCapacity 
+00061430 7C 03 F8 40                 cmplw     r3, r31
+00061434 40 80 00 30                 bge       loc_61464
+00061438 38 60 00 01                 li        r3, 1
+0006143C 4B FE FE A5                 bl        folderCapacity 
+00061440 7C 03 F8 40                 cmplw     r3, r31
+00061444 40 80 00 20                 bge       loc_61464
+00061448 4B FF 32 F9                 bl        folderCardsPresent 
+0006144C 2C 03 00 00                 cmpwi     r3, 0
+00061450 40 82 00 0C                 bne       loc_6145C
+00061454 3C 60 00 22                 lis       r3, 0x22 # '"'
+00061458 48 00 01 74                 b         loc_615CC
+0006145C 3C 60 00 12 loc_6145C:      lis       r3, 0x12
+00061460 48 00 01 6C                 b         loc_615CC
+00061464 48 03 82 B9 loc_61464:      bl        timeUsec 
+00061468 3B E3 00 00                 addi      r31, r3, 0
+0006146C 3C 80 00 0D                 lis       r4, 0xD0000
+00061470 89 80 32 EA                 lbz       r12, imageExposing
+00061474 2C 0C 00 00                 cmpwi     r12, 0
+00061478 41 82 00 0C                 beq       loc_61484
+0006147C 60 83 01 01                 ori       r3, r4, 0x101
+00061480 48 00 01 4C                 b         loc_615CC
+00061484 7D 9F F2 14 loc_61484:      add       r12, r31, r30
+00061488 81 60 33 48                 lwz       r11, captureStartTime
+0006148C 7D 8B 60 50                 subf      r12, r11, r12
+00061490 81 40 33 4C                 lwz       r10, imageCaptureTime
+00061494 7C 0C 50 40                 cmplw     r12, r10
+00061498 40 80 00 0C                 bge       loc_614A4
+0006149C 60 83 01 02                 ori       r3, r4, 0x102
+000614A0 48 00 01 2C                 b         loc_615CC
+000614A4 89 80 32 E9 loc_614A4:      lbz       r12, imageDisable
+000614A8 2C 0C 00 00                 cmpwi     r12, 0
+000614AC 41 82 00 0C                 beq       loc_614B8
+000614B0 60 83 01 03                 ori       r3, r4, 0x103
+000614B4 48 00 01 18                 b         loc_615CC
+000614B8 89 80 32 EB loc_614B8:      lbz       r12, imageCapturing
+000614BC 2C 0C 00 00                 cmpwi     r12, 0
+000614C0 41 82 00 0C                 beq       loc_614CC
+000614C4 60 83 01 04                 ori       r3, r4, 0x104
+000614C8 48 00 01 04                 b         loc_615CC
+000614CC 89 80 32 E7 loc_614CC:      lbz       r12, imageChange
+000614D0 2C 0C 00 00                 cmpwi     r12, 0
+000614D4 40 82 00 10                 bne       loc_614E4
+000614D8 89 80 32 E8                 lbz       r12, imagerDataChange
+000614DC 2C 0C 00 00                 cmpwi     r12, 0
+000614E0 41 82 00 0C                 beq       loc_614EC
+000614E4 60 83 00 01 loc_614E4:      ori       r3, r4, 1
+000614E8 48 00 00 E4                 b         loc_615CC
+000614EC 89 80 32 E6 loc_614EC:      lbz       r12, imageError
+000614F0 2C 0C 00 00                 cmpwi     r12, 0
+000614F4 41 82 00 0C                 beq       loc_61500
+000614F8 60 83 00 02                 ori       r3, r4, 2
+000614FC 48 00 00 D0                 b         loc_615CC
+00061500 89 80 33 6A loc_61500:      lbz       r12, slowFlush
+00061504 2C 0C 00 00                 cmpwi     r12, 0
+00061508 41 82 00 54                 beq       loc_6155C
+0006150C 3D 80 00 04                 lis       r12, loc_493E0@h
+00061510 61 8C 93 E0                 ori       r12, r12, loc_493E0@l
+00061514 7C 1E 60 40                 cmplw     r30, r12
+00061518 40 80 00 68                 bge       loc_61580
+0006151C 4B FC 0D 39                 bl        ccdIsOn 
+00061520 2C 03 00 00                 cmpwi     r3, 0
+00061524 41 82 00 2C                 beq       loc_61550
+00061528 89 80 32 F1                 lbz       r12, imageFlushStarted
+0006152C 2C 0C 00 00                 cmpwi     r12, 0
+00061530 41 82 00 20                 beq       loc_61550
+00061534 7D 9F F2 14                 add       r12, r31, r30
+00061538 81 60 33 44                 lwz       r11, flushStartTime
+0006153C 7D 8B 60 50                 subf      r12, r11, r12
+00061540 3D 40 00 03                 lis       r10, loc_3D090@h
+00061544 61 4A D0 90                 ori       r10, r10, loc_3D090@l
+00061548 7C 0C 50 40                 cmplw     r12, r10
+0006154C 40 80 00 34                 bge       loc_61580
+00061550 3C 60 00 0D loc_61550:      lis       r3, unk_D0004@h
+00061554 60 63 00 04                 ori       r3, r3, unk_D0004@l
+00061558 48 00 00 74                 b         loc_615CC
+0006155C 4B FC 0C F9 loc_6155C:      bl        ccdIsOn 
+00061560 2C 03 00 00                 cmpwi     r3, 0
+00061564 41 82 00 1C                 beq       loc_61580
+00061568 89 80 32 EB                 lbz       r12, imageCapturing
+0006156C 2C 0C 00 00                 cmpwi     r12, 0
+00061570 40 82 00 10                 bne       loc_61580
+00061574 3C 60 00 0D                 lis       r3, unk_D0005@h
+00061578 60 63 00 05                 ori       r3, r3, unk_D0005@l
+0006157C 48 00 00 50                 b         loc_615CC
+00061580 81 80 33 20 loc_61580:      lwz       r12, imageCaptureBuffer
+00061584 2C 0C 00 00                 cmpwi     r12, 0
+00061588 40 82 00 10                 bne       loc_61598
+0006158C 3C 60 00 0D                 lis       r3, unk_D0006@h
+00061590 60 63 00 06                 ori       r3, r3, unk_D0006@l
+00061594 48 00 00 38                 b         loc_615CC
+00061598 81 80 33 28 loc_61598:      lwz       r12, imageCaptureFile
+0006159C 2C 0C 00 00                 cmpwi     r12, 0
+000615A0 40 82 00 10                 bne       loc_615B0
+000615A4 3C 60 00 0D                 lis       r3, unk_D0007@h
+000615A8 60 63 00 07                 ori       r3, r3, unk_D0007@l
+000615AC 48 00 00 20                 b         loc_615CC
+000615B0 48 02 DD 91 loc_615B0:      bl        serialTakePictureError 
+000615B4 3B C3 00 00                 addi      r30, r3, 0
+000615B8 2C 1E 00 00                 cmpwi     r30, 0
+000615BC 41 82 00 0C                 beq       loc_615C8
+000615C0 38 7E 00 00                 addi      r3, r30, 0
+000615C4 48 00 00 08                 b         loc_615CC
+000615C8 38 60 00 00 loc_615C8:      li        r3, 0
+000615CC 83 C1 00 10 loc_615CC:      lwz       r30, 0x18+var_8(r1)
+000615D0 83 E1 00 14                 lwz       r31, 0x18+var_4(r1)
+000615D4 80 01 00 1C                 lwz       r0, 0x18+arg_4(r1)
+000615D8 7C 08 03 A6                 mtlr      r0
+000615DC 38 21 00 18                 addi      r1, r1, 0x18
+000615E0 4E 80 00 20                 blr
