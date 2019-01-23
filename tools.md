@@ -1,4 +1,4 @@
-# Tool (defective pixels remap tools, IDA plugins, profile extraction, etc)
+# Tools (defective pixels remap tools, IDA plugins, profile extraction, etc)
 
 All the sources for the below tools are [available here](sources).
 
