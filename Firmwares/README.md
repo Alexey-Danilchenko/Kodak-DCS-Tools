@@ -59,16 +59,15 @@ The overall list of enhancements over Kodak 3.3.7 last official firmware:
     120mm f/4
     150mm f/2.8
 ```
+   The file should be copied to the CF card's root directory and loaded by selecting the appropriate menu item (see below)
 
-    The file should be copied to the CF card's root directory and loaded by selecting the appropriate menu item (see below)
+   * Added menu Manual Lens Data
 
-    * Added menu Manual Lens Data
+   ![Lens](http://www.aletan.com/img/s/v-3/p2700542429-2.jpg "image3")
 
-    ![Lens](http://www.aletan.com/img/s/v-3/p2700542429-2.jpg "image3")
+   this now contains the options for loading user's manual lens list and resetting the list to the default configuration
 
-    this now contains the options for loading user's manual lens list and resetting the list to the default configuration
-
-    ![Lens](http://www.aletan.com/img/s/v-3/p2700542428-2.jpg "image4")
+   ![Lens](http://www.aletan.com/img/s/v-3/p2700542428-2.jpg "image4")
 
 
 ### [Firmware 3.4.5A.M for Proback 645 Mamiya](ProBack645/3.4.5M_Alt/PB645.BIN) 
