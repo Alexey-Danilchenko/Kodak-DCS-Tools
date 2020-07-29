@@ -20,7 +20,7 @@ Firmware [sources (patches etc) are here](ProBack645/3.4.5M) - those are all inc
 The overall list of enhancements over Kodak 3.3.7 last official firmware:
 
 * Fixed invalid "Image Capture Error" that can appear with fast camera communicatons. This was easy to cause in fast cameras like Phase One DF/DF+ and could appear occasionally in older Mamiya 645 AFD cameras. The error caused by a bug in original Kodak firmware handling image capturing state where image readout stage was not considered _busy_ time for a camera and could lead to a shot attempted whilst capturing.
-* Service mode can be enabled/disabled via public property Enable Service Mode (in Properties menu). When change the mode from service mode enabled to normal, it is recommended to reboot Pro Back by replacing the battery. This property eliminates the need for special firmware used for DCS Remap - use this instead (the Save IF File in imager menu is also present in this firmware).
+* __Service mode__ can be enabled/disabled via public property __Enable Service Mode__ (in Properties menu). When change the mode from service mode enabled to normal, it is recommended to reboot Pro Back by replacing the battery. This property eliminates the need for special firmware used for DCS Remap - use this instead (the Save IF File in imager menu is also present in this firmware).
 * The maximum allowed temperature for the sensor is configurable via Max Temp Limit public property (in Properties menu). It is by default set to the temperature that Kodak originally programmed for your ProBack type (50 degrees C for Mamiya and 65 for the Contax/Hasselblad). Setting this property to 101 degrees disables the check altogether. This allows user to control the well known "Camera too hot" error preventing the shoot or broken frames.
 * Extended range of supported datetimes for Pro Backs to year 2099.
 * Added support for Bulb mode and correct calculation of shutter speed (exposure time) in Bulb mode
@@ -28,7 +28,6 @@ The overall list of enhancements over Kodak 3.3.7 last official firmware:
 * Added 35mm equivalent focal length into EXIF ​​- this will fix problems in Adobe ACR/LR perspective correction tools.
 * Removed Scan-Shoot menu options (they are now defunct and if needed they can be brought back via showLegacyMenu property)
 * Completely rewritten communication interface with the camera to support newer digital cameras such as Mamiya AFD II/III and Phase One DF/DF+.
-* Added Soft Press CCD Active Time property - allows you to set the time period for which the sensor is activated when half-pressed to the shutter (in the original Kodak firmware this is hardcoded to 0.8 seconds).
 * Support for all newer Mamiya/Phase One cameras up until Mamiya 645/Phase One DF+ (completely rewritten communication interface with the camera to support this). The list of supported cameras is:
     * Mamiya 645 AF
     * Mamiya 645 AFD
@@ -36,7 +35,7 @@ The overall list of enhancements over Kodak 3.3.7 last official firmware:
     * Mamiya 645 AFD III / Phase One AF (requires non legacy shutter mode - see below)
     * Mamiya 645 DF / Phase One DF  (requires non legacy shutter mode - see below)
     * Mamiya 645 DF+ / Phase One DF+  (requires non legacy shutter mode - see below)
-* Added Soft Press CCD Active Time property - allows setting the time period for which the sensor is kept activated when shutter is half-pressed (Kodak firmware has this permanently set to 0.8 seconds). Kodak default of 0.8 seconds only works for older Mamiya 645 AFD camera. For all other cameras from Mamiya 645 AFD II and up it should be set to larger value according to your shooting preferences and shutter mode used. I suggest using 5 seconds as a starting point. This setting has no effect in Digital Long Latency or Digital Short Latency shutter modes
+* Added __Soft Press CCD Active Time__ property - allows setting the time period for which the sensor is kept activated when shutter is half-pressed (Kodak firmware has this permanently set to 0.8 seconds). Kodak default of 0.8 seconds only works for older Mamiya 645 AFD camera. For all other cameras from Mamiya 645 AFD II and up it should be set to larger value according to your shooting preferences and shutter mode used. I suggest using 5 seconds as a starting point. This setting has no effect in Digital Long Latency or Digital Short Latency shutter modes
 * Added configurable Shutter Operating Mode option (in main menu) to support newer Mamiya and Phase One cameras. The following modes are supported:
     * __Legacy (645 AF / AFD)__ - compatibility mode. It works just like original Kodak firmware 3.3.7 except for configurable Soft Press CCD Active Time. This mode does not work with Mamiya AFD III and newer cameras. It is also the only mode that will work with Mamiya 645 AF.
     * __Digital Long Latency__ - the sensor is activated only when the shutter is pressed and remains active for the duration of the exposure. Since the sensor activation takes time, this mode exhibits a noticeable delay and blackout when you press the shutter (0.4 seconds approximately - the delay happens in the camera body not in the back). This mode corresponds to Phase One Pnn+ backs Long Latency mode and is the only one which supports full set of modes for ProBack on Phase One DF/DF+. The battery consumption in this mode is the most optimal - the sensor is only turned on when needed.
@@ -60,6 +59,7 @@ The overall list of enhancements over Kodak 3.3.7 last official firmware:
     120mm f/4
     150mm f/2.8
 ```
+
     The file should be copied to the CF card's root directory and loaded by selecting the appropriate menu item (see below)
 
     * Added menu Manual Lens Data
