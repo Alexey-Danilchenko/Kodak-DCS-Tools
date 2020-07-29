@@ -37,21 +37,21 @@ The overall list of enhancements over Kodak 3.3.7 last official firmware:
     * Mamiya 645 DF+ / Phase One DF+  (requires non legacy shutter mode - see below)
 * Added __Soft Press CCD Active Time__ property - allows setting the time period for which the sensor is kept activated when shutter is half-pressed (Kodak firmware has this permanently set to 0.8 seconds). Kodak default of 0.8 seconds only works for older Mamiya 645 AFD camera. For all other cameras from Mamiya 645 AFD II and up it should be set to larger value according to your shooting preferences and shutter mode used. I suggest using 5 seconds as a starting point. This setting has no effect in Digital Long Latency or Digital Short Latency shutter modes
 * Added configurable Shutter Operating Mode option (in main menu) to support newer Mamiya and Phase One cameras. The following modes are supported:
-    * __Legacy (645 AF / AFD)__ - compatibility mode. It works just like original Kodak firmware 3.3.7 except for configurable Soft Press CCD Active Time. This mode does not work with Mamiya AFD III and newer cameras. It is also the only mode that will work with Mamiya 645 AF.
-    * __Digital Long Latency__ - the sensor is activated only when the shutter is pressed and remains active for the duration of the exposure. Since the sensor activation takes time, this mode exhibits a noticeable delay and blackout when you press the shutter (0.4 seconds approximately - the delay happens in the camera body not in the back). This mode corresponds to Phase One Pnn+ backs Long Latency mode and is the only one which supports full set of modes for ProBack on Phase One DF/DF+. The battery consumption in this mode is the most optimal - the sensor is only turned on when needed.
-    * __Digital Combined__ - the combined mode between Long and Short latencies. The sensor is activated when the shutter is half-pressed and remains active for a time set by Soft Press CCD Active Time or until exposing a frame (whichever comes earlier). There are no delays in shooting for sensor activation and minimal viewfinder blackout. It does not however work in timer mode (with the timer mode it will work, provided that the timer is set to be less than Soft Press CCD Active Time). The battery consumption is somewhat more than in Digital Long Latency mode - exact consumption will depend on usage patterns.
-    * __Digital Short Latency__ - the sensor is activated the first time the shutter is pressed and remains active until the camera goes to sleep (in Phase One DF/DF+ this period is configurable in the camera). There are no delays in the shooting for sensor activation. This mode corresponds more or less to Phase One P+ backs Short Latency mode. Battery consumption is the largest of all modes.
+   * __Legacy (645 AF / AFD)__ - compatibility mode. It works just like original Kodak firmware 3.3.7 except for configurable Soft Press CCD Active Time. This mode does not work with Mamiya AFD III and newer cameras. It is also the only mode that will work with Mamiya 645 AF.
+   * __Digital Long Latency__ - the sensor is activated only when the shutter is pressed and remains active for the duration of the exposure. Since the sensor activation takes time, this mode exhibits a noticeable delay and blackout when you press the shutter (0.4 seconds approximately - the delay happens in the camera body not in the back). This mode corresponds to Phase One Pnn+ backs Long Latency mode and is the only one which supports full set of modes for ProBack on Phase One DF/DF+. The battery consumption in this mode is the most optimal - the sensor is only turned on when needed.
+   * __Digital Combined__ - the combined mode between Long and Short latencies. The sensor is activated when the shutter is half-pressed and remains active for a time set by Soft Press CCD Active Time or until exposing a frame (whichever comes earlier). There are no delays in shooting for sensor activation and minimal viewfinder blackout. It does not however work in timer mode (with the timer mode it will work, provided that the timer is set to be less than Soft Press CCD Active Time). The battery consumption is somewhat more than in Digital Long Latency mode - exact consumption will depend on usage patterns.
+   * __Digital Short Latency__ - the sensor is activated the first time the shutter is pressed and remains active until the camera goes to sleep (in Phase One DF/DF+ this period is configurable in the camera). There are no delays in the shooting for sensor activation. This mode corresponds more or less to Phase One P+ backs Short Latency mode. Battery consumption is the largest of all modes.
 * Added ability to select metadata for manual lenses (that in turn ensures correct EXIF population) with loadable user-defined list of lenses. This has the following features:
 
-    * Manual lenses are selected on the main screen in a similar way to white balances - via drop-down menu (it is faster and more convenient in a field):
+   * Manual lenses are selected on the main screen in a similar way to white balances - via drop-down menu (it is faster and more convenient in a field):
 
-    ![Lens](http://www.aletan.com/img/s/v-3/p2700542434-2.jpg "image1")
+   ![Lens](http://www.aletan.com/img/s/v-3/p2700542434-2.jpg "image1")
 
-    * The data for the selected lens is always present on the status screen (in this respect the layout of the screen has changed slightly to accommodate it):
+   * The data for the selected lens is always present on the status screen (in this respect the layout of the screen has changed slightly to accommodate it):
 
-    ![Lens](http://www.aletan.com/img/s/v-3/p2700542431-2.jpg "image2")
+   ![Lens](http://www.aletan.com/img/s/v-3/p2700542431-2.jpg "image2")
 
-    * You can make up and load your own list of lenses (up to 20 in total). The list can be loaded from _lens.txt_ file that has the following textual format (example):
+   * You can make up and load your own list of lenses (up to 20 in total). The list can be loaded from _lens.txt_ file that has the following textual format (example):
 
 ```
     45mm f/3.5
