@@ -2,7 +2,7 @@
     raw_image.cpp - control class that handles display of the raw image and
                     selected defects.
 
-    Copyright 2013,2014 Alexey Danilchenko
+    Copyright 2013,2014,2020 Alexey Danilchenko
     Written by Alexey Danilchenko
 
     This program is free software; you can redistribute it and/or modify
@@ -27,9 +27,7 @@
 #include <string.h>
 #include <math.h>
 
-#if defined( Q_OS_WIN )
-#include <omp.h>
-#endif
+#include <tbb/tbb.h>
 
 #include "raw_image.h"
 
@@ -86,7 +84,7 @@ static void initStaticData()
 //
 // The curve is quite tunable and uses a number of parameters
 //    f(x) = ((1-s)*x + s*xA*(x/xA)^V)^(log(yA)/log(xA))
-// 
+//
 // Parameters:
 //     (xA,yA): turning point
 //     s: slope at ends
@@ -96,7 +94,7 @@ static void initStaticData()
 //  y = f(x)       for [0..xA)
 //  y = 1 - f(1-x) for [xA..1]
 //
-inline double f_CC(double x, double s, double V, double xA, double yA) 
+inline double f_CC(double x, double s, double V, double xA, double yA)
 {
     //  return (1/(1+exp(V*(xA-x)))-1/(1+exp(V)))/(1/(1+exp(V*(xA-1)))-1/(1+exp(V*xA)));
     return pow((1-s)*x + s*xA*pow(x/xA,V), log(yA)/log(xA));
@@ -104,11 +102,11 @@ inline double f_CC(double x, double s, double V, double xA, double yA)
 
 // Adjustments calculation for a single point -
 // applies black level, gamma, exposure, contrast
-inline uint16 adjustSinglePoint(uint16 value, 
-                                uint16 blackLevel, 
-                                double exposure, 
-                                double contrast, 
-                                double midpoint, 
+inline uint16 adjustSinglePoint(uint16 value,
+                                uint16 blackLevel,
+                                double exposure,
+                                double contrast,
+                                double midpoint,
                                 bool applyGamma,
                                 bool blackLevelsZeroed)
 {
@@ -118,9 +116,9 @@ inline uint16 adjustSinglePoint(uint16 value,
         return 0;
 
     double val = blackLevelsZeroed
-                                ? double(value)/MAX_RAW_VALUE 
+                                ? double(value)/MAX_RAW_VALUE
                                 : double(value-blackLevel)/MAX_RAW_VALUE;
-    
+
     if (val<1)
     {
 		val *= exposure;
@@ -132,10 +130,10 @@ inline uint16 adjustSinglePoint(uint16 value,
             val = 1- f_CC(1-val,s,contrast,1-midpoint,1-midpoint);
 
 		if (applyGamma)
-            val = val < g[3] 
-                        ? val*g[1] 
-                        : (g[0] 
-                            ? pow(val,g[0])*(1+g[4])-g[4]    
+            val = val < g[3]
+                        ? val*g[1]
+                        : (g[0]
+                            ? pow(val,g[0])*(1+g[4])-g[4]
                             : log(val)*g[2]+1);
     }
     else
@@ -144,12 +142,12 @@ inline uint16 adjustSinglePoint(uint16 value,
     return uint16(MAX_RAW_VALUE * val);
 }
 
-inline void extractChannel(EChannel ch, 
-                           uint16 *chValues, 
-                           uint16 *raw, 
-                           uint16 width, 
-                           uint16 row, 
-                           uint16 col, 
+inline void extractChannel(EChannel ch,
+                           uint16 *chValues,
+                           uint16 *raw,
+                           uint16 width,
+                           uint16 row,
+                           uint16 col,
                            uint16 blockSize)
 {
     uint16 lastRow = row+blockSize;
@@ -188,9 +186,9 @@ DCSRawImage::DCSRawImage(QWidget *parent)
     chnlEnabled[C_RED]    = true;
     chnlEnabled[C_BLUE]   = true;
     chnlEnabled[C_GREEN2] = true;
-    
+
     resetAllCorrections();
-    
+
     setText(tr("Open RAW file with 'Load RAW(s)...'"));
     setAlignment(Qt::AlignHCenter|Qt::AlignVCenter);
     for (int i=0; i<DCSDefects::ISO_COUNT; i++)
@@ -214,67 +212,67 @@ void DCSRawImage::generateCurves(EChannel channel)
 {
     if (channel == C_ALL)
     {
-        double contrast = contrast_*10+1;  
+        double contrast = contrast_*10+1;
         double exposure[4];
-        exposure[C_RED]    = exposure_[C_ALL]*exposure_[C_RED];  
-        exposure[C_GREEN]  = exposure_[C_ALL]*exposure_[C_GREEN];  
-        exposure[C_BLUE]   = exposure_[C_ALL]*exposure_[C_BLUE];  
-        exposure[C_GREEN2] = exposure_[C_ALL]*exposure_[C_GREEN2];  
-    
-        #pragma omp parallel for
-        for (int i=0; i<TOTAL_RAW_VALUES; i++)
+        exposure[C_RED]    = exposure_[C_ALL]*exposure_[C_RED];
+        exposure[C_GREEN]  = exposure_[C_ALL]*exposure_[C_GREEN];
+        exposure[C_BLUE]   = exposure_[C_ALL]*exposure_[C_BLUE];
+        exposure[C_GREEN2] = exposure_[C_ALL]*exposure_[C_GREEN2];
+
+        tbb::parallel_for(size_t(0), size_t(TOTAL_RAW_VALUES),
+        [&](size_t i)
         {
             chnlCurves_[C_RED][i] = adjustSinglePoint(
-                                             i, 
+                                             i,
                                              blckLevels_[C_RED],
-                                             exposure[C_RED], 
-                                             contrast, 
-                                             contrMidpoint_, 
+                                             exposure[C_RED],
+                                             contrast,
+                                             contrMidpoint_,
                                              applyGamma_,
                                              blackLevelsZeroed_);
             chnlCurves_[C_GREEN][i] = adjustSinglePoint(
-                                             i, 
+                                             i,
                                              blckLevels_[C_GREEN],
-                                             exposure[C_GREEN], 
-                                             contrast, 
-                                             contrMidpoint_, 
+                                             exposure[C_GREEN],
+                                             contrast,
+                                             contrMidpoint_,
                                              applyGamma_,
                                              blackLevelsZeroed_);
             chnlCurves_[C_BLUE][i] = adjustSinglePoint(
-                                             i, 
+                                             i,
                                              blckLevels_[C_BLUE],
-                                             exposure[C_BLUE], 
-                                             contrast, 
-                                             contrMidpoint_, 
+                                             exposure[C_BLUE],
+                                             contrast,
+                                             contrMidpoint_,
                                              applyGamma_,
                                              blackLevelsZeroed_);
             chnlCurves_[C_GREEN2][i] = adjustSinglePoint(
-                                             i, 
+                                             i,
                                              blckLevels_[C_GREEN2],
-                                             exposure[C_GREEN2], 
-                                             contrast, 
-                                             contrMidpoint_, 
+                                             exposure[C_GREEN2],
+                                             contrast,
+                                             contrMidpoint_,
                                              applyGamma_,
                                              blackLevelsZeroed_);
-        }
+        });
     }
     else
     {
         uint16 *chCurve = chnlCurves_[channel];
-        double contrast = contrast_*10+1;  
-        double exposure = exposure_[C_ALL]*exposure_[channel];  
+        double contrast = contrast_*10+1;
+        double exposure = exposure_[C_ALL]*exposure_[channel];
 
-        #pragma omp parallel for
-        for (int i=0; i<TOTAL_RAW_VALUES; i++)
+        tbb::parallel_for(size_t(0), size_t(TOTAL_RAW_VALUES),
+        [&](size_t i)
         {
-            chCurve[i] = adjustSinglePoint(i, 
+            chCurve[i] = adjustSinglePoint(i,
                                            blckLevels_[channel],
-                                           exposure, 
-                                           contrast, 
-                                           contrMidpoint_, 
+                                           exposure,
+                                           contrast,
+                                           contrMidpoint_,
                                            applyGamma_,
                                            blackLevelsZeroed_);
-        }
+        });
     }
 }
 
@@ -307,14 +305,14 @@ void DCSRawImage::paintEvent(QPaintEvent *p)
 
         // adjust for cases where image is "fit to window"
         exposedRect.adjust(pX,pY,pX,pY);
-        
+
         // the adjust is to account for half points along edges
-        exposedRect = painter.matrix().inverted().mapRect(exposedRect).adjusted(-1, -1, 1, 1);
-        imageRect   = painter.matrix().inverted().mapRect(imageRect).adjusted(-1, -1, 1, 1);
+        exposedRect = painter.worldTransform().inverted().mapRect(exposedRect).adjusted(-1, -1, 1, 1);
+        imageRect   = painter.worldTransform().inverted().mapRect(imageRect).adjusted(-1, -1, 1, 1);
 
         if (rawData_)
             painter.drawPixmap(exposedRect, rawPixmap_, imageRect);
-        
+
         if (defects_)
         {
             painter.setPen(pen);
@@ -325,7 +323,7 @@ void DCSRawImage::paintEvent(QPaintEvent *p)
                 painter.setBackgroundMode(Qt::OpaqueMode);
                 QBrush bgrBrush(Qt::black);
                 painter.setBackground(bgrBrush);
-                
+
             }
             painter.drawPixmap(exposedRect, defBitmap_, imageRect);
         }
@@ -335,7 +333,7 @@ void DCSRawImage::paintEvent(QPaintEvent *p)
 void DCSRawImage::resizeEvent(QResizeEvent *event)
 {
     QLabel::resizeEvent(event);
-    
+
     // calculate point offsets
     calcViewpointOffsets();
 }
@@ -346,9 +344,9 @@ void DCSRawImage::mouseMoveEvent(QMouseEvent * e)
     {
         uint16 col = uint16(double(e->x()-pX)/scale_);
         uint16 row = uint16(double(e->y()-pY)/scale_);
-        
+
         if (col<width_ && row<height_)
-            emit imageCursorPosUpdated(row, col);
+            Q_EMIT imageCursorPosUpdated(row, col);
     }
 }
 
@@ -358,14 +356,14 @@ void DCSRawImage::mousePressEvent(QMouseEvent * e)
     {
         uint16 col = uint16(double(e->x()-pX)/scale_);
         uint16 row = uint16(double(e->y()-pY)/scale_);
-        
+
         if (col>=width_ || row>=height_)
             return;
-            
+
         if (defSwapRowCol_)
         {
-            // Update col and swap row and col 
-            //   for SLR/n/c sensor real orientation should be 
+            // Update col and swap row and col
+            //   for SLR/n/c sensor real orientation should be
             //   turned 90 degrees counter clockwise
             swap16(row, col);
             row = width_-row-1;
@@ -376,24 +374,24 @@ void DCSRawImage::mousePressEvent(QMouseEvent * e)
         if (enablePoints_ && curDefSetMode_==M_POINT)
         {
             bool isMarked = defects_->isDefectivePoint(row,col,isoCode_);
-            if (updated=defects_->markPoint(!isMarked,row,col,isoCode_))
+            if ((updated=defects_->markPoint(!isMarked,row,col,isoCode_)))
                 updateDefects();
         }
         else if (enableRows_ && curDefSetMode_==M_ROW)
         {
             bool isMarked = defects_->isDefectiveRow(row,isoCode_);
-            if (updated=defects_->markRow(!isMarked,row,isoCode_))
+            if ((updated=defects_->markRow(!isMarked,row,isoCode_)))
                 updateDefects();
         }
         else if (enableCols_ && curDefSetMode_==M_COL)
         {
             bool isMarked = defects_->isDefectiveCol(col,isoCode_);
-            if (updated=defects_->markCol(!isMarked,col,isoCode_))
+            if ((updated=defects_->markCol(!isMarked,col,isoCode_)))
                 updateDefects();
         }
-        
+
         if (updated)
-            emit defectsChanged();
+            Q_EMIT defectsChanged();
     }
 }
 
@@ -410,7 +408,7 @@ void DCSRawImage::setScale(double scale)
     }
 }
 
-void DCSRawImage::setDefectSettingMode(EDefectMode mode) 
+void DCSRawImage::setDefectSettingMode(EDefectMode mode)
 {
     if (defects_)
     {
@@ -429,7 +427,7 @@ void DCSRawImage::setDefectSettingMode(EDefectMode mode)
     else
         setCursor(Qt::ArrowCursor);
 }
-    
+
 void DCSRawImage::setRawRenderingType(ERawRendering renderingType)
 {
     if (renderingType_ != renderingType)
@@ -479,7 +477,7 @@ void DCSRawImage::resetAllCorrections()
     generateCurves();
     updateRaw();
     repaint();
-}    
+}
 
 // exposure corrections
 void DCSRawImage::setExpCorr(double expCorr, EChannel channel)
@@ -489,7 +487,7 @@ void DCSRawImage::setExpCorr(double expCorr, EChannel channel)
     updateRaw();
     repaint();
 }
-    
+
 // contrast corrections
 void DCSRawImage::setContrCorr(double contrast)
 {
@@ -525,7 +523,7 @@ void DCSRawImage::setWB(double* wb)
     exposure_[C_GREEN] = wb[C_GREEN];
     exposure_[C_BLUE] = wb[C_BLUE];
     exposure_[C_GREEN2] = wb[C_GREEN2];
-    
+
     generateCurves();
     updateRaw();
     repaint();
@@ -537,7 +535,7 @@ void DCSRawImage::enableChannel(bool enable, EChannel channel)
     if (channel!=C_ALL)
     {
         chnlEnabled[channel] = enable;
-        
+
         updateRaw();
         repaint();
     }
@@ -573,7 +571,7 @@ void DCSRawImage::setRawImage(uint16* data, uint16 width, uint16 height, uint16 
 
     rawData_ = new uint16[height_*width_];
     rawData8_ = new byte[height_*width_*3];
-    
+
     // copy the raw data
     memcpy(rawData_, data, height_*width_*sizeof(uint16));
     updateRaw();
@@ -601,7 +599,7 @@ void DCSRawImage::clearRawImage()
     rawData_ = 0;
     delete[] rawData8_;
     rawData8_ = 0;
- 
+
     repaint();
 }
 
@@ -609,7 +607,7 @@ void DCSRawImage::clearDefects()
 {
     defects_ = 0;
     defSwapRowCol_ = false;
-    
+
     if (!rawData_)
     {
         width_ = 0;
@@ -643,7 +641,7 @@ void DCSRawImage::setIsoCode(uint16 isoCode)
 void DCSRawImage::setDefects(DCSDefects* defects, double scale)
 {
     defects_ = defects;
-    
+
     defSwapRowCol_ = defects_->getMaxRows() > defects_->getMaxCols();
 
     // regenerate bitmap
@@ -651,10 +649,10 @@ void DCSRawImage::setDefects(DCSDefects* defects, double scale)
     {
         width_  = defSwapRowCol_ ? defects_->getMaxRows() : defects_->getMaxCols();
         height_ = defSwapRowCol_ ? defects_->getMaxCols() : defects_->getMaxRows();
-        
+
         defBitmap_ = QBitmap(width_, height_);
     }
-    
+
     // update bitmap
     updateDefectsBitmap();
 
@@ -672,7 +670,7 @@ void DCSRawImage::updateDefectsBitmap()
 {
     if (pauseUpdates_ || !defects_)
         return;
-    
+
     defPointsCount_ = 0;
     defRowsCount_ = 0;
     defColsCount_ = 0;
@@ -683,14 +681,14 @@ void DCSRawImage::updateDefectsBitmap()
     // update bitmap
     int maxCols = defects_->getMaxCols();
     int maxRows = defects_->getMaxRows();
-    
+
     defBitmap_.clear();
-    
+
     QPainter painter(&defBitmap_);
     QPen pen(Qt::color1);
     painter.setPen(pen);
 
-    // For SLR/n/c sensor real orientation should be turned 
+    // For SLR/n/c sensor real orientation should be turned
     // 90 degrees counter clockwise - hence the row calculations
 
     // paint point defects
@@ -698,7 +696,7 @@ void DCSRawImage::updateDefectsBitmap()
     {
         TDefPointVec::const_iterator pointIt = defects_->getDefPoints().begin();
         TDefPointVec::const_iterator pointEnd = defects_->getDefPoints().end();
-    
+
         while (pointIt != pointEnd)
         {
             if (pointIt->isoCode < DCSDefects::ISO_COUNT)
@@ -740,7 +738,7 @@ void DCSRawImage::updateDefectsBitmap()
             ++colIt;
         }
     }
-    
+
     // paint row defects
     if (enableRows_)
     {
@@ -779,7 +777,7 @@ bool DCSRawImage::performAvgAutoRemap(double* avgValues, uint16* thresholds)
         {
             byte channel = (row&1)<<1 | col&1;
             uint16 threshold = thresholds[channel];
-            if (threshold>0 && 
+            if (threshold>0 &&
                 fabs(avgValues[channel]-rawData_[row*width_+col])>threshold)
             {
                 uint16 rw = defSwapRowCol_ ? (width_-col-1) : row;
@@ -788,15 +786,15 @@ bool DCSRawImage::performAvgAutoRemap(double* avgValues, uint16* thresholds)
                     remapped = true;
             }
         }
-    
+
     if (remapped)
         updateDefects();
 
     return remapped;
 }
 
-bool DCSRawImage::performAdaptiveAutoRemap(uint16* thresholds, 
-                                           uint16 blockSize, 
+bool DCSRawImage::performAdaptiveAutoRemap(uint16* thresholds,
+                                           uint16 blockSize,
                                            bool countOnly,
                                            EChannel ch,
                                            uint32 *counts)
@@ -806,7 +804,7 @@ bool DCSRawImage::performAdaptiveAutoRemap(uint16* thresholds,
 
     if (!rawData_)
         return false;
-    
+
     if (!countOnly && !defects_)
         return false;
 
@@ -814,13 +812,13 @@ bool DCSRawImage::performAdaptiveAutoRemap(uint16* thresholds,
         return false;
 
     bool remapped = false;
-    
+
     uint16 chBlockCount = (blockSize*blockSize)>>2;
     //uint16 *values = new uint16[chBlockCount+4];
     uint16 median[4];
-    
-    // loop through blocks claculating median for all channels in a block and 
-    // then marking the defective pixels as those that exceed thresholds 
+
+    // loop through blocks claculating median for all channels in a block and
+    // then marking the defective pixels as those that exceed thresholds
     // against median
     for (int y=0; y<height_; y+=blockSize)
     {
@@ -833,7 +831,7 @@ bool DCSRawImage::performAdaptiveAutoRemap(uint16* thresholds,
             uint16 col = uint16(x);
             if (col+blockSize>width_)
                 col = width_-blockSize;
-            
+
             if (ch == C_ALL)
             {
                 median[C_RED]=median[C_GREEN]=median[C_BLUE]=median[C_GREEN2]=0;
@@ -852,8 +850,8 @@ bool DCSRawImage::performAdaptiveAutoRemap(uint16* thresholds,
                 extractChannel(ch, values, rawData_, width_, row, col, blockSize);
                 median[ch] = calc_median(values, chBlockCount);
             }
-    
-            // walk the block and mark the defects    
+
+            // walk the block and mark the defects
             uint16 lastRow = row+blockSize;
             uint16 lastCol = col+blockSize;
             for (uint16 rw=row; rw<lastRow; rw++)
@@ -864,7 +862,7 @@ bool DCSRawImage::performAdaptiveAutoRemap(uint16* thresholds,
                         continue;
 
                     uint16 threshold = thresholds[channel];
-                    if (threshold>0 && 
+                    if (threshold>0 &&
                         abs(median[channel]-rawData_[rw*width_+cl])>threshold)
                     {
                         if (countOnly)
@@ -950,16 +948,20 @@ void DCSRawImage::eraseEnabledDefects()
             defects_->erasePoints(!enablePreRemap_);
 
         if (enableCols_)
+        {
             if (defSwapRowCol_)
                 defects_->eraseRows(!enablePreRemap_);
             else
                 defects_->eraseCols(!enablePreRemap_);
+        }
 
         if (enableRows_)
+        {
             if (defSwapRowCol_)
                 defects_->eraseCols(!enablePreRemap_);
             else
                 defects_->eraseRows(!enablePreRemap_);
+        }
 
         updateDefects();
     }
@@ -971,7 +973,7 @@ void DCSRawImage::updateRaw()
         return;
 
     #define TO_8_BIT(val) from12To8[(val)]
-    
+
     if (rawData_ && rawData8_)
     {
         // bayer layout is
@@ -1073,7 +1075,7 @@ void DCSRawImage::updateRaw()
                     }
                 }
         }
-    
+
         // update pixmap
         QImage image(rawData8_, width_, height_, 3*width_, QImage::Format_RGB888);
         rawPixmap_.convertFromImage(image);

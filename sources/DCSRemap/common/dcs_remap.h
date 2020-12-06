@@ -75,7 +75,7 @@ class SpinBoxSliderIntegrator : public QObject
         {
             // only emit if value has changed
             value_ = spinBox_->value();
-            emit valueChanged(value_);
+            Q_EMIT valueChanged(value_);
         }
     }
 
@@ -101,7 +101,7 @@ public:
         connect(slider_, SIGNAL(valueChanged(int)), this, SLOT(sliderValueChanged(int)));
         connect(slider_, SIGNAL(sliderMoved(int)), this, SLOT(sliderValueChanged(int)));
         connect(spinBox_, SIGNAL(valueChanged(double)), this, SLOT(spinboxValueChanged(double)));
-        
+
         value_ = spinBox_->value();
 
         if (resetButton)
@@ -119,7 +119,7 @@ public:
         spinBox_->setValue(v);
     }
 
-public slots:
+public Q_SLOTS:
 
     void spinboxValueChanged(double value)
     {
@@ -154,7 +154,7 @@ public slots:
         spinBox_->setValue(initValue_);
     }
 
-signals:
+Q_SIGNALS:
     void valueChanged(double value);
 };
 
@@ -165,7 +165,7 @@ signals:
 class DCSRemap : public QMainWindow
 {
 	Q_OBJECT
-    
+
     // member variables
     Ui::DCSRemap ui;
 
@@ -174,18 +174,18 @@ class DCSRemap : public QMainWindow
     DCSImagerFile *imagerFile;
     DCSDefects    *defects;
     bool unsavedChanges;
-    
+
     // Defects colour
     QColor defectColour;
 
     SpinBoxSliderIntegrator* expControls[5];
 
     SpinBoxSliderIntegrator* wbControls[3];
-    
+
     SpinBoxSliderIntegrator* wbExpControl;
 
     double camWB[Illuminants_length][4];
-    
+
     // raw per-channel stats
     uint16 maxVal[4];
     uint16 minVal[4];
@@ -193,26 +193,26 @@ class DCSRemap : public QMainWindow
 
     uint16 threshold[4];
     uint32 thrStats[4];
-    
+
     QString curRawPath;
     QString rawFileName;
     QString curIFPath;
     QString ifFileName;
     QString imagerSerial;
-    
+
     QIcon tickIcon;
     QIcon tickEmptyIcon;
-    
+
     double scale;
     int rawIsoSpeed;
-    
+
     int language;
     bool lockModeChange;
     bool lockThresChange;
     bool overrideCursorSet;
 
 public:
-	DCSRemap(QWidget *parent = 0, Qt::WindowFlags flags = 0);
+	DCSRemap();
 	~DCSRemap();
 
 private:
@@ -224,11 +224,11 @@ private:
     int showMessage(const QString& title,
                     const QString& msgText,
                     const QString& informativeText=tr(""),
-                    QMessageBox::Icon icon=QMessageBox::Critical, 
-                    QMessageBox::StandardButtons buttons = QMessageBox::NoButton, 
+                    QMessageBox::Icon icon=QMessageBox::Critical,
+                    QMessageBox::StandardButtons buttons = QMessageBox::NoButton,
                     QMessageBox::StandardButton defButton = QMessageBox::NoButton);
-                    
-    void setOverrideCursor(const QCursor& cursor) { 
+
+    void setOverrideCursor(const QCursor& cursor) {
         if (!overrideCursorSet)
         {
             overrideCursorSet = true;
@@ -237,14 +237,14 @@ private:
         }
     }
 
-    void restoreOverrideCursor() { 
+    void restoreOverrideCursor() {
         if (overrideCursorSet)
         {
             overrideCursorSet = false;
             QApplication::restoreOverrideCursor();
         }
-    } 
-                     
+    }
+
     void processRawData();
     void resizeEvent(QResizeEvent *event);
     void updateRawStats();
@@ -256,10 +256,11 @@ private:
     int  loadRCF(uint16* data, uint16 &width, uint16 &height);
     bool checkUnsavedAndSave();
     bool accepLicense();
-    
+
     void init();
 
-private slots:
+private Q_SLOTS:
+
     void setRussianLanguage();
     void setEnglishLanguage();
 
@@ -283,7 +284,7 @@ private slots:
     void zoomIn();
     void zoomOut();
     void setZoomLevel(int cbIndex);
-    
+
     void gammaChecked(int state);
     void blackLevelZeroed(int state);
 
@@ -291,7 +292,7 @@ private slots:
     void greenChecked(int state);
     void blueChecked(int state);
     void green2Checked(int state);
-    
+
     void showPreRemapChecked(int state);
     void showPointsChecked(int state);
     void showRowsChecked(int state);
@@ -303,10 +304,10 @@ private slots:
     void adjustContrastMidpoint(int value);
     void adjustExposure(double value);
     void adjustBlack(int value);
-    
+
     void adaptiveRemapModeChecked(int state);
     void adjustAdaptiveBlockSize(int value);
-    
+
     void adjustThreshold(int value);
 
     void pointDefectModeChecked(bool checked);

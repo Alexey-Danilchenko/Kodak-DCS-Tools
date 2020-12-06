@@ -1,5 +1,5 @@
 /*
-    raw_image.h - control class that handles display of the raw image and 
+    raw_image.h - control class that handles display of the raw image and
                   selected defects.
 
     Copyright 2013,2014 Alexey Danilchenko
@@ -31,7 +31,7 @@
 #include <QPoint>
 #include <QSize>
 
-#include <defects.h>
+#include "defects.h"
 
 #define MAX_RAW_VALUE     4095
 #define TOTAL_RAW_VALUES  MAX_RAW_VALUE+1
@@ -70,16 +70,16 @@ inline int roundToInt(float x){
 inline uint16 calc_median(uint16 *stack, int count)
 {
     int middle = count>>1;
-    
+
     std::nth_element<uint16*>(stack, stack+middle, stack+count);
-    
+
     if (count&1)
         return stack[middle];
-   
-    // even number - get the other one and average   
+
+    // even number - get the other one and average
     int result = stack[middle];
     std::nth_element<uint16*>(stack, stack+middle-1, stack+count);
-    
+
     return (result+stack[middle-1]+1)>>1;
 }
 
@@ -92,20 +92,20 @@ class DCSRawImage : public QLabel
 
     QPixmap rawPixmap_;
     QBitmap defBitmap_;
-    
+
     QColor defColour_;
-    
+
     uint16 width_;
     uint16 height_;
-    
+
     uint16 isoCode_;
     bool   defectsForIso_[DCSDefects::ISO_COUNT];
-    
+
     uint16* rawData_;
     byte*   rawData8_;
-    
+
     ERawRendering renderingType_;
-    
+
     DCSDefects* defects_;
     bool defSwapRowCol_;
     bool enablePreRemap_;
@@ -116,17 +116,17 @@ class DCSRawImage : public QLabel
     int defPointsCount_;
     int defColsCount_;
     int defRowsCount_;
-    
+
     bool pauseUpdates_;
-    
+
     double scale_;
-    
+
     // displaying options
     int pX, pY;
-    
+
     // channel curves
     uint16 chnlCurves_[4][TOTAL_RAW_VALUES];
-    
+
     // adjustment parameters
     double contrast_;
     double contrMidpoint_;
@@ -134,15 +134,15 @@ class DCSRawImage : public QLabel
     uint16 blckLevels_[4];
     bool blackLevelsZeroed_;
     bool applyGamma_;
-    
+
     // per channel enablement
     bool chnlEnabled[4];
-    
+
 public:
 
     DCSRawImage(QWidget* parent = 0);
     ~DCSRawImage();
-    
+
     void retranslate();
 
     inline uint16 getRawValue(uint16 row, uint16 col) {
@@ -178,19 +178,19 @@ public:
     void setRawRenderingType(ERawRendering renderingType);
 
     void pauseUpdates(bool pauseUpdates);
-    
+
     void setScale(double scale);
-    
+
     void enableGammaCorrection(bool enable);
 
     void enableBlackLevelZeroed(bool enable);
-    
+
     // reset for exposure and contrast corrections
     void resetAllCorrections();
-    
+
     // exposure corrections
     void setExpCorr(double expCorr, EChannel channel = C_ALL);
-    
+
     // contrast corrections
     void setContrCorr(double contrast);
     void setContrMidpoint(double ctrsMidpoint);
@@ -200,21 +200,21 @@ public:
 
     // enable/disable channels
     void enableChannel(bool enable, EChannel channel = C_ALL);
-    
+
     // set expo corrections to specified WB
     void setWB(double* wb);
-    
+
     // attempts to autoremap points
     bool performAvgAutoRemap(double* avgValues, uint16* thresholds);
-    bool performAdaptiveAutoRemap(uint16* thresholds, 
-                                  uint16 blockSize, 
-                                  bool countOnly = false, 
+    bool performAdaptiveAutoRemap(uint16* thresholds,
+                                  uint16 blockSize,
+                                  bool countOnly = false,
                                   EChannel ch = C_ALL,
                                   uint32 *counts = 0);
-    
+
     // erase enabled defects
     void eraseEnabledDefects();
-    
+
     // getters
     uint16 getRawWidth() { return width_; }
     uint16 getRawHeight() { return height_; }
@@ -223,15 +223,15 @@ public:
     int getDefectRows() { return defSwapRowCol_ ? defColsCount_ : defRowsCount_; }
     int getDefectCols() { return defSwapRowCol_ ? defRowsCount_ : defColsCount_; }
     uint16 getIsoCode() { return isoCode_; }
-    bool hasDefectsForIso(uint16 isoCode) { 
-        return (isoCode<DCSDefects::ISO_COUNT) ? defectsForIso_[isoCode] : false; 
+    bool hasDefectsForIso(uint16 isoCode) {
+        return (isoCode<DCSDefects::ISO_COUNT) ? defectsForIso_[isoCode] : false;
     }
     ERawRendering getRawRenderingType() { return renderingType_; }
-    
+
     // size hint
     QSize sizeHint() const;
 
-signals:
+Q_SIGNALS:
     void imageCursorPosUpdated(uint16 row, uint16 col);
     void defectsChanged();
 
@@ -247,7 +247,7 @@ private:
     inline uint16 getRawData(byte ch, uint16 row, uint16 col) {
         return chnlCurves_[ch][rawData_[row*width_+col]];
     }
-    
+
     void calcViewpointOffsets() {
         pX=pY=0;
         if (width() >= width_*scale_)

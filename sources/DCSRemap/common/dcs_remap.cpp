@@ -1,7 +1,7 @@
 /*
     dcs_remap.cpp - mainform class to deal with QT application
 
-    Copyright 2013,2014 Alexey Danilchenko
+    Copyright 2013,2014,2020 Alexey Danilchenko
     Written by Alexey Danilchenko
 
     This program is free software; you can redistribute it and/or modify
@@ -45,6 +45,8 @@
 #include <algorithm>
 #include <memory>
 
+#include <tbb/tbb.h>
+
 #include "dcs_remap.h"
 #include "about.h"
 #include "ifdata.h"
@@ -71,15 +73,14 @@
 
 #if defined( Q_OS_MACX )
 #define BUNDLE_ID CFSTR("DCSRemap")
-#if QT_VERSION >= 0x050000
+#if defined(_QT_STATIC_) && QT_VERSION >= 0x050000
 #include <QtPlugin>
 Q_IMPORT_PLUGIN (QCocoaIntegrationPlugin);
 #endif
 #endif
 
 #if defined( Q_OS_WIN )
-#include <omp.h>
-#if defined(_QT_STATIC_) && QT_VERSION >= 0x050000 
+#if defined(_QT_STATIC_) && QT_VERSION >= 0x050000
 #include <QtPlugin>
 Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 #endif
@@ -90,8 +91,8 @@ Q_IMPORT_PLUGIN (QWindowsIntegrationPlugin);
 // --------------------------------------------------------
 
 // list of scale levels in percent
-static uint16 zoomLevelList[] = { 
-    5, 10, 15, 20, 25, 30, 40, 50, 60, 75, 
+static uint16 zoomLevelList[] = {
+    5, 10, 15, 20, 25, 30, 40, 50, 60, 75,
     100, 125, 150, 200, 300, 500, 700, 1000
 };
 
@@ -104,7 +105,7 @@ static uint16 zoomLevelListFull = 0;
 static void initStaticData()
 {
     static bool needInit = true;
-    
+
     if (needInit)
     {
         for (int i=0; i<zoomLevelListSize; i++)
@@ -113,16 +114,16 @@ static void initStaticData()
                 zoomLevelListFull = i+1;
                 break;
             }
-            
+
         needInit = false;
-    }    
+    }
 }
 
 static double fitScale(uint16 imgWidth, uint16 imgHeight, QWidget &w)
 {
     if (imgWidth==0 || imgHeight==0)
         return 1.0;
-        
+
     double scale = (double)w.width()/imgWidth;
     double scaleH = (double)w.height()/imgHeight;
 
@@ -133,7 +134,7 @@ static double fitScale(uint16 imgWidth, uint16 imgHeight, QWidget &w)
     int i=0;
     while (i<zoomLevelListSize && (scale*100) >= zoomLevelList[i])
         ++i;
-    
+
     if (i>0)
         --i;
 
@@ -168,8 +169,8 @@ inline uint16 blockSize(int index) { return uint16((index<<1)+4); }
 // --------------------------------------------------------
 //    DCSRemap class
 // --------------------------------------------------------
-DCSRemap::DCSRemap(QWidget *parent, Qt::WindowFlags flags)
-    : QMainWindow(parent, flags), scale(1), 
+DCSRemap::DCSRemap()
+    : QMainWindow(), scale(1),
       lockModeChange(false), lockThresChange(false),
       unsavedChanges(false), overrideCursorSet(false),
       imagerFile(0), defects(0), rawIsoSpeed(0)
@@ -182,18 +183,18 @@ DCSRemap::DCSRemap(QWidget *parent, Qt::WindowFlags flags)
 
     ui.setupUi(this);
     ui.btnZoomFit->setEnabled(false);
-    
+
     // load icon
     tickIcon.addFile(QStringLiteral(":/MainForm/images/tick_small.png"));
     tickEmptyIcon.addFile(QStringLiteral(":/MainForm/images/tick_small_empty.png"));
-    
+
     // integrators
     expControls[C_ALL] = new SpinBoxSliderIntegrator(ui.expAllSpin, ui.expAll);
     expControls[C_RED] = new SpinBoxSliderIntegrator(ui.expRedSpin, ui.expRed);
     expControls[C_GREEN] = new SpinBoxSliderIntegrator(ui.expGreenSpin, ui.expGreen);
     expControls[C_BLUE] = new SpinBoxSliderIntegrator(ui.expBlueSpin, ui.expBlue);
     expControls[C_GREEN2] = new SpinBoxSliderIntegrator(ui.expGreen2Spin, ui.expGreen2);
-    
+
     // buttons
     connect(ui.btnRussian, SIGNAL(clicked()), this, SLOT(setRussianLanguage()));
     connect(ui.btnEnglish, SIGNAL(clicked()), this, SLOT(setEnglishLanguage()));
@@ -211,7 +212,7 @@ DCSRemap::DCSRemap(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.btnWB, SIGNAL(clicked()), this, SLOT(setWB()));
     connect(ui.btnDefColour, SIGNAL(clicked()), this, SLOT(changeDefColour()));
     connect(ui.btnDetectFromRaw, SIGNAL(clicked()), this, SLOT(calculateThresholds()));
-    
+
     // comboboxes
     connect(ui.cboxZoomLevel, SIGNAL(currentIndexChanged(int)), this, SLOT(setZoomLevel(int)));
     connect(ui.cboxISO, SIGNAL(currentIndexChanged(int)), this, SLOT(setIso(int)));
@@ -226,18 +227,18 @@ DCSRemap::DCSRemap(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.spbThrGreen, SIGNAL(valueChanged(int)), this, SLOT(adjustThreshold(int)));
     connect(ui.spbThrBlue, SIGNAL(valueChanged(int)), this, SLOT(adjustThreshold(int)));
     connect(ui.spbThrGreen2, SIGNAL(valueChanged(int)), this, SLOT(adjustThreshold(int)));
-            
+
     // exposure controls
     connect(expControls[C_ALL], SIGNAL(valueChanged(double)), this, SLOT(adjustExposure(double)));
     connect(expControls[C_RED], SIGNAL(valueChanged(double)), this, SLOT(adjustExposure(double)));
     connect(expControls[C_GREEN], SIGNAL(valueChanged(double)), this, SLOT(adjustExposure(double)));
-    connect(expControls[C_BLUE], SIGNAL(valueChanged(double)), this, SLOT(adjustExposure(double)));    
+    connect(expControls[C_BLUE], SIGNAL(valueChanged(double)), this, SLOT(adjustExposure(double)));
     connect(expControls[C_GREEN2], SIGNAL(valueChanged(double)), this, SLOT(adjustExposure(double)));
-    
+
     // sliders
     connect(ui.sldrContrast, SIGNAL(valueChanged(int)), this, SLOT(adjustContrast(int)));
     connect(ui.sldrContrastPoint, SIGNAL(valueChanged(int)), this, SLOT(adjustContrastMidpoint(int)));
-    
+
     // checkboxes
     connect(ui.checkGamma, SIGNAL(stateChanged(int)), this, SLOT(gammaChecked(int)));
     connect(ui.checkBlackZeroed, SIGNAL(stateChanged(int)), this, SLOT(blackLevelZeroed(int)));
@@ -258,7 +259,7 @@ DCSRemap::DCSRemap(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.btnColMode, SIGNAL(toggled(bool)), this, SLOT(colDefectModeChecked(bool)));
     connect(ui.btnPointMode, SIGNAL(toggled(bool)), this, SLOT(pointDefectModeChecked(bool)));
     connect(ui.btnRowMode, SIGNAL(toggled(bool)), this, SLOT(rowDefectModeChecked(bool)));
-    
+
     // actions
     connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(openImagerFile()));
     connect(ui.actionSave, SIGNAL(triggered()), this, SLOT(saveImagerFile()));
@@ -268,21 +269,21 @@ DCSRemap::DCSRemap(QWidget *parent, Qt::WindowFlags flags)
     connect(ui.actionHelp_web, SIGNAL(triggered()), this, SLOT(help()));
     connect(ui.actionAbout, SIGNAL(triggered()), this, SLOT(about()));
     connect(ui.actionQuit, SIGNAL(triggered()), this, SLOT(close()));
-    
+
     setWindowTitle(MAIN_TITLE);
 
     // raw image events
-    connect(ui.rawImage, SIGNAL(imageCursorPosUpdated(uint16, uint16)), 
+    connect(ui.rawImage, SIGNAL(imageCursorPosUpdated(uint16, uint16)),
             this,        SLOT(updateStatus(uint16, uint16)));
     connect(ui.rawImage, SIGNAL(defectsChanged()), this, SLOT(defectsChanged()));
 
-    // init data    
+    // init data
     init();
 
     ui.rawImage->setRawRenderingType(R_RGB);
-    
+
     defectColour = QColor(255, 85, 0, 255);
-    
+
     // read settings and position the window
     QSettings settings(APP_NAME, STATE_SECTION);
     QPoint pos = settings.value("Position").toPoint();
@@ -292,21 +293,21 @@ DCSRemap::DCSRemap(QWidget *parent, Qt::WindowFlags flags)
     defectColour = settings.value("Defect Colour", defectColour).value<QColor>();
     ui.cbAdaptiveBlock->setCurrentIndex(settings.value("Adaptive Block", 14).toInt());
     ui.chkAdaptiveRemap->setCheckState(Qt::CheckState(settings.value("Adaptive Remap", Qt::Unchecked).toInt()));
-    
+
     int savedLanguage = settings.value("Language", language).toInt();
-    
+
     if (savedLanguage != language)
     {
         language = savedLanguage;
         retranslate();
     }
-    
+
     if (!pos.isNull())
         move(pos);
-        
+
     if (!size.isEmpty())
         resize(size);
-        
+
     if (settings.value("Maximized").toBool())
         setWindowState(windowState() | Qt::WindowMaximized);
 
@@ -317,7 +318,6 @@ DCSRemap::DCSRemap(QWidget *parent, Qt::WindowFlags flags)
     updateWidgets();
 }
 
-
 DCSRemap::~DCSRemap()
 {
     delete expControls[C_ALL];
@@ -325,23 +325,23 @@ DCSRemap::~DCSRemap()
     delete expControls[C_GREEN];
     delete expControls[C_BLUE];
     delete expControls[C_GREEN2];
-    
+
     delete defects;
     delete imagerFile;
 }
-    
+
 bool DCSRemap::checkUnsavedAndSave()
 {
     bool okToProceed = true;
     if (unsavedChanges && defects->hasDefects())
     {
         int dlgRes = showMessage(
-                        tr("Warning"), 
+                        tr("Warning"),
                         tr("The remap has been modified!"),
                         tr("Do you want to save your changes?"),
                         QMessageBox::Question,
                         QMessageBox::Save
-                            | QMessageBox::Discard 
+                            | QMessageBox::Discard
                             | QMessageBox::Cancel);
 
         if (dlgRes == QMessageBox::Save)
@@ -352,14 +352,14 @@ bool DCSRemap::checkUnsavedAndSave()
         if (okToProceed)
             unsavedChanges = false;
     }
-    
+
     return okToProceed;
 }
 
 void DCSRemap::closeEvent(QCloseEvent *event)
 {
     QSettings settings(APP_NAME, STATE_SECTION);
-    
+
     if (!isMaximized())
     {
         settings.setValue("Position", pos());
@@ -373,7 +373,7 @@ void DCSRemap::closeEvent(QCloseEvent *event)
     settings.setValue("Defect Colour", defectColour);
     settings.setValue("Adaptive Remap", ui.chkAdaptiveRemap->checkState());
     settings.setValue("Adaptive Block", ui.cbAdaptiveBlock->currentIndex());
-    
+
     if (checkUnsavedAndSave())
         event->accept();
     else
@@ -387,9 +387,9 @@ void DCSRemap::retranslate()
         translator.load(QStringLiteral(":/MainForm/dcs_remap_ru.qm"));
         QApplication::installTranslator(&translator);
     }
-    else 
+    else
        QApplication::removeTranslator(&translator);
-       
+
     ui.retranslateUi(this);
     ui.cboxZoomLevel->setItemText(0, tr("Fit to Window"));
     ui.rawImage->retranslate();
@@ -425,7 +425,7 @@ void DCSRemap::init()
     numStr = "%1";
     for (int i=0; i<DCSDefects::ISO_COUNT; i++)
         ui.cboxISO->addItem(tickEmptyIcon, numStr.arg(DCSDefects::isoList[i]));
-    
+
     numStr = "%1 x %1";
     for (int i=4; i<=MAX_ADAPTIVE_BLOCK; i+=2)
         ui.cbAdaptiveBlock->addItem(numStr.arg(i));
@@ -433,12 +433,12 @@ void DCSRemap::init()
     ui.cboxZoomLevel->setMaxVisibleItems(10);
     ui.cboxISO->setMaxVisibleItems(10);
     ui.cbAdaptiveBlock->setMaxVisibleItems(20);
-    
+
     for (int i=0; i<=Illuminants_length; i++)
         camWB[i][C_RED] = camWB[i][C_GREEN] = camWB[i][C_BLUE] = camWB[i][C_GREEN2] = 1;
     threshold[C_RED]=threshold[C_GREEN]=threshold[C_BLUE]=threshold[C_GREEN2]=0;
     thrStats[C_RED]=thrStats[C_GREEN]=thrStats[C_BLUE]=thrStats[C_GREEN2]=0;
-    
+
     maxVal[C_RED] = maxVal[C_GREEN] = maxVal[C_BLUE] = maxVal[C_GREEN2] = 0;
     minVal[C_RED] = minVal[C_GREEN] = minVal[C_BLUE] = minVal[C_GREEN2] = 0;
     avgVal[C_RED] = avgVal[C_GREEN] = avgVal[C_BLUE] = avgVal[C_GREEN2] = 0;
@@ -447,26 +447,26 @@ void DCSRemap::init()
 int DCSRemap::showMessage(const QString& title,
                           const QString& msgText,
                           const QString& informativeText,
-                          QMessageBox::Icon icon, 
-                          QMessageBox::StandardButtons buttons, 
+                          QMessageBox::Icon icon,
+                          QMessageBox::StandardButtons buttons,
                           QMessageBox::StandardButton defButton)
 {
     restoreOverrideCursor();
 
-    QMessageBox msgBox(icon, 
+    QMessageBox msgBox(icon,
                        title,
                        msgText,
                        buttons);
     msgBox.setInformativeText(informativeText);
     msgBox.setDefaultButton(defButton);
-    
+
     return msgBox.exec();
 }
 
 void DCSRemap::resizeEvent(QResizeEvent *event)
 {
     QMainWindow::resizeEvent(event);
-    
+
     if (ui.cboxZoomLevel->currentIndex()==0)
     {
         scale = fitScale(ui.rawImage->getRawWidth(), ui.rawImage->getRawHeight(), *ui.rawImage);
@@ -479,9 +479,9 @@ void DCSRemap::updateWidgets()
 {
     bool hasRaw = ui.rawImage->rawLoaded();
     bool hasDefects = ui.rawImage->hasDefects();
-    
+
     QString title(MAIN_TITLE);
-    
+
     if (hasRaw)
     {
         QFileInfo info(rawFileName);
@@ -502,34 +502,34 @@ void DCSRemap::updateWidgets()
         if (!imagerSerial.isEmpty())
             title.append(tr("     Imager serial: ")).append(imagerSerial);
     }
-    
+
     setWindowTitle(title);
-    
-    bool isProback = ui.rawImage->getRawWidth() > 0 && 
+
+    bool isProback = ui.rawImage->getRawWidth() > 0 &&
                      ui.rawImage->getRawWidth() == ui.rawImage->getRawHeight();
-        
+
     ui.tabDisplay->setEnabled(hasRaw);
     ui.tabRemap->setEnabled(hasDefects);
-    
+
     ui.zoomBar->setEnabled(hasRaw || hasDefects);
     ui.btnColMode->setEnabled(hasDefects);
     ui.btnPointMode->setEnabled(hasDefects);
     // Proback does not support rows remap
     ui.btnRowMode->setEnabled(hasDefects && !isProback);
     ui.chkShowRows->setEnabled(hasDefects && !isProback);
-    
+
     ui.btnSave->setEnabled(hasDefects);
     ui.btnReset->setEnabled(hasDefects);
     //ui.actionSave->setEnabled(hasDefects);
     //ui.actionDiscard_changes->setEnabled(hasDefects);
-    
+
     if (hasDefects)
     {
         ui.grpRemapThr->setEnabled(hasRaw);
         ui.btnAutoRemap->setEnabled(hasRaw);
         ui.btnDetectFromRaw->setEnabled(hasRaw);
     }
-    
+
     updateAutoRemap();
 }
 
@@ -541,33 +541,33 @@ void DCSRemap::updateAutoRemap()
 }
 
 // -------------------------------------------------------------------------
-//   Event slots    
+//   Event slots
 // -------------------------------------------------------------------------
 
 void DCSRemap::openImagerFile()
 {
-    QString fileName = QFileDialog::getOpenFileName(this, 
-                                                    tr("Load Kodak .IF imager file"), 
-                                                    curIFPath, 
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Load Kodak .IF imager file"),
+                                                    curIFPath,
                                                     tr("Kodak imager files (*.IF)"));
 
-    if (fileName != "") 
+    if (fileName != "")
     {
         QFileInfo info(fileName);
         curIFPath = info.absolutePath();
 
-        std::auto_ptr<DCSImagerFile> newImagerFile(new DCSImagerFile);
-        std::auto_ptr<DCSDefects> newDefects(new DCSDefects);
-        
+        auto newImagerFile = std::make_unique<DCSImagerFile>();
+        auto newDefects = std::make_unique<DCSDefects>();
+
         if (!newImagerFile->readFromFile(fileName.toUtf8().data()))
         {
             showMessage(tr("Error"), tr("Error opening imager file\n%1!").arg(fileName));
         }
         else
-        {   
+        {
             if (!newDefects->loadFromFile(*newImagerFile))
             {
-                showMessage(tr("Warning"), 
+                showMessage(tr("Warning"),
                             tr("Imager file %1\ndoes not have any defects data!").arg(fileName),
                             "",
                             QMessageBox::Warning);
@@ -578,13 +578,13 @@ void DCSRemap::openImagerFile()
             uint16 defWidth  = isSwapped ? newDefects->getMaxRows() : newDefects->getMaxCols();
             uint16 defHeight = isSwapped ? newDefects->getMaxCols() : newDefects->getMaxRows();
             bool loadDefects = checkUnsavedAndSave();
-            
+
             if (loadDefects && hasRaw &&
                 (defWidth != ui.rawImage->getRawWidth() ||
                  defHeight != ui.rawImage->getRawHeight()))
             {
                 loadDefects = showMessage(
-                                tr("Warning"), 
+                                tr("Warning"),
                                 tr("Imager file %1\nis not from the same type of\ncamera as currently loaded RAW file!").arg(fileName),
                                 tr("Do you want to load imager file and discard the raw?"),
                                 QMessageBox::Question,
@@ -602,7 +602,7 @@ void DCSRemap::openImagerFile()
                 imagerFile = newImagerFile.release();
                 defects = newDefects.release();
                 imagerSerial = imagerFile->getStringTagValue(TAG_ImagerSerialN);
-                
+
                 // reset mode
                 lockModeChange = true;
                 ui.btnPointMode->setChecked(false);
@@ -625,7 +625,7 @@ void DCSRemap::openImagerFile()
     }
 }
 
-bool DCSRemap::saveImagerFile() 
+bool DCSRemap::saveImagerFile()
 {
     if (!defects)
         return true;
@@ -645,17 +645,17 @@ bool DCSRemap::saveImagerFile()
         unsavedChanges = false;
 
         // attempt to reload saved imager file
-        std::auto_ptr<DCSImagerFile> newImagerFile(new DCSImagerFile);
-        std::auto_ptr<DCSDefects> newDefects(new DCSDefects);
-        
+        std::unique_ptr<DCSImagerFile> newImagerFile(new DCSImagerFile);
+        std::unique_ptr<DCSDefects> newDefects(new DCSDefects);
+
         if (newImagerFile->readFromFile(ifFileName.toUtf8().data()) &&
             newDefects->loadFromFile(*newImagerFile))
-        {   
+        {
             delete defects;
             delete imagerFile;
             imagerFile = newImagerFile.release();
             defects = newDefects.release();
-            
+
             ui.rawImage->setDefects(defects, scale);
 
             // reset mode
@@ -673,7 +673,7 @@ bool DCSRemap::saveImagerFile()
     }
     else
         showMessage(tr("Error"), tr("Error writing imager file %1!").arg(ifFileName));
-    
+
     return success;
 }
 
@@ -690,10 +690,10 @@ void DCSRemap::discardChanges()
 
 void DCSRemap::loadRaw()
 {
-    QStringList fileNames = 
-            QFileDialog::getOpenFileNames(this, 
-                                          tr("Load Kodak .DCR RAW file(s)"), 
-                                          curRawPath, 
+    QStringList fileNames =
+            QFileDialog::getOpenFileNames(this,
+                                          tr("Load Kodak .DCR RAW file(s)"),
+                                          curRawPath,
                                           tr("Kodak RAWs (*.dcr *.rcf)"));
 
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -703,28 +703,28 @@ void DCSRemap::loadRaw()
     while (it != fileNames.end())
     {
         QFileInfo info(*it);
-        
+
         if (!info.isFile())
             it = fileNames.erase(it);
         else
             ++it;
     }
-    
+
     if (fileNames.size() > MAX_RAWS)
     {
         showMessage(tr("Error"), tr("Cannot load more than %1 RAW files!").arg(MAX_RAWS));
     }
-    else if (fileNames.size() > 0) 
+    else if (fileNames.size() > 0)
     {
         // read the first raw
         QFileInfo info(fileNames.at(0));
 		curRawPath = info.absolutePath();
         bool isRCF = false;
-        
+
         LibRaw rawProc;
         QByteArray byteStr = fileNames.at(0).toUtf8();
         int ret = LIBRAW_SUCCESS;
-        
+
         if ((ret = rawProc.open_file(byteStr.constData())) != LIBRAW_SUCCESS)
             showMessage(tr("Error"), tr("Error opening file\n%1!").arg(fileNames.at(0)));
         else
@@ -732,19 +732,19 @@ void DCSRemap::loadRaw()
             // check if we have the right format
             libraw_decoder_info_t decInf;
             rawProc.get_decoder_info(&decInf);
-                    
+
             if (!strstr(rawProc.imgdata.idata.make, "Kodak"))
             {
                 ret = LIBRAW_FILE_UNSUPPORTED;
                 showMessage(tr("Error"), tr("File %1\ndoes not seem to be Kodak .DCR file!").arg(fileNames.at(0)));
             }
-            
+
             // RCF format checks
             if (ret == LIBRAW_SUCCESS &&
                 info.suffix().compare("RCF", Qt::CaseInsensitive)==0)
-            {        
-                isRCF = rawProc.imgdata.sizes.raw_width==RCF_COLS && 
-                        rawProc.imgdata.sizes.raw_height==RCF_ROWS && 
+            {
+                isRCF = rawProc.imgdata.sizes.raw_width==RCF_COLS &&
+                        rawProc.imgdata.sizes.raw_height==RCF_ROWS &&
                         rawProc.imgdata.idata.cdesc[rawProc.COLOR(0,0)] == 'G' &&
                         rawProc.imgdata.idata.cdesc[rawProc.COLOR(0,1)] == 'R' &&
                         rawProc.imgdata.idata.cdesc[rawProc.COLOR(1,0)] == 'B' &&
@@ -765,7 +765,7 @@ void DCSRemap::loadRaw()
                  rawProc.imgdata.idata.cdesc[rawProc.COLOR(1,1)] != 'G'))
             {
                 // its not Bayer or does not have Kodak as a maker
-                // or is not in 
+                // or is not in
                 //   G R
                 //   B G
                 // pattern
@@ -777,17 +777,17 @@ void DCSRemap::loadRaw()
                 showMessage(tr("Error"), tr("Error unpacking RAW data from file\n%1!").arg(fileNames.at(0)));
             }
         }
-        
+
         // check if we have multiple files and load up a stack
         if (ret == LIBRAW_SUCCESS && fileNames.size() > 1)
-            ret = loadRawStack(rawProc.imgdata.rawdata.raw_image, 
-                               rawProc.imgdata.sizes.raw_width, 
-                               rawProc.imgdata.sizes.raw_height, 
+            ret = loadRawStack(rawProc.imgdata.rawdata.raw_image,
+                               rawProc.imgdata.sizes.raw_width,
+                               rawProc.imgdata.sizes.raw_height,
                                fileNames);
-        
+
         if (ret == LIBRAW_SUCCESS && isRCF)
-            ret = loadRCF(rawProc.imgdata.rawdata.raw_image, 
-                          rawProc.imgdata.sizes.raw_width, 
+            ret = loadRCF(rawProc.imgdata.rawdata.raw_image,
+                          rawProc.imgdata.sizes.raw_width,
                           rawProc.imgdata.sizes.raw_height);
 
         bool hasDefects = ui.rawImage->hasDefects();
@@ -795,7 +795,7 @@ void DCSRemap::loadRaw()
             (rawProc.imgdata.sizes.raw_width != ui.rawImage->getRawWidth() ||
              rawProc.imgdata.sizes.raw_height != ui.rawImage->getRawHeight()))
         {
-            if (showMessage(tr("Warning"), 
+            if (showMessage(tr("Warning"),
                             tr("RAW file %1\ndoes not match currently loaded imager file!").arg(fileNames.at(0)),
                             tr("Do you want to load RAW file and discard the imager file?"),
                             QMessageBox::Question,
@@ -812,7 +812,7 @@ void DCSRemap::loadRaw()
                 ui.btnRowMode->setChecked(false);
                 lockModeChange = false;
             }
-            else 
+            else
                 ret = LIBRAW_UNSPECIFIED_ERROR;
         }
 
@@ -821,29 +821,39 @@ void DCSRemap::loadRaw()
         {
             // get WB
             float* wb = rawProc.imgdata.color.cam_mul;
-            
+
             if (wb[0] <= 0)
                 wb = rawProc.imgdata.color.pre_mul;
-                
+
             camWB[DaylightIllum][C_RED]    = wb[rawProc.COLOR(0,1)];
             camWB[DaylightIllum][C_GREEN]  = wb[rawProc.COLOR(0,0)];
             camWB[DaylightIllum][C_BLUE]   = wb[rawProc.COLOR(1,0)];
             camWB[DaylightIllum][C_GREEN2] = wb[rawProc.COLOR(1,1)];
-            
+
             if (camWB[DaylightIllum][C_GREEN2] <= 0)
                 camWB[DaylightIllum][C_GREEN2] = camWB[DaylightIllum][C_GREEN];
+
+            double maxGreen = std::max(camWB[DaylightIllum][C_GREEN], camWB[DaylightIllum][C_GREEN2]);
+            if (maxGreen == 0.0)
+                maxGreen = 1.0;
+
+            // normalise camWB
+            camWB[DaylightIllum][C_RED]    /= maxGreen;
+            camWB[DaylightIllum][C_GREEN]  /= maxGreen;
+            camWB[DaylightIllum][C_BLUE]   /= maxGreen;
+            camWB[DaylightIllum][C_GREEN2] /= maxGreen;
 
             rawIsoSpeed = rawProc.imgdata.other.iso_speed;
 
             // recalculate fit
             if (ui.cboxZoomLevel->currentIndex()==0)
-                scale = fitScale(rawProc.imgdata.sizes.raw_width, 
-                                 rawProc.imgdata.sizes.raw_height, 
+                scale = fitScale(rawProc.imgdata.sizes.raw_width,
+                                 rawProc.imgdata.sizes.raw_height,
                                  *ui.rawImage);
-            ui.rawImage->setRawImage(rawProc.imgdata.rawdata.raw_image, 
-                                     rawProc.imgdata.sizes.raw_width, 
-                                     rawProc.imgdata.sizes.raw_height, 
-                                     DCSDefects::isoCodeFromISO((uint16)rawIsoSpeed), 
+            ui.rawImage->setRawImage(rawProc.imgdata.rawdata.raw_image,
+                                     rawProc.imgdata.sizes.raw_width,
+                                     rawProc.imgdata.sizes.raw_height,
+                                     DCSDefects::isoCodeFromISO((uint16)rawIsoSpeed),
                                      scale);
             // update ISO selection
             int16 isoIndex = ui.rawImage->getIsoCode();
@@ -853,20 +863,20 @@ void DCSRemap::loadRaw()
             // process raw data to gather stats
             processRawData();
         }
-        
+
         rawFileName = fileNames.at(0);
         updateWidgets();
 
         rawProc.recycle();
     }
-    
+
     QApplication::restoreOverrideCursor();
 }
 
 // The number of files in a stack passed here needs to be limited by MAX_RAWS
-int DCSRemap::loadRawStack(uint16* data, 
-                           uint16 width, 
-                           uint16 height, 
+int DCSRemap::loadRawStack(uint16* data,
+                           uint16 width,
+                           uint16 height,
                            QStringList fileNames)
 {
     QApplication::setOverrideCursor(QCursor(Qt::WaitCursor));
@@ -893,7 +903,7 @@ int DCSRemap::loadRawStack(uint16* data,
                 rawProc[i-1].imgdata.idata.cdesc[rawProc[i-1].COLOR(1,1)] != 'G')
             {
                 // its not Bayer or does not have Kodak as a maker
-                // or is not in 
+                // or is not in
                 //   G R
                 //   B G
                 // pattern
@@ -912,61 +922,62 @@ int DCSRemap::loadRawStack(uint16* data,
             }
         }
     }
-    
+
     // loaded all the raws - calculate the median into first array
     if (result == LIBRAW_SUCCESS)
     {
-        int length = width*height;
-        #pragma omp parallel for
-        for (int i=0; i<length; i++)
+        tbb::parallel_for(size_t(0), size_t(width*height),
+        [&](size_t i)
         {
             uint16 stack[MAX_RAWS];
             stack[0] = data[i];
             for (int cnt=1; cnt<rawCount; cnt++)
                 stack[cnt] = rawProc[cnt-1].imgdata.rawdata.raw_image[i];
             data[i] = calc_median(stack, rawCount);
-        }        
+        });
     }
 
 	delete[] rawProc;
-    
+
     QApplication::restoreOverrideCursor();
-    
+
     return result;
 }
 
-int DCSRemap::loadRCF(uint16* data, 
-                      uint16& width, 
+int DCSRemap::loadRCF(uint16* data,
+                      uint16& width,
                       uint16& height)
 {
     int result = LIBRAW_SUCCESS;
-    
+
     width  = RCF_ROWS - RCF_CROP_ROW_1 - RCF_CROP_ROW_2;
     height = RCF_COLS - RCF_OVERCLOCK_COLS - RCF_CROP_COL_1 - RCF_CROP_COL_2;
-    
+
     int startRow = RCF_CROP_ROW_1;
     int maxRow = width + startRow;
     int startCol = RCF_CROP_COL_1;
     int maxCol = height + startCol;
-    
+
     uint16* tmpData = new uint16[width*height];
 
     if (tmpData)
     {
-        #pragma omp parallel for
-        for (int row = startRow; row<maxRow; row++)
+        tbb::parallel_for(size_t(startRow), size_t(maxRow),
+        [&](size_t row)
+        {
             for (int col = startCol; col<maxCol; col++)
             {
                 int newRow = col - startCol;
                 int newCol = width - (row - startRow) - 1;
                 tmpData[newRow*width+newCol] = data[row*RCF_COLS+col];
             }
+        });
         memcpy(data, tmpData, sizeof(uint16)*width*height);
         delete[] tmpData;
     }
     else
         result = LIBRAW_UNSPECIFIED_ERROR;
-    
+
     return result;
 }
 
@@ -976,12 +987,11 @@ void DCSRemap::processRawData()
     uint16 rawWidth = ui.rawImage->getRawWidth();
     uint16 rawHeight = ui.rawImage->getRawHeight();
     int totalValuesPerChannel = (rawWidth * rawHeight)>>2;
-    
+
     maxVal[C_RED] = maxVal[C_GREEN] = maxVal[C_BLUE] = maxVal[C_GREEN2] = 0;
     minVal[C_RED] = minVal[C_GREEN] = minVal[C_BLUE] = minVal[C_GREEN2] = 0xFFFF;
     avgVal[C_RED] = avgVal[C_GREEN] = avgVal[C_BLUE] = avgVal[C_GREEN2] = 0;
-    
-    //#pragma omp parallel for
+
     for (int row=0; row<rawHeight; row++)
         for (int col=0; col<rawWidth; col++)
         {
@@ -993,11 +1003,12 @@ void DCSRemap::processRawData()
                 minVal[channel] = val;
             avgVal[channel] += val;
         }
+
     avgVal[C_RED] /= totalValuesPerChannel;
     avgVal[C_GREEN] /= totalValuesPerChannel;
     avgVal[C_BLUE] /= totalValuesPerChannel;
     avgVal[C_GREEN2] /= totalValuesPerChannel;
-    
+
     updateRawStats();
 
     // calculate thersholds
@@ -1028,15 +1039,15 @@ void DCSRemap::calculateThresholds()
     const double DARK_THRESHOLD = 10;
     const double LIGHT_THRESHOLD = 20;
 
-    bool isDark = (avgVal[C_RED]-minVal[C_RED] + 
+    bool isDark = (avgVal[C_RED]-minVal[C_RED] +
                    avgVal[C_GREEN]-minVal[C_GREEN] +
-                   avgVal[C_BLUE]-minVal[C_BLUE] + 
+                   avgVal[C_BLUE]-minVal[C_BLUE] +
                    avgVal[C_GREEN2]-minVal[C_GREEN2]) < DARK_THRESHOLD;
-    bool isLight = (maxVal[C_RED]-avgVal[C_RED] + 
+    bool isLight = (maxVal[C_RED]-avgVal[C_RED] +
                     maxVal[C_GREEN]-avgVal[C_GREEN] +
-                    maxVal[C_BLUE]-avgVal[C_BLUE] + 
+                    maxVal[C_BLUE]-avgVal[C_BLUE] +
                     maxVal[C_GREEN2]-avgVal[C_GREEN2]) < LIGHT_THRESHOLD;
-                    
+
     if (isDark || isLight)
     {
         if (isDark)
@@ -1064,7 +1075,7 @@ void DCSRemap::calculateThresholds()
     ui.spbThrBlue->setValue(threshold[C_BLUE]);
     ui.spbThrGreen2->setValue(threshold[C_GREEN2]);
     lockThresChange = false;
-    
+
     // update stats
     updateThresholdStats(C_ALL);
 }
@@ -1082,7 +1093,7 @@ void DCSRemap::updateThresholdStats(EChannel channel)
     if (ui.chkAdaptiveRemap->checkState()==Qt::Checked)
     {
         ui.rawImage->performAdaptiveAutoRemap(
-                    threshold, 
+                    threshold,
                     blockSize(ui.cbAdaptiveBlock->currentIndex()),
                     true,
                     channel,
@@ -1095,7 +1106,7 @@ void DCSRemap::updateThresholdStats(EChannel channel)
             for (int col=0; col<rawWidth; col++)
             {
                 EChannel channel = ui.rawImage->getRawColor(row,col);
-                if (threshold[channel]>0 && 
+                if (threshold[channel]>0 &&
                     fabs(avgVal[channel]-ui.rawImage->getRawValue(row,col))>threshold[channel])
                     thrStats[channel]++;
             }
@@ -1109,12 +1120,12 @@ void DCSRemap::updateThresholdStats(EChannel channel)
         for (int row=rowStart; row<rawHeight; row+=2)
             for (int col=colStart; col<rawWidth; col+=2)
             {
-                if (threshold[channel]>0 && 
+                if (threshold[channel]>0 &&
                     fabs(avgVal[channel]-ui.rawImage->getRawValue(row,col))>threshold[channel])
                     thrStats[channel]++;
             }
     }
-    
+
     if (channel == C_ALL)
     {
         ui.lblStatsDefR->setText(fmtStr.arg(thrStats[C_RED]));
@@ -1139,7 +1150,7 @@ void DCSRemap::autoRemap()
     if (ui.chkAdaptiveRemap->checkState()==Qt::Checked)
     {
         if (ui.rawImage->performAdaptiveAutoRemap(
-                        threshold, 
+                        threshold,
                         blockSize(ui.cbAdaptiveBlock->currentIndex())))
         {
             unsavedChanges = true;
@@ -1158,7 +1169,7 @@ void DCSRemap::autoRemap()
 void DCSRemap::deleteShownDefects()
 {
     if (ui.chkShowPreDefects->checkState()!=Qt::Checked ||
-        showMessage(tr("Warning"), 
+        showMessage(tr("Warning"),
                     tr("This will remove all selected types of remapped\n"
                        "defects for currently loaded imager file!\n"
                        "You can always go back by pressing \"Reset\""
@@ -1184,16 +1195,18 @@ void DCSRemap::help()
 #endif
 
     if (dir.cd("help"))
+    {
         if (language == QLocale::Russian)
             QDesktopServices::openUrl(QUrl::fromLocalFile(dir.filePath("help_ru.html")));
         else
             QDesktopServices::openUrl(QUrl::fromLocalFile(dir.filePath("help_en.html")));
+    }
 }
 
 void DCSRemap::about()
 {
     About about(language);
-    
+
     about.exec();
 }
 
@@ -1242,7 +1255,7 @@ void DCSRemap::setZoomLevel(int cbIndex)
             ui.btnZoom100->setEnabled(false);
         else
             ui.btnZoom100->setEnabled(true);
-            
+
         if (cbIndex == 1)
             ui.btnZoomOut->setEnabled(false);
         else
@@ -1258,7 +1271,7 @@ void DCSRemap::setZoomLevel(int cbIndex)
 
         // disable updates
         ui.rawScrollArea->setUpdatesEnabled(false);
-        
+
         // check the types of zoom
         if (cbIndex == 0)
         {
@@ -1271,11 +1284,11 @@ void DCSRemap::setZoomLevel(int cbIndex)
             ui.btnZoomFit->setEnabled(true);
             resizable = false;
             scale = (double)zoomLevelList[cbIndex-1]/100;
-            
+
             horValue = getScrollBarRelPos(hBar);
             vertValue = getScrollBarRelPos(vBar);
 
-            // setWidgetResizable() updates the scrollbars so it has to 
+            // setWidgetResizable() updates the scrollbars so it has to
             // be called after we read their values
 			ui.rawScrollArea->setWidgetResizable(false);
         }
@@ -1288,7 +1301,7 @@ void DCSRemap::setZoomLevel(int cbIndex)
             QSize max = ui.rawScrollArea->maximumViewportSize();
             QSize vSize = ui.rawScrollArea->viewport()->size();
             QSize wSize = ui.rawImage->sizeHint();
-            
+
             if (max.width()==vSize.width() && wSize.width()>max.width())
             {
                 vSize.rwidth() -= vBar->width();
@@ -1301,11 +1314,11 @@ void DCSRemap::setZoomLevel(int cbIndex)
                 vBar->setRange(0, wSize.height() - vSize.height());
                 vBar->setPageStep(vSize.height());
             }
-   
+
             setScrollBarRelPos(hBar, horValue);
             setScrollBarRelPos(vBar, vertValue);
         }
-        
+
         ui.rawScrollArea->setUpdatesEnabled(true);
 
     }
@@ -1369,7 +1382,7 @@ void DCSRemap::adjustExposure(double value)
 {
     QObject *sender = QObject::sender();
     double factor = pow(2, value);
-    
+
     if (sender==expControls[C_ALL])
         ui.rawImage->setExpCorr(factor, C_ALL);
     else if (sender==expControls[C_RED])
@@ -1385,7 +1398,7 @@ void DCSRemap::adjustExposure(double value)
 void DCSRemap::adjustBlack(int value)
 {
     QObject *sender = QObject::sender();
-   
+
     if (sender==ui.spinBlckRed)
         ui.rawImage->setBlack(value, C_RED);
     else if (sender==ui.spinBlckGreen)
@@ -1395,7 +1408,7 @@ void DCSRemap::adjustBlack(int value)
     else if (sender==ui.spinBlckGreen2)
         ui.rawImage->setBlack(value, C_GREEN2);
 }
-    
+
 void DCSRemap::adjustThreshold(int value)
 {
     if (lockThresChange)
@@ -1418,7 +1431,7 @@ void DCSRemap::adjustThreshold(int value)
         updateThresholdStats(channel);
     }
 }
-    
+
 void DCSRemap::adaptiveRemapModeChecked(int state)
 {
     ui.frmAdaptiveBlock->setEnabled(state==Qt::Checked);
@@ -1433,12 +1446,12 @@ void DCSRemap::adjustAdaptiveBlockSize(int value)
 void DCSRemap::setWB()
 {
     ui.rawImage->pauseUpdates(true);
-    
+
     ui.expRedSpin->setValue(log(camWB[DaylightIllum][C_RED])/log(2.0));
     ui.expGreenSpin->setValue(log(camWB[DaylightIllum][C_GREEN])/log(2.0));
     ui.expBlueSpin->setValue(log(camWB[DaylightIllum][C_BLUE])/log(2.0));
     ui.expGreen2Spin->setValue(log(camWB[DaylightIllum][C_GREEN2])/log(2.0));
-    
+
     ui.rawImage->setWB(camWB[DaylightIllum]);
 
     ui.rawImage->pauseUpdates(false);
@@ -1447,7 +1460,7 @@ void DCSRemap::setWB()
 void DCSRemap::resetAdjustments()
 {
     ui.rawImage->pauseUpdates(true);
-    
+
     ui.sldrContrast->setValue(0);
     ui.sldrContrastPoint->setValue(ui.sldrContrastPoint->maximum()/2);
 
@@ -1469,14 +1482,14 @@ void DCSRemap::resetAdjustments()
 void DCSRemap::updateDefectStats()
 {
     QString fmtStr("%1");
-    
+
     if (!ui.rawImage->hasDefects())
         return;
 
     ui.lblStPoints->setText(fmtStr.arg(ui.rawImage->getDefectPoints()));
     ui.lblStCols->setText(fmtStr.arg(ui.rawImage->getDefectCols()));
     ui.lblStRows->setText(fmtStr.arg(ui.rawImage->getDefectRows()));
-    
+
     // update ISO labels
     for (int i=0; i<DCSDefects::ISO_COUNT; i++)
         if (ui.rawImage->hasDefectsForIso(i))
@@ -1491,11 +1504,11 @@ void DCSRemap::updateStatus(uint16 row, uint16 col)
     EChannel channel = ui.rawImage->getRawColor(row,col);
     uint16 value = ui.rawImage->getRawValue(row,col);
     ERawRendering curRendMode = ui.rawImage->getRawRenderingType();
-    
+
     ui.lblStRow->setText(fmtStr.arg(row, -5));
     ui.lblStCol->setText(fmtStr.arg(col, -5));
 
-    // pattern is 
+    // pattern is
     //    G R
     //    B G
     switch (channel)
@@ -1506,7 +1519,7 @@ void DCSRemap::updateStatus(uint16 row, uint16 col)
             {
                 uint16 green = (ui.rawImage->getRawValue(row,col-1)+
                                 ui.rawImage->getRawValue(row+1,col) + 1)>>1;
-                                
+
                 ui.lblStG->setText(fmtStr.arg(green, -5));
                 ui.lblStB->setText(fmtStr.arg(ui.rawImage->getRawValue(row+1,col-1), -5));
                 ui.lblStG2->setText(fmtStr.arg(green, -5));
@@ -1569,6 +1582,8 @@ void DCSRemap::updateStatus(uint16 row, uint16 col)
                 ui.lblStG2->setText(fmtStr.arg(value, -5));
             }
             break;
+        case C_ALL:
+            break;
     }
 }
 
@@ -1590,7 +1605,7 @@ void DCSRemap::pointDefectModeChecked(bool checked)
         ui.btnColMode->setChecked(false);
         ui.btnRowMode->setChecked(false);
         lockModeChange = false;
-        
+
         if (ui.chkShowPoints->checkState()!=Qt::Checked)
             ui.chkShowPoints->setCheckState(Qt::Checked);
     }
@@ -1644,8 +1659,8 @@ void DCSRemap::changeDefColour(QColor* colour)
 {
     if (!colour)
     {
-        QColor tmpColour = QColorDialog::getColor(defectColour, 
-                                                  0, 
+        QColor tmpColour = QColorDialog::getColor(defectColour,
+                                                  0,
                                                   tr("Choose colour for displaying defects"));
 
         if (tmpColour.isValid())
@@ -1654,15 +1669,15 @@ void DCSRemap::changeDefColour(QColor* colour)
             colour = &defectColour;
         }
     }
-    
+
     if (colour)
     {
         ui.rawImage->setDefectColour(*colour);
 
         QPalette palette = ui.btnDefColour->palette();
-        
+
         palette.setColor(QPalette::Button, *colour);
-        
+
         ui.btnDefColour->setPalette(palette);
     }
 }
@@ -1676,7 +1691,7 @@ void DCSRemap::showPreRemapChecked(int state)
 void DCSRemap::showPointsChecked(int state)
 {
     ui.rawImage->enableDefPoints(state==Qt::Checked);
-    
+
     if (state!=Qt::Checked && ui.btnPointMode->isChecked())
         ui.btnPointMode->setChecked(false);
 
@@ -1686,7 +1701,7 @@ void DCSRemap::showPointsChecked(int state)
 void DCSRemap::showRowsChecked(int state)
 {
     ui.rawImage->enableDefRows(state==Qt::Checked);
-    
+
     if (state!=Qt::Checked && ui.btnRowMode->isChecked())
         ui.btnRowMode->setChecked(false);
 
@@ -1725,7 +1740,7 @@ class DCSProxyStyle : public QProxyStyle
 {
 public:
     DCSProxyStyle(QStyle *style): QProxyStyle(style) {}
-    
+
     int styleHint(StyleHint hint, const QStyleOption *option, const QWidget *widget, QStyleHintReturn *returnData) const
     {
         if (hint == QStyle::SH_ComboBox_Popup)
@@ -1734,7 +1749,7 @@ public:
         }
         return QProxyStyle::styleHint(hint, option, widget, returnData);
     }
-    
+
     void polish (QWidget *w)
     {
 #ifdef Q_OS_MACX
@@ -1753,7 +1768,7 @@ int main(int argc, char *argv[])
 #if QT_VERSION >= 0x050000
 	app.setStyle(new DCSProxyStyle(QStyleFactory::create("fusion")));
 #endif
-    
+
     QPalette palette;
     palette.setColor(QPalette::Window, QColor(83,83,83));
     palette.setColor(QPalette::WindowText, Qt::white);
@@ -1767,13 +1782,13 @@ int main(int argc, char *argv[])
     palette.setColor(QPalette::BrightText, Qt::red);
     palette.setColor(QPalette::Highlight, QColor(51,153,255));
     palette.setColor(QPalette::HighlightedText, Qt::black);
-    
+
     palette.setColor(QPalette::Disabled, QPalette::WindowText, Qt::gray);
     palette.setColor(QPalette::Disabled, QPalette::ButtonText, Qt::gray);
 
-    app.setPalette(palette);    
+    app.setPalette(palette);
 
-    
+
     DCSRemap remapMain;
     remapMain.show();
 

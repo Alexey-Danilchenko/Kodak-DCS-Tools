@@ -43,7 +43,7 @@ private:
 
     void mousePressEvent(QMouseEvent * event);
 
-private slots:
+private Q_SLOTS:
 
     void donate();
 };

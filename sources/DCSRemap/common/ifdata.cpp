@@ -93,7 +93,7 @@ uint32 FileSize(char *fileName)
 {
     FILE* file = 0;
     long int size = 0;
-    
+
     if ((file = fopen(fileName, "rb"))==0)
         return 0;
 
@@ -117,7 +117,7 @@ bool DCSImagerFile::parseIfFile(byte*     ifFileData,
     TTiffTagEntry* tagEntry = (TTiffTagEntry*)ifFileData;
     uint16 tifftag = fromBigEndian16(tagEntry->tiffTag);
 
-    while (success && (byte*)tagEntry < end && 
+    while (success && (byte*)tagEntry < end &&
            tifftag && tifftag != 0xFFFF)
     {
         fromBigEndian(tagEntry);
@@ -145,7 +145,7 @@ bool DCSImagerFile::parseIfFile(byte*     ifFileData,
     return success && !tagDataList.empty();
 }
 
-void DCSImagerFile::cleanup() 
+void DCSImagerFile::cleanup()
 {
     tagMap_.clear();
     TTagList::iterator listIter = tagDataList_.begin();
@@ -179,7 +179,7 @@ bool DCSImagerFile::readFromFile(const char* fileName)
 
     if (ifFileSize)
     {
-        if (file = fopen(fileName,"rb"))
+        if ((file = fopen(fileName,"rb")))
         {
             ifFileData = new byte[ifFileSize];
             if (fread(ifFileData, 1, ifFileSize, file) != ifFileSize)
@@ -218,7 +218,7 @@ bool DCSImagerFile::saveToFile(const char* fileName)
     bool success = false;
     uint32 empty = 0;
 
-    if (file = fopen(fileName,"wb"))
+    if ((file = fopen(fileName,"wb")))
     {
         success = true;
 
@@ -308,8 +308,8 @@ bool DCSImagerFile::lookupTag(uint32 tag)
 // This works for any data and assumes the data ownership passed to this
 // class and will deallocate it when needed.
 //
-// If copyData is specified then the data is copied from the source (allocating 
-// memory if needed), otherwise the data and ownership are transferred to 
+// If copyData is specified then the data is copied from the source (allocating
+// memory if needed), otherwise the data and ownership are transferred to
 // the imager file.
 //
 bool DCSImagerFile::setTagData(uint32 tag,
@@ -365,7 +365,7 @@ bool DCSImagerFile::setTagData(uint32 tag,
                     lastLookupData_->data = new byte[valSize];
                     lastLookupData_->ownData = true;
                 }
-            
+
                 memcpy((void*)lastLookupData_->data, data, valSize);
                 lastLookupData_->entry->dataCount = dataCount;
             }
@@ -396,7 +396,7 @@ bool DCSImagerFile::setTagData(uint32 tag,
 
             if (valSize)
             {
-                tagData->data = new byte[valSize];        
+                tagData->data = new byte[valSize];
                 memcpy((void*)tagData->data, data, valSize);
             }
         }
@@ -479,7 +479,7 @@ uint64 fromBigEndian64(uint64 ulValue) {
 	unsigned char *tmp = (unsigned char*) & ulValue;
 
 	// convert from big endian
-	return ((uint64)tmp[0] << 56) | ((uint64)tmp[1] << 48) | ((uint64)tmp[2] << 40) | ((uint64)tmp[2] << 32) | 
+	return ((uint64)tmp[0] << 56) | ((uint64)tmp[1] << 48) | ((uint64)tmp[2] << 40) | ((uint64)tmp[2] << 32) |
            ((uint64)tmp[4] << 24) | ((uint64)tmp[5] << 16) | ((uint64)tmp[6] << 8) | (uint64)tmp[7];
 }
 
