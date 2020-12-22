@@ -11,7 +11,7 @@ These cameras use 50x50mm square, 1mm thick glass IR Cut filter with the followi
 
 ProBack filters should have sharp cutoff edge closely following specification to match Kodak's profiles. In fact the better colour reproduction has ben observed for filters where cut off area is atthefar end of tolerance - 660-665nm. 
 
-The best commercially available alternative that is close to those specifications is [Knight Optical IR Cut filters](https://www.knightoptical.com/stock/optical-components/uvvisnir-optics/filters/ir-cut-filters/). The spectral trasmission curves for one sample of Knight Optical filter compared with standard Kodak ones [could be seen here](The spectral trasmission curves) with corresponding [.CSV files here](https://drive.google.com/file/d/0Bw2ZohnbXtyASVRReHUzd0gzWGc/view?usp=sharing).
+The best commercially available alternative that is close to those specifications is [Knight Optical IR Cut filters](https://www.knightoptical.com/stock/optical-components/uvvisnir-optics/filters/ir-cut-filters/). The spectral trasmission curves for one sample of Knight Optical filter compared with standard Kodak ones [could be seen here](https://drive.google.com/file/d/1-58zvv20XH8T5d2wr0gaVNZsHv_yeqn3/view?usp=sharing) with corresponding [.CSV files here](https://drive.google.com/file/d/0Bw2ZohnbXtyASVRReHUzd0gzWGc/view?usp=sharing).
 
 ## Mamiya viewfinder masks for Kodak DCS ProBack 645M
 
@@ -24,3 +24,7 @@ These cameras have 36x36mm square sensor so the Mamiya 645 AFD and Phase One DF 
 _How to use instructions_. Print selected PDF with masks without scaling on laser or inkjet printer onto a transparent sheet. Cut out one of the selected templates on the outside frame and for the version with cut out also cut out the inside part. After that install it under camera focussing screen - for the instruction how [see this video](https://www.youtube.com/watch?v=R4JBCJcvV64).
 
 _NOTE_: These masks do not alter the focus (and masks with internal cutouts do not alter visibility) as some idiots on various forums seem to suggest. The cutouts on the sides of the masks (just like the similar masks for Phase One Leaf backs for Mamiya/Phase One cameras) ensure the masks sits above the focusing screen in available gap in the holding frame and does not alter the focusing screen plane at all.
+
+## LED backlight to ProBack 645 LCD
+
+Description is coming.
