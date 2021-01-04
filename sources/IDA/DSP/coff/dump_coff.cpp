@@ -25,14 +25,12 @@
 
 #include <ctype.h>
 #include <string.h>
-#include <io.h>
 #include <fcntl.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <share.h>
-#include <direct.h>
 #include <sys/stat.h>
 
+#include <filesystem>
 #include <string>
 #include <set>
 #include <map>
@@ -238,25 +236,24 @@ inline const char* get_register_name(int reg)
 
 inline bool is_ignored_file(const char* fileName)
 {
-    const int length = sizeof(ignore_list)/sizeof(char*);
-    for (int i=0; i<length; i++)
-        if (strcmp(fileName, ignore_list[i])==0)
+    for (auto ignoreName : ignore_list)
+        if (strcmp(fileName, ignoreName)==0)
             return true;
     return false;
 }
 
 // get string from string table
-char* get_name(char* name)
+const char* get_symbol_name(char* name)
 {
     char *ret_name = 0;
-    static char name_inl[9];
     if (!name)
         return "";
 
     if (*name)
     {
-        memset(name_inl, 0, 9);
-        strncpy(name_inl, name, 8);
+        static char name_inl[9];
+        memcpy(name_inl, name, 8);
+        name_inl[8] = 0;
         ret_name = name_inl;
     }
     else
@@ -275,9 +272,9 @@ char* get_name(char* name)
     return "";
 }
 
-inline char* get_name(uint32 idx)
+inline const char* get_symbol_name(uint32 idx)
 {
-    return get_name(symbol[idx].name);
+    return get_symbol_name(symbol[idx].name);
 }
 
 // adds referencing pair
@@ -300,14 +297,14 @@ inline std::string get_type_name(uint32 idx)
 
     TIdxMap::iterator tpSymb = typeDefMap.find(idx);
     if (tpSymb != typeDefMap.end())
-        typeName = get_name(tpSymb->second);
+        typeName = get_symbol_name(tpSymb->second);
     else
-        typeName = get_name(idx);
-        
+        typeName = get_symbol_name(idx);
+
     if (typeName.compare(0, 6, "$$fake")==0 || typeName.compare("T0")==0)
     {
         char tmp[128];
-        _snprintf(tmp, sizeof(tmp), "unnamed_%u", idx);
+        snprintf(tmp, sizeof(tmp), "unnamed_%u", idx);
         typeName = tmp;
     }
 
@@ -322,8 +319,7 @@ void mark_complex_type(uint32 idx)
 
     if (basicType==T_ENUM)
         enumsSet.insert(typeIdx);
-    else if (basicType==T_STRUCT ||
-             basicType==T_UNION)
+    else if (basicType==T_STRUCT || basicType==T_UNION)
     {
         TIdxRefMap::iterator refSymb = refMap.find(typeIdx);
 
@@ -362,7 +358,7 @@ void mark_complex_type(uint32 idx)
     }
 }
 
-char* value_as_string(int32 val)
+const char* value_as_string(int32 val)
 {
     static char buf[32];
 
@@ -379,10 +375,9 @@ std::string get_type_descr(uint32 idx,
                            uint32 indent = 0,
                            bool inEnum = false)
 {
-    std::string descr;
     bool doComplex = generateComplexTypes;
 
-    descr = (inEnum) ? value_as_string(symbol[idx].value) : get_name(idx);
+    std::string descr = inEnum ? value_as_string(symbol[idx].value) : get_symbol_name(idx);
 
     uint16 dataType = symbol[idx].dataType;
     uint16 basicType = BTYPE(dataType);
@@ -395,7 +390,7 @@ std::string get_type_descr(uint32 idx,
     bool isComplexType = false;
 
     if (inEnum)
-        basicTypeStr = get_name(idx);
+        basicTypeStr = get_symbol_name(idx);
     else
     {
         switch (basicType)
@@ -496,6 +491,7 @@ std::string get_type_descr(uint32 idx,
     }
 
     if (typeLength)
+    {
         if (*typeLength==0)
             *typeLength = basicTypeStr.length();
         else
@@ -505,12 +501,15 @@ std::string get_type_descr(uint32 idx,
             if (bLength < *typeLength)
                 basicTypeStr.append(*typeLength - bLength, ' ');
         }
+    }
 
     if (varLength)
+    {
         if (*varLength==0)
             *varLength = descr.length();
         else if (descr.length() < *varLength)
             descr.append(*varLength - descr.length(), ' ');
+    }
 
     if (inEnum)
         descr.insert(0, " = ");
@@ -556,6 +555,7 @@ uint32 calc_types_length(uint32 startIdx,
 
     return startIdx;
 }
+
 std::string get_complex_type_definition(uint32 idx,
                                         uint32 indent)
 {
@@ -615,7 +615,7 @@ std::string get_complex_type_definition(uint32 idx,
             if ((indent+nameLength)<(maxTypeLength+maxVarLength+1))
                 typeStr.append(maxTypeLength+maxVarLength+1-indent-nameLength, ' ');
 
-            _snprintf(buf,
+            snprintf(buf,
                       sizeof(buf),
                       "     // size (bytes): %Xh(%u)",
                       symbol[idx].auxEntry->auxSymb.sizes.funcSize>>3,
@@ -661,7 +661,7 @@ std::string get_complex_type_definition(uint32 idx,
             }
             else if (generateOffsetComments)
             {
-                _snprintf(buf,
+                snprintf(buf,
                           sizeof(buf),
                           ";    // offsets: byte %Xh(%u), uint16 %Xh(%u), uint32 %Xh(%u)\n",
                           structOffs, structOffs,
@@ -725,8 +725,8 @@ bool types_equal(uint32 idx1, uint32 idx2)
 
         while (matches && idx1 < endIdx1 && idx2 < endIdx2)
         {
-            std::string name1 = get_name(idx1);
-            std::string name2 = get_name(idx2);
+            std::string name1 = get_symbol_name(idx1);
+            std::string name2 = get_symbol_name(idx2);
 
             matches = matches &&
                      (name1==name2) &&
@@ -850,7 +850,7 @@ void process_complex_types()
     // switch on header generation mode that does not print
     // struct/union/enum for type members
     //headerGenerationMode = true;
-    
+
     // 1st pass - generate enums
     while (enumsIter != enumsSet.end())
     {
@@ -942,7 +942,7 @@ bool prepareFiles()
     struct stat st;
     stat(extractTo.c_str(), &st);
     if ((st.st_mode & S_IFDIR) == 0)
-        success = _mkdir(extractTo.c_str())==0;
+        success = std::filesystem::create_directories(extractTo.c_str());
     else
         success = true;
 
@@ -1017,7 +1017,7 @@ void extractSymbols()
             }
 
             // check the current file
-            fileName = get_name(i);
+            fileName = get_symbol_name(i);
             isIgnoredFile = is_ignored_file(fileName.c_str());
             if (isIgnoredFile)
             {
@@ -1031,7 +1031,7 @@ void extractSymbols()
         }
 
         // process symbol
-        char *symbName = get_name(i);
+        const char *symbName = get_symbol_name(i);
         bool validStatClass = (symbName && *symbName != '.') || IS_FCN(symbol[i].dataType);
 
         if (symbol[i].storageClass == C_EXT ||
@@ -1100,9 +1100,9 @@ void extractSymbols()
                         else
                             // stack offset is in bytes against adjusted stack frame
                             // offsets in bytes, halfwords (16bit) and words (32bit)
-                            sprintf(regName, " /* = SP[%Xh], SPh[%Xh], SPw[%Xh] */", 
-                                             symbol[i].value, 
-                                             (symbol[i].value)/2, 
+                            sprintf(regName, " /* = SP[%Xh], SPh[%Xh], SPw[%Xh] */",
+                                             symbol[i].value,
+                                             (symbol[i].value)/2,
                                              (symbol[i].value)/4);
 
                         paramStr += parName;
@@ -1142,9 +1142,9 @@ void extractSymbols()
                         else
                             // stack offset is in bytes against adjusted stack frame
                             // offsets in bytes, halfwords (16bit) and words (32bit)
-                            sprintf(regName, " = SP[%Xh], SPh[%Xh], SPw[%Xh]", 
-                                             symbol[i].value, 
-                                             (symbol[i].value)/2, 
+                            sprintf(regName, " = SP[%Xh], SPh[%Xh], SPw[%Xh]",
+                                             symbol[i].value,
+                                             (symbol[i].value)/2,
                                              (symbol[i].value)/4);
 
                         local += "    ";
@@ -1186,22 +1186,7 @@ void extractSymbols()
 
 }
 
-uint32 FileSize(char *fileName)
-{
-    int arcHandle = 0;
-    if ((arcHandle = _open(fileName,_O_BINARY | _O_RDONLY))==-1)
-    {
-        return 0;
-    }
-    __int64 size64=_lseeki64(arcHandle,0,SEEK_END);
-
-    _close(arcHandle);
-
-    return (uint32)(size64 & 0xFFFFFFFF);
-}
-
-
-char* get_class(char symbolClass)
+const char* get_class(char symbolClass)
 {
     switch (symbolClass)
     {
@@ -1363,7 +1348,7 @@ void printCoffHeaderAndSections(TiCoffOptionalHeader *optHeader,
     printf("Timestamp:       %Xh\n",header.date_time);
     printf("Symbols offset:  %Xh\n",header.symbolsOffset);
     printf("Total symbols:   %d\n",header.symbolsNumber);
-    printf("Strings offset:  %Xh\n",stringTable-(char*)coffFile);
+    printf("Strings offset:  %Xh\n",(unsigned int)(stringTable-(char*)coffFile));
     printf("Opt.header size: %d\n",header.optHeaderSize);
     printf("Target magic ID: %Xh\n",header.targetID);
     printf("Flags:           ");
@@ -1402,7 +1387,7 @@ void printCoffHeaderAndSections(TiCoffOptionalHeader *optHeader,
         sprintf(strSize, "0x%X", section[i].size);
         printf("%2d %-25s 0x%08X 0x%08X 0x%08X %8s %4d %08X\n",
                i,
-               get_name(section[i].name),
+               get_symbol_name(section[i].name),
                section[i].physicalAddr,
                section[i].virtualAddr,
                section[i].offset,
@@ -1427,7 +1412,7 @@ void printSymbolsList(TiCoffSectHeader* section)
         char storageClass = symbol[i].storageClass;
         uint16 dataType = symbol[i].dataType;
         uint32 relEntry = 0;
-        char *sectName = "";
+        const char *sectName = "";
 
         if (dataType & (~0x3F))
             complexTypeIdx.insert(i);
@@ -1438,8 +1423,9 @@ void printSymbolsList(TiCoffSectHeader* section)
         else if (symbol[i].sectionNumber == 0)
             sectName = ".UNDEF";
         else if (symbol[i].sectionNumber > 0)
-            sectName = get_name(section[symbol[i].sectionNumber].name);
-        char *symbName=get_name(symbol[i].name);
+            sectName = get_symbol_name(section[symbol[i].sectionNumber].name);
+
+        const char *symbName = get_symbol_name(symbol[i].name);
 
         // set relEntry
         if (symbol[i].auxEntries &&
@@ -1477,7 +1463,7 @@ void printSymbolsList(TiCoffSectHeader* section)
     // print class map distribution
     if (!complexTypeIdx.empty())
     {
-        printf("\nComplex datatypes (%d in total) present at those indexes:", complexTypeIdx.size());
+        printf("\nComplex datatypes (%d in total) present at those indexes:", (unsigned int)complexTypeIdx.size());
         std::set<uint16>::iterator it = complexTypeIdx.begin();
         int count = 0;
         while (it != complexTypeIdx.end())
@@ -1533,7 +1519,7 @@ void processCoffFile()
     }
 }
 
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
     FILE *file = 0;
     byte* inBuf = 0;
@@ -1541,13 +1527,13 @@ void main(int argc, char* argv[])
 
     if (parseCmdLine(argc, argv))
     {
-        uint32 inSize = FileSize(coffFileName);
+        auto inSize = std::filesystem::file_size(coffFileName);
 
         if (inSize)
         {
             if ((file = fopen(coffFileName,"rb"))==NULL)
             {
-                return;
+                return 1;
             }
 
             inBuf = new byte[inSize+4];
@@ -1556,7 +1542,7 @@ void main(int argc, char* argv[])
             fclose(file);
 
             if (inSize != len)
-                return;
+                return 1;
 
             // initialise all data structures
             bssAddr = 0;
@@ -1573,4 +1559,6 @@ void main(int argc, char* argv[])
             delete[] inBuf;
         }
     }
+
+    return 0;
 }

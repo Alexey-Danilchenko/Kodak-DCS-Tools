@@ -28,19 +28,19 @@
 #pragma warning(disable:4530)
 #define NO_OBSOLETE_FUNCS
 
+#include <string>
+#include <map>
+#include <set>
+
 #include <string.h>
 #include <stdio.h>
 
 #include <ida.hpp>
 
-#include <idaldr.h>
+#include <loader.hpp>
 
-#include "dcs_tiff_tags.h"
-#include "dsp_coff.h"
-
-#include <string>
-#include <map>
-#include <set>
+#include <dcs_tiff_tags.h>
+#include <dsp_coff.h>
 
 // IDA includes
 #include <fpro.h>
@@ -55,7 +55,7 @@
 #include <funcs.hpp>
 #include <offset.hpp>
 #include <segment.hpp>
-#include <srarea.hpp>
+#include <segregs.hpp>
 #include <fixup.hpp>
 #include <nalt.hpp>
 #include <entry.hpp>
@@ -251,25 +251,24 @@ inline const char* get_register_name(int reg)
 
 inline bool is_ignored_file(const char* fileName)
 {
-    const int length = sizeof(ignore_list)/sizeof(char*);
-    for (int i=0; i<length; i++)
-        if (strcmp(fileName, ignore_list[i])==0)
+    for (auto ignoreName : ignore_list)
+        if (strcmp(fileName, ignoreName)==0)
             return true;
     return false;
 }
 
 // get string from string table
-char* get_name(char* name)
+const char* get_symbol_name(char* name)
 {
     char *ret_name = 0;
-    static char name_inl[9];
     if (!name)
         return "";
 
     if (*name)
     {
-        memset(name_inl, 0, 9);
-        qstrncpy(name_inl, name, 8);
+        static char name_inl[9];
+        memcpy(name_inl, name, 8);
+        name_inl[8] = 0;
         ret_name = name_inl;
     }
     else
@@ -288,9 +287,9 @@ char* get_name(char* name)
     return "";
 }
 
-inline char* get_name(uint32 idx)
+inline const char* get_symbol_name(uint32 idx)
 {
-    return get_name(symbol[idx].name);
+    return get_symbol_name(symbol[idx].name);
 }
 
 // adds referencing pair
@@ -310,14 +309,14 @@ void add_ref_pair(uint32 idxFrom, uint32 idxTo)
 inline std::string get_type_name(uint32 idx)
 {
     std::string typeName;
-    
+
     TIdxMap::iterator tpSymb = typeDefMap.find(idx);
     if (tpSymb != typeDefMap.end())
-        typeName = get_name(tpSymb->second);
+        typeName = get_symbol_name(tpSymb->second);
     else
-        typeName = get_name(idx);
+        typeName = get_symbol_name(idx);
 
-    return typeName;    
+    return typeName;
 }
 
 // add complex type for later printing
@@ -328,8 +327,7 @@ void mark_complex_type(uint32 idx)
 
     if (basicType==T_ENUM)
         enumsSet.insert(typeIdx);
-    else if (basicType==T_STRUCT ||
-             basicType==T_UNION)
+    else if (basicType==T_STRUCT || basicType==T_UNION)
     {
         TIdxRefMap::iterator refSymb = refMap.find(typeIdx);
 
@@ -390,7 +388,7 @@ std::string get_type_descr(uint32 idx,
     std::string descr;
     bool doComplex = generateComplexTypes;
 
-    descr = (inEnum) ? value_as_string(symbol[idx].value) : get_name(idx);
+    descr = (inEnum) ? value_as_string(symbol[idx].value) : get_symbol_name(idx);
 
     uint16 dataType = symbol[idx].dataType;
     uint16 basicType = BTYPE(dataType);
@@ -403,7 +401,7 @@ std::string get_type_descr(uint32 idx,
     bool isComplexType = false;
 
     if (inEnum)
-        basicTypeStr = get_name(idx);
+        basicTypeStr = get_symbol_name(idx);
     else
     {
         switch (basicType)
@@ -444,7 +442,7 @@ std::string get_type_descr(uint32 idx,
                     else
                     {
                         basicTypeStr = get_type_name(typeIdx);
-                        
+
                         if (!headerGenerationMode || basicTypeStr.empty())
                         {
                             if (basicType == T_STRUCT)
@@ -504,21 +502,25 @@ std::string get_type_descr(uint32 idx,
     }
 
     if (typeLength)
+    {
         if (*typeLength==0)
             *typeLength = basicTypeStr.length();
-        else 
+        else
         {
             // pad type name
             uint32 bLength = (isComplexType && doComplex) ? 1 : basicTypeStr.length();
             if (bLength < *typeLength)
                 basicTypeStr.append(*typeLength - bLength, ' ');
         }
+    }
 
     if (varLength)
+    {
         if (*varLength==0)
             *varLength = descr.length();
         else if (descr.length() < *varLength)
             descr.append(*varLength - descr.length(), ' ');
+    }
 
     if (inEnum)
         descr.insert(0, " = ");
@@ -564,10 +566,11 @@ uint32 calc_types_length(uint32 startIdx,
 
     return startIdx;
 }
+
 bool is_unnamed_complex_type(uint32 idx)
 {
     uint16 basicType = BTYPE(symbol[idx].dataType);
-    
+
     if (basicType==T_STRUCT || basicType==T_UNION)
     {
         std::string typeNameStr = get_type_name(symbol[idx].auxEntry->auxSymb.tagIndex);
@@ -614,11 +617,11 @@ std::string get_complex_type_definition(uint32 idx,
         uint32 maxVarLength = 0;
 
         // walk through the simple type and calculate the indent
-        calc_types_length(firstIdx, 
-                          endIdx, 
-                          memberClass, 
-                          0, 
-                          &maxTypeLength, 
+        calc_types_length(firstIdx,
+                          endIdx,
+                          memberClass,
+                          0,
+                          &maxTypeLength,
                           &maxVarLength,
                           memberClass==C_MOE);
 
@@ -640,13 +643,13 @@ std::string get_complex_type_definition(uint32 idx,
             if ((indent+nameLength)<(maxTypeLength+maxVarLength+1))
                 typeStr.append(maxTypeLength+maxVarLength+1-indent-nameLength, ' ');
 
-            qsnprintf(buf, 
-                      sizeof(buf), 
+            qsnprintf(buf,
+                      sizeof(buf),
                       "     // size (bytes): %Xh(%u)",
-                      symbol[idx].auxEntry->auxSymb.sizes.funcSize>>3, 
+                      symbol[idx].auxEntry->auxSymb.sizes.funcSize>>3,
                       symbol[idx].auxEntry->auxSymb.sizes.funcSize>>3);
-            
-            typeStr.append(buf);            
+
+            typeStr.append(buf);
         }
 
         typeStr.append("\n");
@@ -673,10 +676,10 @@ std::string get_complex_type_definition(uint32 idx,
                                               true,
                                               indent+INDENT_LEVEL,
                                               memberClass==C_MOE));
-            
+
             // advance the symbol
             idx += symbol[idx].auxEntries + 1;
-        
+
             if (memberClass==C_MOE)
             {
                 if (idx < endIdx && symbol[idx].storageClass == memberClass)
@@ -686,13 +689,13 @@ std::string get_complex_type_definition(uint32 idx,
             }
             else if (generateOffsetComments)
             {
-                qsnprintf(buf, 
-                          sizeof(buf), 
+                qsnprintf(buf,
+                          sizeof(buf),
                           ";    // offsets: byte %Xh(%u), uint16 %Xh(%u), uint32 %Xh(%u)\n",
                           structOffs, structOffs,
                           structOffs>>1, structOffs>>1,
                           structOffs>>2, structOffs>>2);
-            
+
                 typeStr.append(buf);
             }
             else
@@ -739,7 +742,7 @@ bool types_equal(uint32 idx1, uint32 idx2)
         symbol[idx1].dataType == symbol[idx2].dataType)
     {
         bool matches = true;
-        
+
         // walk through the contents
         uint32 endIdx1 = symbol[idx1].auxEntry->auxSymb.fcn_ary.funct.endIndex - 2;
         uint32 endIdx2 = symbol[idx2].auxEntry->auxSymb.fcn_ary.funct.endIndex - 2;
@@ -750,21 +753,21 @@ bool types_equal(uint32 idx1, uint32 idx2)
 
         while (matches && idx1 < endIdx1 && idx2 < endIdx2)
         {
-            std::string name1 = get_name(idx1);
-            std::string name2 = get_name(idx2);
-            
-            matches = matches && 
+            std::string name1 = get_symbol_name(idx1);
+            std::string name2 = get_symbol_name(idx2);
+
+            matches = matches &&
                      (name1==name2) &&
                      symbol[idx1].dataType == symbol[idx2].dataType;
-            
+
             if (matches && is_complex_type(symbol[idx1].dataType))
             {
                 uint32 typeIdx1 = symbol[idx1].auxEntry->auxSymb.tagIndex;
                 uint32 typeIdx2 = symbol[idx2].auxEntry->auxSymb.tagIndex;
-                
+
                 matches = matches && types_equal(typeIdx1, typeIdx2);
             }
-            
+
             // advance the symbols
             idx1 += symbol[idx1].auxEntries + 1;
             idx2 += symbol[idx2].auxEntries + 1;
@@ -772,8 +775,8 @@ bool types_equal(uint32 idx1, uint32 idx2)
 
         equal = matches && (idx1 >= endIdx1) && (idx2 >= endIdx2);
     }
-    
-    return equal;   
+
+    return equal;
 }
 
 bool check_duplicate_and_add(uint32 idx)
@@ -782,10 +785,10 @@ bool check_duplicate_and_add(uint32 idx)
     std::string typeName = get_type_name(idx);
     TStrMap::iterator iter = nameMap.find(typeName);
 
-    if (iter != nameMap.end() && 
+    if (iter != nameMap.end() &&
         symbol[idx].dataType == symbol[iter->second].dataType)
         isDuplicate = types_equal(idx, iter->second);
-    
+
     if (!isDuplicate)
         nameMap[typeName] = idx;
     else
@@ -797,7 +800,7 @@ bool check_duplicate_and_add(uint32 idx)
 inline bool empty_type(uint32 idx)
 {
     idx += symbol[idx].auxEntries + 1;
-    
+
     return symbol[idx].storageClass == C_EOS;
 }
 
@@ -814,12 +817,12 @@ tid_t getIdaType(uint32 idx)
 {
     TTypeMap::iterator typeIter;
     TIdxMap::iterator dupIter = dupTypeMap.find(idx);
-    
+
     if (dupIter == dupTypeMap.end())
         typeIter = idaTypeMap.find(idx);
     else
         typeIter = idaTypeMap.find(dupIter->second);
-    
+
     if (typeIter == idaTypeMap.end())
         return BADADDR;
 
@@ -831,36 +834,36 @@ tid_t getIdaType(uint32 idx)
 flags_t get_base_type_flags_and_type(uint32 idx, tid_t& typeId)
 {
     uint16 basicType = BTYPE(symbol[idx].dataType);
-    flags_t flags = byteflag();
-                
+    flags_t flags = byte_flag();
+
     if (isPointer(symbol[idx].dataType))
-        flags = dwrdflag();
+        flags = dword_flag();
     else if (basicType == T_CHAR && IS_ARRAY(symbol[idx].dataType))
-        flags = asciflag();
+        flags = strlit_flag();
     else switch (basicType)
     {
         case T_SHORT:
         case T_USHORT:
-            flags = wordflag();
+            flags = word_flag();
             break;
         case T_INT:
         case T_LONG:
         case T_UINT:
         case T_ULONG:
         case T_ENUM:
-            flags = dwrdflag();
+            flags = dword_flag();
             break;
         case T_FLOAT:
-            flags = floatflag();
+            flags = float_flag();
             break;
         case T_DOUBLE:
-            flags = doubleflag();
+            flags = double_flag();
             break;
         case T_STRUCT:
         case T_UNION:
             typeId = getIdaType(symbol[idx].auxEntry->auxSymb.tagIndex);
             if (typeId != BADADDR)
-                flags = struflag();
+                flags = stru_flag();
             break;
     }
 
@@ -872,7 +875,7 @@ uint32 get_base_type_size(uint32 idx)
 {
     uint16 basicType = BTYPE(symbol[idx].dataType);
     uint32 size = 0;
-    
+
     switch (basicType)
     {
         case T_CHAR:
@@ -909,10 +912,10 @@ uint32 get_base_type_size(uint32 idx)
 uint32 get_type_size(uint32 idx)
 {
     uint16 dataType = symbol[idx].dataType;
-    uint32 singleSize = isPointer(dataType) 
+    uint32 singleSize = isPointer(dataType)
                             ? sizeof(uint32)
                             : get_base_type_size(idx);
-    
+
     // process array sizes
     uint32 totalArrSize = 1;
     int dimCount = 0;
@@ -924,7 +927,7 @@ uint32 get_type_size(uint32 idx)
         dataType >>= N_DT_SHIFT;
         ++dimCount;
     }
-    
+
     return totalArrSize*singleSize;
 }
 
@@ -938,7 +941,7 @@ void create_struct(uint32 structIdx)
 
     uint32 stSize = symbol[structIdx].auxEntry->auxSymb.sizes.funcSize>>3;
     char mbrClass = symbol[structIdx].storageClass==C_UNTAG ? C_MOU : C_MOS;
-    
+
     stId = add_struc(BADADDR,
                      name.c_str(),
                      mbrClass==C_MOU);
@@ -952,15 +955,15 @@ void create_struct(uint32 structIdx)
         while (symbol[idx].storageClass == mbrClass)
         {
             uint32 nextIdx = idx + symbol[idx].auxEntries + 1;
-            const char* mbrName = get_name(idx);
+            const char* mbrName = get_symbol_name(idx);
             uint32 mbrOffset = symbol[idx].value >> 3;
-            uint32 mbrSize = get_type_size(idx); 
+            uint32 mbrSize = get_type_size(idx);
 
             flags_t flags = 0;
             opinfo_t opInf;
             opinfo_t *mt = 0;
             uint16 basicType = BTYPE(symbol[idx].dataType);
-            
+
             if (isPointer(symbol[idx].dataType))
             {
                 opInf.ri.flags = REF_OFF32;
@@ -968,27 +971,27 @@ void create_struct(uint32 structIdx)
                 opInf.ri.base = 0;
                 opInf.ri.tdelta = 0;
                 mt = &opInf;
-                flags =  offflag() | dwrdflag();
+                flags =  off_flag() | dword_flag();
             }
             else switch (basicType)
             {
                 case T_SHORT:
                 case T_USHORT:
-                    flags = wordflag();
+                    flags = word_flag();
                     break;
                 case T_INT:
                 case T_UINT:
-                    flags = dwrdflag();
+                    flags = dword_flag();
                     break;
                 case T_LONG:
                 case T_ULONG:
-                    flags = dwrdflag();
+                    flags = dword_flag();
                     break;
                 case T_FLOAT:
-                    flags = floatflag();
+                    flags = float_flag();
                     break;
                 case T_DOUBLE:
-                    flags = doubleflag();
+                    flags = double_flag();
                     break;
                 case T_ENUM:
                 case T_STRUCT:
@@ -1001,16 +1004,16 @@ void create_struct(uint32 structIdx)
                                 opInf.ec.tid = typeId;
                                 opInf.ec.serial = 0;
                                 mt = &opInf;
-                                flags = enumflag() | dwrdflag();
+                                flags = enum_flag() | dword_flag();
                             }
                             else
                             {
                                 opInf.tid = typeId;
                                 mt = &opInf;
-                                flags = struflag();
+                                flags = stru_flag();
                             }
                         else
-                            flags = dwrdflag();
+                            flags = dword_flag();
                     }
                     break;
 
@@ -1018,17 +1021,17 @@ void create_struct(uint32 structIdx)
                     if (basicType == T_CHAR && IS_ARRAY(symbol[idx].dataType))
                     {
                         // Attempt ASCII string
-                        opInf.strtype = ASCSTR_C;
+                        opInf.strtype = STRTYPE_C;
                         mt = &opInf;
-                        flags = asciflag();
+                        flags = strlit_flag();
                     }
                     else
-                        flags = byteflag();
+                        flags = byte_flag();
                     break;
             }
 
             int err = add_struc_member(newStruct, mbrName, mbrOffset, flags, mt, mbrSize);
-                                              
+
             if (err)
                 msg("Error adding %s.%s struct member ERR: %d\n", name.c_str(), mbrName, err);
 
@@ -1036,7 +1039,7 @@ void create_struct(uint32 structIdx)
             if (symbol[nextIdx].storageClass != mbrClass && mbrOffset+mbrSize<stSize)
             {
                 // need alignement
-                add_struc_member(newStruct, "__align", mbrOffset+mbrSize, byteflag(), 0, stSize-mbrOffset-mbrSize);
+                add_struc_member(newStruct, "__align", mbrOffset+mbrSize, byte_flag(), 0, stSize-mbrOffset-mbrSize);
             }
 
             idx = nextIdx;
@@ -1052,7 +1055,7 @@ void create_enum(uint32 enumIdx)
     if (enumId != BADNODE)
         return;
 
-    enumId = add_enum(-1, name.c_str(), decflag());
+    enumId = add_enum(-1, name.c_str(), dec_flag());
 
     if (enumId != BADNODE)
     {
@@ -1061,13 +1064,13 @@ void create_enum(uint32 enumIdx)
         uint32 idx = enumIdx + symbol[enumIdx].auxEntries + 1;
         while (symbol[idx].storageClass == C_MOE)
         {
-            const char* mbrName = get_name(idx);
+            const char* mbrName = get_symbol_name(idx);
             int err = add_enum_member(enumId, mbrName, symbol[idx].value);
             if (err)
                 msg("Error adding %s.%s enum member\n", name.c_str(), mbrName);
             idx += symbol[idx].auxEntries + 1;
         }
-    }    
+    }
 }
 
 // go through symbols again, processes those that are in data segments and
@@ -1081,7 +1084,7 @@ void process_typed_symbols()
     // walk through the symbols checking and filling in their types
     for (uint32 i=0; i<header.symbolsNumber; i++)
     {
-        char *symbName = get_name(i);
+        const char* symbName = get_symbol_name(i);
         bool validStatClass = (symbName && *symbName != '.');
         uint32 value = symbol[i].value;
         if ((symbol[i].storageClass == C_EXT ||
@@ -1095,11 +1098,11 @@ void process_typed_symbols()
                 tid_t typeId = BADADDR;
                 uint32 size = get_type_size(i);
                 flags_t flags = get_base_type_flags_and_type(i, typeId);
-                
-                if (isStruct(flags) && typeId != BADADDR)
-                    do_data_ex(value, flags, size, typeId);
+
+                if (is_struct(flags) && typeId != BADADDR)
+                    create_data(value, flags, size, typeId);
                 else
-                    do_data_ex(value, flags, size, BADNODE);
+                    create_data(value, flags, size, BADNODE);
             }
 
             count++;
@@ -1112,7 +1115,7 @@ void process_typed_symbols()
     msg("Finished processing typed data symbols - %d symbols done\n", count);
 }
 
-// processes the complex types - generates .h files and creates IDA 
+// processes the complex types - generates .h files and creates IDA
 // data types and maps
 void process_complex_types()
 {
@@ -1138,7 +1141,7 @@ void process_complex_types()
         typesDef.append("#endif\n\n");
         typesDef.append("typedef unsigned char byte;\n\n");
     }
-    
+
     // switch on header generation mode that does not print
     // struct/union/enum for type members
     //headerGenerationMode = true;
@@ -1153,7 +1156,7 @@ void process_complex_types()
         typesDef.append(indent, ' ');
         typesDef.append(get_complex_type_definition(*enumsIter, indent));
         typesDef.append(";\n\n");
-        
+
         // create IDA type
         create_enum(*enumsIter);
 
@@ -1175,7 +1178,7 @@ void process_complex_types()
                 typesDef.append(indent, ' ');
                 typesDef.append(get_complex_type_definition(refIter->first, indent));
                 typesDef.append(";\n\n");
-                
+
                 // create IDA type
                 create_struct(refIter->first);
             }
@@ -1202,7 +1205,7 @@ void process_complex_types()
                     typesDef.append(indent, ' ');
                     typesDef.append(get_complex_type_definition(refIter->first, indent));
                     typesDef.append(";\n\n");
-                    
+
                     // create IDA type
                     create_struct(refIter->first);
                 }
@@ -1243,9 +1246,9 @@ void process_complex_types()
 // process line numbers
 void process_line_numbers(TiCoffSectHeader *section)
 {
-    if (section->linesNumber && 
-        section->linesOffset > 0 && 
-        section->linesOffset < fileLength) 
+    if (section->linesNumber &&
+        section->linesOffset > 0 &&
+        section->linesOffset < fileLength)
     {
         TiCoffLineNo* lineNum = (TiCoffLineNo*)(coffFile + section->linesOffset);
         TiCoffLineNo* lineEnd = lineNum+section->linesNumber;
@@ -1256,7 +1259,7 @@ void process_line_numbers(TiCoffSectHeader *section)
         {
             if (lineNum->lineNo)
             {
-                set_source_linnum(lineNum->addr.address, 
+                set_source_linnum(lineNum->addr.address,
                                   functSrcLine + lineNum->lineNo - 1);
                 ++count;
             }
@@ -1265,7 +1268,7 @@ void process_line_numbers(TiCoffSectHeader *section)
                 // advance to next symbol
                 uint32 funcIdx = lineNum->addr.symbIdx;
                 funcIdx += symbol[funcIdx].auxEntries + 1;
-                
+
                 // populate source line of the func
                 if (funcIdx<header.symbolsNumber &&
                     symbol[funcIdx].storageClass==C_FCN &&
@@ -1277,38 +1280,35 @@ void process_line_numbers(TiCoffSectHeader *section)
             lineNum++;
         }
 
-        msg("Processed %d lines in %s section\n", count, get_name(section->name));
+        msg("Processed %d lines in %s section\n", count, get_symbol_name(section->name));
     }
 }
 
 // gets function start/end address
 bool add_func(std::string& fileName, uint32 idx, func_t** func)
 {
-    bool success = false;
-
-    std::string funcName = get_name(idx);
+    std::string funcName = get_symbol_name(idx);
     uint32 startEA = symbol[idx].value;
     uint32 endEA = startEA + symbol[idx].auxEntry->auxSymb.sizes.funcSize;
-    
-    // add entry and function
-    if (!add_func(startEA, endEA))
-        if (!add_func(startEA, BADADDR))
-        {
-            char buf[50];
-            get_segm_name(startEA, buf, sizeof(buf));
-            msg("Error adding function %s:%s() at %X - %X\n", buf, funcName.c_str(), startEA, endEA);
-        }
 
     // add an entry point to analyze
-    add_entry(startEA, startEA, funcName.c_str(), true);
-    
+    add_entry(startEA, startEA, funcName.c_str(), true, SN_IDBENC);
+
+    // add entry and function
+    if (!add_func(startEA, endEA) && !add_func(startEA))
+    {
+        qstring segName;
+        get_segm_name(&segName, getseg(startEA));
+        msg("Error adding function %s:%s() at %X - %X\n", segName.c_str(), funcName.c_str(), startEA, endEA);
+    }
+
     *func = get_func(startEA);
-    
+
     // add file name for this function
     if (!fileName.empty())
         add_sourcefile(startEA, endEA, fileName.c_str());
 
-    return (*func!=0);
+    return *func != nullptr;
 }
 
 // creates IDA enum for TIFF and Kodak tag names
@@ -1316,7 +1316,7 @@ void populate_tiff_tags_enum()
 {
     const char * enumName = "TIFF_TAGS";
 
-    enum_t enumId = add_enum(-1, enumName, decflag());
+    enum_t enumId = add_enum(-1, enumName, dec_flag());
 
     if (enumId != BADNODE)
     {
@@ -1395,13 +1395,13 @@ void process_symbols()
     {
         if (symbol[i].storageClass == C_FILE)
         {
-            fileName = get_name(i);
+            fileName = get_symbol_name(i);
             isIgnoredFile = is_ignored_file(fileName.c_str());
         }
 
-        char *symbName = get_name(i);
+        const char* symbName = get_symbol_name(i);
         bool validStatClass = (symbName && *symbName != '.') || IS_FCN(symbol[i].dataType);
-        
+
         if (symbol[i].storageClass == C_EXT ||
             (symbol[i].storageClass == C_STAT && validStatClass) ||
             symbol[i].storageClass == C_LABEL)
@@ -1477,9 +1477,9 @@ void process_symbols()
                                 // stack offset is in bytes against adjusted stack frame
                                 // offsets in bytes, halfwords (16bit) and words (32bit)
                                 qsnprintf(regName, sizeof(regName),
-                                          " = SP[%Xh], SPh[%Xh], SPw[%Xh]", 
-                                          symbol[i].value, 
-                                          (symbol[i].value)/2, 
+                                          " = SP[%Xh], SPh[%Xh], SPw[%Xh]",
+                                          symbol[i].value,
+                                          (symbol[i].value)/2,
                                           (symbol[i].value)/4);
 
                             paramStr += parName;
@@ -1522,9 +1522,9 @@ void process_symbols()
                                     // stack offset is in bytes against adjusted stack frame
                                     // offsets in bytes, halfwords (16bit) and words (32bit)
                                     qsnprintf(regName, sizeof(regName),
-                                              " = SP[%Xh], SPh[%Xh], SPw[%Xh]", 
-                                              symbol[i].value, 
-                                              (symbol[i].value)/2, 
+                                              " = SP[%Xh], SPh[%Xh], SPw[%Xh]",
+                                              symbol[i].value,
+                                              (symbol[i].value)/2,
                                               (symbol[i].value)/4);
 
                                 local += "    ";
@@ -1550,7 +1550,7 @@ void process_symbols()
             }
 
             // add name to an address
-            if (!validate_name3(&name) || !do_name_anyway(value, name.c_str())) {
+            if (!validate_name(&name, VNT_IDENT, SN_IDBENC) || !force_name(value, name.c_str(), SN_IDBENC)) {
                 msg("Cannot set symbol name \"%s\" for the address 0x%08X\n", name.c_str(), value);
             }
 
@@ -1575,7 +1575,7 @@ void process_symbols()
     msg("Finished - %d symbols done\n", count);
 }
 
-char* get_section_class(uint32 flags)
+const char* get_section_class(uint32 flags)
 {
     if (flags & STYP_TEXT)
         return "CODE";
@@ -1585,7 +1585,7 @@ char* get_section_class(uint32 flags)
         return "DATA";
 }
 
-uint32 fromBigEndian(uint32 ulValue) 
+uint32 fromBigEndian(uint32 ulValue)
 {
 	unsigned char *tmp = (unsigned char*) & ulValue;
 
@@ -1601,11 +1601,10 @@ void load_cinit(linput_t *li)
 
     if (cInitAddr==0 || cInitOffset==0 || bssAddr==0)
         return;
-    
+
     byte* cinitPtr = coffFile+cInitOffset;
     const uint32 *recptr = (uint32*)(cinitPtr);
     int32 length = 0;
-    uint32 idx = 0;
 
     while ((length = fromBigEndian(*recptr++)) != 0)
     {
@@ -1613,13 +1612,13 @@ void load_cinit(linput_t *li)
         {
             // not sure how to process patched DP offsets in IDA - skip them
             recptr += -length / sizeof(uint32);
-            uint32 offset = (byte*)recptr-cinitPtr; 
+            uint32 offset = (byte*)recptr-cinitPtr;
             recptr = (uint32*)(cinitPtr+ALIGN_ADDR(offset));
         }
         else
         {
-            uint32 toAddr = fromBigEndian(*recptr++); 
-            uint32 offset = (byte*)recptr-coffFile; 
+            uint32 toAddr = fromBigEndian(*recptr++);
+            uint32 offset = (byte*)recptr-coffFile;
 
             // load static data
             file2base(li,
@@ -1628,7 +1627,7 @@ void load_cinit(linput_t *li)
                       toAddr+length,
                       FILEREG_PATCHABLE);
 
-            offset = (byte*)recptr-cinitPtr+length; 
+            offset = (byte*)recptr-cinitPtr+length;
             recptr = (uint32*)(cinitPtr+ALIGN_ADDR(offset));
         }
     }
@@ -1651,7 +1650,7 @@ bool add_segments(linput_t *li)
     // iterate through COFF sections
     for (int i=0; i<header.sectionNumber; i++)
     {
-        char* sectName = get_name(section[i].name);
+        const char* sectName = get_symbol_name(section[i].name);
 
         // remember sepcial segments
         if (strcmp(".bss", sectName) == 0)
@@ -1666,7 +1665,7 @@ bool add_segments(linput_t *li)
             cInitOffset = section[i].offset;
         }
 
-        // process section         
+        // process section
         if (section[i].offset
             && (section[i].flags & (STYP_TEXT | STYP_DATA)))
         {
@@ -1710,7 +1709,7 @@ bool add_segments(linput_t *li)
 
     // load __cinit__ data
     load_cinit(li);
-    
+
     return true;
 }
 
@@ -1729,17 +1728,16 @@ int read_header (linput_t *li)
     return 1;
 }
 
+#if IDA_SDK_VERSION<730
+inline bool inf_set_be() { return inf.set_be(true); }
+#endif
+
 // Check if input file can be a Kodak DCS .BIN firmware file. If it passes return
 // and fill in the formatname otherwise return 0
-int idaapi accept_file(linput_t *li, char fileformatname[MAX_FILE_FORMAT_NAME], int n) {
-    int32 fileLength = 0;
-
-    if (n) {
-        return 0;
-    }
-
+int idaapi accept_file(qstring* fileformatname, qstring* processor, linput_t* li, const char* /*filename*/)
+{
     // first get the lenght of the file
-    fileLength = qlseek(li, 0, SEEK_END);
+    auto fileLength = qlseek(li, 0, SEEK_END);
 
     // is too short for a COFF header
     if (fileLength > 0 && fileLength < sizeof(header)) {
@@ -1752,13 +1750,13 @@ int idaapi accept_file(linput_t *li, char fileformatname[MAX_FILE_FORMAT_NAME], 
 
     // BIG endian check
     if (!(header.flags & F_LITTLE) || (header.flags & F_BIG))
-        inf.mf = 1;
+        inf_set_be();
 
     // file has passed all sanity checks and might be a DOL
-    qstrncpy(fileformatname, "Kodak DSP (COFF2 for TMS320C6x) binary", MAX_FILE_FORMAT_NAME);
+    *fileformatname = "Kodak DSP (COFF2 for TMS320C6x) binary";
 
     // we need TMS320C6 support otherwise we cannot do much with DCS DSP binary
-    set_processor_type("TMS320C6", SETPROC_ALL|SETPROC_FATAL);
+    *processor = "TMS320C6";
 
     return ACCEPT_FIRST | 1;
 }
@@ -1772,7 +1770,7 @@ void idaapi load_file(linput_t *li, ushort /*neflag*/, const char * /*fileformat
     headerGenerationMode = false;
 
     // we need TMS320C6 support otherwise we cannot do much with DCS DSP binary
-    set_processor_type("TMS320C6", SETPROC_ALL|SETPROC_FATAL);
+    set_processor_type("TMS320C6", SETPROC_LOADER);
 
     // first read the file in
     fileLength = qlseek(li, 0, SEEK_END);
@@ -1792,7 +1790,7 @@ void idaapi load_file(linput_t *li, ushort /*neflag*/, const char * /*fileformat
 
         includeFileName = buf;
         includeFileName.append("h");
-        
+
         // prepare the base file name
         get_input_file_path(buf, sizeof(buf));
         sanitize_file_name(buf, sizeof(buf));
@@ -1813,7 +1811,7 @@ void idaapi load_file(linput_t *li, ushort /*neflag*/, const char * /*fileformat
     stringTable = (char*)(coffFile + header.symbolsOffset +
                           (header.symbolsNumber * sizeof(TiCoffSymbol)));
     symbol = (TiCoffSymbol*)(coffFile + header.symbolsOffset);
-    
+
     // message
     msg("----------------------------------------------\n");
     msg("Kodak DSP (COFF2 for TMS320C6x) binary ver.1.0\n");
@@ -1821,10 +1819,7 @@ void idaapi load_file(linput_t *li, ushort /*neflag*/, const char * /*fileformat
 
     // BIG endian check
     if (!(header.flags & F_LITTLE) || (header.flags & F_BIG))
-        inf.mf = 1;
-
-    // we need TMS320C6 support otherwise we cannot do much with DCS DSP binary
-    set_processor_type("TMS320C6", SETPROC_ALL|SETPROC_FATAL);
+        inf_set_be();
 
     // add segmens and load data
     if (!add_segments(li)) {
@@ -1834,21 +1829,21 @@ void idaapi load_file(linput_t *li, ushort /*neflag*/, const char * /*fileformat
     // set entry points
     if (header.optHeaderSize)
     {
-        TiCoffOptionalHeader *optHeader = 
+        TiCoffOptionalHeader *optHeader =
             (TiCoffOptionalHeader *)(coffFile+sizeof(TiCoffHeader));
 
-        add_entry(optHeader->entryPoint, optHeader->entryPoint, 0, true);
+        add_entry(optHeader->entryPoint, optHeader->entryPoint, 0, true, SN_IDBENC);
     }
 
     // process symbol information
     if (header.symbolsNumber)
     {
         process_symbols();
-        
+
         // generate complex types and process data types
         process_complex_types();
     }
-    
+
     populate_tiff_tags_enum();
 
     // clear the data
@@ -1860,7 +1855,7 @@ void idaapi load_file(linput_t *li, ushort /*neflag*/, const char * /*fileformat
 //
 // Loader Module Descriptor Blocks
 //
-loader_t LDSC =
+idaman loader_t LDSC =
 {
   IDP_INTERFACE_VERSION,
   0,                            // loader flags

@@ -1,5 +1,5 @@
 /*
-    dcs_common.h - Datatypes and little<-->big endian conversion functions 
+    dcs_common.h - Datatypes and little<-->big endian conversion functions
 
     Copyright 2013 Alexey Danilchenko
     Written by Alexey Danilchenko
@@ -35,10 +35,10 @@ typedef unsigned long long uint64;
 
 typedef unsigned char byte;
 
-enum BYTE_ORDER 
+enum E_BYTE_ORDER
 {
-    BIG_ENDIAN = 0,
-    LITTLE_ENDIAN = 1
+    E_BIG_ENDIAN = 0,
+    E_LITTLE_ENDIAN = 1
 };
 
 // ------------------------------------
@@ -56,7 +56,7 @@ uint32 fromBigEndian(uint32 ulValue);
 
 uint64 fromBigEndian64(uint64 ulValue);
 
-void setByteOrder(BYTE_ORDER byteOrder);
+void setByteOrder(E_BYTE_ORDER byteOrder);
 
 #endif
 

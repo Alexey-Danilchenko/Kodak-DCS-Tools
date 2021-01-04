@@ -1,6 +1,6 @@
 /*
     offset_finder.cpp - Main file for MVK/MVKH offset finder plugin (for TI TMS320C6414 DSP)
-                        This will scan the selected area (or a function if one line is 
+                        This will scan the selected area (or a function if one line is
                         selected) and scan MVK/MVKH pairs populating the same 32 bit register.
                         It then calculates the combined value and sets offsets for MVK/MVKH
                         referencing this 32 bit value.
@@ -36,9 +36,13 @@
 #include <set>
 
 //--------------------------------------------------------------------------
+#if IDA_SDK_VERSION<750
 int idaapi init(void)
+#else
+plugmod_t* idaapi init(void)
+#endif
 {
-    if ( ph.id != PLFM_TMSC6 )
+    if (ph.id != PLFM_TMSC6)
         return PLUGIN_SKIP; // only for TMS320C6xx CPUs
     return PLUGIN_OK;
 }
@@ -47,25 +51,25 @@ int idaapi init(void)
 #define BIT1  0x2
 #define regB0 0x20
 
-inline bool is_tms6_mvk_mvkh(uint32 code) 
-{ 
-    return (code & 0x7CL) == 0x28 
-           || (code & 0x7CL) == 0x68 
-           || (code & 0x3EFFCL) == 0xA358 
-           || (code & 0x7C1FFCL) == 0x40; 
+inline bool is_tms6_mvk_mvkh(uint32 code)
+{
+    return (code & 0x7CL) == 0x28
+           || (code & 0x7CL) == 0x68
+           || (code & 0x3EFFCL) == 0xA358
+           || (code & 0x7C1FFCL) == 0x40;
 }
 
-inline int get_dst_reg(uint32 code) 
-{ 
-    return (code & BIT1) ? ((int(code >> 23) & 0x1F) + regB0) 
-                         : (int(code >> 23) & 0x1F); 
+inline int get_dst_reg(uint32 code)
+{
+    return (code & BIT1) ? ((int(code >> 23) & 0x1F) + regB0)
+                         : (int(code >> 23) & 0x1F);
 }
 
-inline uint16 get_mvk_op(uint32 code) 
-{ 
-    return ((code & 0x3EFFCL)==0xA358) 
+inline uint16 get_mvk_op(uint32 code)
+{
+    return ((code & 0x3EFFCL)==0xA358)
                 ? uint16(code>>18) & 0x1F
-                : (((code & 0x7C1FFCL)==0x40) 
+                : (((code & 0x7C1FFCL)==0x40)
                         ? uint16(code>>13) & 0x1F
                         : uint16(code >> 7));
 }
@@ -76,7 +80,7 @@ inline bool isLoadToReg(uint32 code, int reg)
         (code & 0x17C) == 0x64  ||   // LDW
         (code & 0x7C)  == 0x6C)      // LDW with 15bit offset
         return get_dst_reg(code) == reg;
-    
+
     return false;
 }
 
@@ -91,7 +95,7 @@ struct reg32k_set_info
     uint16 mvkhOp;
     int reg;
     bool regOverloaded;
-    
+
     reg32k_set_info() : mvk(BADADDR), mvkh(BADADDR), reg(-1), mvkOp(0), mvkhOp(0), regOverloaded(false) {}
     void init() { mvk = BADADDR; mvkh = BADADDR;  reg = -1;  mvkOp = 0; mvkhOp = 0; regOverloaded = false; }
     bool found_address(void) { return mvk != BADADDR && mvkh != BADADDR; }
@@ -101,7 +105,6 @@ struct reg32k_set_info
     ea_t get_address() { return found_address() ? (uint32)mvkOp | (uint32)(mvkhOp<<16) : BADADDR; }
 };
 
-
 void reg32k_set_info::test(ea_t ea, uint32 code)
 {
     if (isLoadToReg(code, reg))
@@ -109,30 +112,34 @@ void reg32k_set_info::test(ea_t ea, uint32 code)
     else if (is_tms6_mvk_mvkh(code))
     {
         int mvk_reg = get_dst_reg(code);
-        
+
         if ((code & 0x7CL) == 0x28      ||   // MVK.S
             (code & 0x3EFFCL) == 0xA358 ||   // MVK.L
             (code & 0x7C1FFCL) == 0x40)      // MVK.D
         {
             if (mvk == BADADDR)
+            {
                 if (reg==-1 || reg == mvk_reg)
                 {
                     reg = mvk_reg;
                     mvk = ea;
                     mvkOp = get_mvk_op(code);
                 }
+            }
             else if (reg == mvk_reg)
                 regOverloaded = true;
         }
         else if ((code & 0x7CL) == 0x68)  // MVKH.S
         {
             if (mvkh == BADADDR)
+            {
                 if (reg==-1 || reg == mvk_reg)
                 {
                     reg  = mvk_reg;
                     mvkh = ea;
                     mvkhOp = get_mvk_op(code);
                 }
+            }
             else if (reg == mvk_reg)
                 regOverloaded = true;
         }
@@ -144,11 +151,9 @@ void reg32k_set_info::test(ea_t ea, uint32 code)
 bool reg32k_set_info::set(ea_t ea, uint32 code)
 {
     bool wasSet = false;
-    
+
     if (is_tms6_mvk_mvkh(code))
     {
-        int mvk_reg = get_dst_reg(code);
-        
         if ((code & 0x7CL) == 0x28      ||   // MVK.S
             (code & 0x3EFFCL) == 0xA358  ||   // MVK.L
             (code & 0x7C1FFCL) == 0x40)      // MVK.D
@@ -170,26 +175,25 @@ bool reg32k_set_info::set(ea_t ea, uint32 code)
             wasSet = true;
         }
     }
-    
+
     return wasSet;
 }
-
 
 //--------------------------------------------------------------------------
 void run_manual()
 {
     static reg32k_set_info manualRegInfo;
-    
+
     // get screen selection
     ea_t curEa = get_screen_ea();
-        
-    if (is_spec_ea(curEa) || !isCode(get_flags_novalue(curEa)))
+
+    if (is_spec_ea(curEa) || !is_code(get_flags(curEa)))
     {
         msg("No code found at address %X\n", curEa);
         return;
     }
-    
-    if (manualRegInfo.set(curEa, get_long(curEa)))
+
+    if (manualRegInfo.set(curEa, get_dword(curEa)))
     {
         if (manualRegInfo.mvk == BADADDR)
         {
@@ -203,17 +207,17 @@ void run_manual()
         }
         else
         {
-            msg("Calculated offset %X and stored it in MVK at %X\n", 
+            msg("Calculated offset %X and stored it in MVK at %X\n",
                 manualRegInfo.get_address(), manualRegInfo.mvk);
 
             // add offset results
-            // if (!isOff0(get_flags_novalue(manualRegInfo.mvk)))
+            // if (!is_off0(get_flags(manualRegInfo.mvk)))
             op_offset(manualRegInfo.mvk, 0, REF_LOW16, manualRegInfo.get_address());
 
             manualRegInfo.init();
         }
     }
-    else 
+    else
     {
         // wrong instruction
         manualRegInfo.init();
@@ -227,8 +231,8 @@ void run_auto()
 {
     ea_t start;
     ea_t finish;
-    
-    if (!read_selection(&start, &finish))
+
+    if (!read_range_selection(nullptr, &start, &finish))
     {
         func_t* func = get_func(get_screen_ea());
         if (!func)
@@ -236,8 +240,8 @@ void run_auto()
             msg("No function found at address %X\n", get_screen_ea());
             return;
         }
-        start = func->startEA;
-        finish = func->endEA;
+        start = func->start_ea;
+        finish = func->end_ea;
     }
 
     if (is_spec_ea(start))
@@ -245,33 +249,33 @@ void run_auto()
         msg("No code found at address %X\n", start);
         return;
     }
-    
+
     ea_t ea = start;
 
     std::set<ea_t> processed;
 
-    while (!is_spec_ea(ea) && ea != BADADDR 
-           && ea<finish && isCode(get_flags_novalue(ea)))
+    while (!is_spec_ea(ea) && ea != BADADDR
+           && ea<finish && is_code(get_flags(ea)))
     {
-        if (processed.find(ea) == processed.end() && is_tms6_mvk_mvkh(get_long(ea)))
+        if (processed.find(ea) == processed.end() && is_tms6_mvk_mvkh(get_dword(ea)))
         {
             // first mvk
             reg32k_set_info reg;
-            
+
             ea_t mvkEA = ea;
-            while (!is_spec_ea(mvkEA) && mvkEA != BADADDR 
-                   && mvkEA<finish && isCode(get_flags_novalue(mvkEA))
+            while (!is_spec_ea(mvkEA) && mvkEA != BADADDR
+                   && mvkEA<finish && is_code(get_flags(mvkEA))
                    && !reg.searchFinished())
             {
-                reg.test(mvkEA, get_long(mvkEA));
-                if (reg.found_address()) 
+                reg.test(mvkEA, get_dword(mvkEA));
+                if (reg.found_address())
                 {
                     processed.insert(mvkEA);
 
                     // add offset results
-                    //if ( !isOff0(get_flags_novalue(reg.mvk)) )
+                    //if (!is_off0(get_flags(reg.mvk)))
                         op_offset(reg.mvk, 0, REF_LOW16, reg.get_address());
-                    if ( !isOff0(get_flags_novalue(reg.mvkh)) )
+                    if (!is_off0(get_flags(reg.mvkh)))
                         op_offset(reg.mvkh, 0, REF_HIGH16, reg.get_address());
 
                     break;
@@ -295,27 +299,27 @@ void run_dp_mode()
             // try one modified ny DCS loader
             bssSegm = get_segm_by_name(".bss_");
         if (bssSegm)
-            bssEA = (uint32)bssSegm->startEA;
+            bssEA = (uint32)bssSegm->start_ea;
     }
-    
+
     if (bssEA==0)
     {
         msg("No .BSS offset found! This mode only works with Kodak DSP loader.\n");
         return;
     }
-    
+
     // main functionality
 
-    // get screen selection 
+    // get screen selection
     ea_t curEa = get_screen_ea();
-        
-    if (is_spec_ea(curEa) || !isCode(get_flags_novalue(curEa)))
+
+    if (is_spec_ea(curEa) || !is_code(get_flags(curEa)))
     {
         msg("No code found at address %X\n", curEa);
         return;
     }
-    
-    uint32 code = get_long(curEa);
+
+    uint32 code = get_dword(curEa);
     if ((code & 0x7CL) == 0x28)
     {
         // mvk - calculate DP address
@@ -323,7 +327,7 @@ void run_dp_mode()
 
         // add offset results
         op_offset(curEa, 0, REF_LOW16, address, bssEA);
-        
+
         msg("Set offset for MVK instruction at %X to .BSS address %X\n", curEa, address);
     }
     else
@@ -340,7 +344,7 @@ void run_dp_mode()
                 op_offset(curEa, 0, REF_LOW16, address, bssEA);
                 msg("Set offset for LDH(U) instruction at %X to .BSS address %X\n", curEa, address);
                 break;
-                
+
             case 0x1C:
                 // LDBU
             case 0x2C:
@@ -363,7 +367,7 @@ void run_dp_mode()
                 op_offset(curEa, 1, REF_LOW16, address, bssEA);
                 msg("Set offset for STB instruction at %X to .BSS address %X\n", curEa, address);
                 break;
-                
+
             case 0x5C:
                 // STH
                 address += (offset<<1);
@@ -382,7 +386,7 @@ void run_dp_mode()
 }
 
 //--------------------------------------------------------------------------
-void idaapi run(int param)
+bool idaapi run(size_t param)
 {
     if (param == 0)
     {
@@ -396,6 +400,8 @@ void idaapi run(int param)
     {
         run_dp_mode();
     }
+
+    return true;
 }
 
 char comment[] = "MVK/MVKH address finder";
@@ -413,7 +419,7 @@ char help[] =
         "DP addressing mode is used (offsets against .BSS segment pointed to\n"
         "by DP register (B14)). This will only work in conjunction with \n"
         "Kodak DSP binary loader\n";
-                
+
 
 char name[] = "MVK/MVKH address finder";
 char hotkey[] = "F10";
@@ -427,7 +433,7 @@ static char wanted_hotkey[] = "F10";
 //      PLUGIN DESCRIPTION BLOCK
 //
 //--------------------------------------------------------------------------
-plugin_t PLUGIN =
+idaman plugin_t PLUGIN =
 {
   IDP_INTERFACE_VERSION,
   0,                    // plugin flags

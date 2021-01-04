@@ -1,5 +1,5 @@
 /*
-    dcs_common.cpp - Little<-->big endian conversion functions 
+    dcs_common.cpp - Little<-->big endian conversion functions
 
     Copyright 2013 Alexey Danilchenko
     Written by Alexey Danilchenko
@@ -22,9 +22,9 @@
 
 #include "dcs_common.h"
 
-static BYTE_ORDER byteOrder = BIG_ENDIAN;
+static E_BYTE_ORDER byteOrder = E_BIG_ENDIAN;
 
-void setByteOrder(BYTE_ORDER bo)
+void setByteOrder(E_BYTE_ORDER bo)
 {
     byteOrder = bo;
 }
@@ -33,7 +33,7 @@ uint16 toBigEndian16(uint16 dwValue) {
 	uint16 ulValue = 0;
 	byte *tmp = (byte*) & ulValue;
 
-    if (byteOrder == LITTLE_ENDIAN)
+    if (byteOrder == E_LITTLE_ENDIAN)
         return dwValue;
 
 	// convert to big endian
@@ -47,7 +47,7 @@ uint32 toBigEndian(uint32 dwValue) {
 	uint32 ulValue = 0;
 	unsigned char *tmp = (unsigned char*) & ulValue;
 
-    if (byteOrder == LITTLE_ENDIAN)
+    if (byteOrder == E_LITTLE_ENDIAN)
         return dwValue;
 
 	// convert to big endian
@@ -63,7 +63,7 @@ uint64 toBigEndian64(uint64 dwValue) {
 	uint64 ulValue = 0;
 	unsigned char *tmp = (unsigned char*) & ulValue;
 
-    if (byteOrder == LITTLE_ENDIAN)
+    if (byteOrder == E_LITTLE_ENDIAN)
         return dwValue;
 
 	// convert to big endian
@@ -83,7 +83,7 @@ uint16 fromBigEndian16(uint16 ulValue) {
 	byte *tmp = (byte*) & ulValue;
 
 	// convert from big endian
-	return byteOrder == BIG_ENDIAN 
+	return byteOrder == E_BIG_ENDIAN
                 ? ((uint16)tmp[0] << 8) | (uint16)tmp[1]
                 : ulValue;
 }
@@ -92,7 +92,7 @@ uint32 fromBigEndian(uint32 ulValue) {
 	unsigned char *tmp = (unsigned char*) & ulValue;
 
 	// convert from big endian
-	return byteOrder == BIG_ENDIAN 
+	return byteOrder == E_BIG_ENDIAN
                 ? ((uint32)tmp[0] << 24) | ((uint32)tmp[1] << 16) | ((uint32)tmp[2] << 8) | (uint32)tmp[3]
                 : ulValue;
 }
@@ -101,9 +101,9 @@ uint64 fromBigEndian64(uint64 ulValue) {
 	unsigned char *tmp = (unsigned char*) & ulValue;
 
 	// convert from big endian
-	return byteOrder == BIG_ENDIAN 
-                ? ((uint64)tmp[0] << 56) | ((uint64)tmp[1] << 48) | ((uint64)tmp[2] << 40) | 
-                  ((uint64)tmp[2] << 32) | ((uint64)tmp[4] << 24) | ((uint64)tmp[5] << 16) | 
+	return byteOrder == E_BIG_ENDIAN
+                ? ((uint64)tmp[0] << 56) | ((uint64)tmp[1] << 48) | ((uint64)tmp[2] << 40) |
+                  ((uint64)tmp[2] << 32) | ((uint64)tmp[4] << 24) | ((uint64)tmp[5] << 16) |
                   ((uint64)tmp[6] << 8) | (uint64)tmp[7]
                 : ulValue;
 }

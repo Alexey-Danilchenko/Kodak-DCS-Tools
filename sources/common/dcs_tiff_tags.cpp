@@ -21,7 +21,7 @@
 
 #include "dcs_tiff_tags.h"
 
-static const TTagNames StdTiffTagNames = 
+const TTagNames StdTiffTagNames =
 {
     { 254,    "TIFF_TAG_SUBFILETYPE" },
     { 255,    "TIFF_TAG_OSUBFILETYPE" },
@@ -234,7 +234,7 @@ static const TTagNames StdTiffTagNames =
     { 65563,  "TIFF_TAG_PERSAMPLE" }
 };
 
-static const TTagNames StdExifTagNames = 
+const TTagNames StdExifTagNames =
 {
     { 33434,  "EXIF_TAG_EXPOSURETIME" },
     { 33437,  "EXIF_TAG_FNUMBER" },
@@ -296,7 +296,7 @@ static const TTagNames StdExifTagNames =
     { 42016,  "EXIF_TAG_IMAGEUNIQUEID" }
 };
 
-static const TTagNames KodakTiffTagNames = 
+const TTagNames KodakTiffTagNames =
 {
     { 4097,   "RelatedImageWidth" },
     { 4098,   "RelatedImageHeight" },
@@ -421,7 +421,7 @@ static const TTagNames KodakTiffTagNames =
 };
 
 // KodakCameraInfoIFD  tags
-static const TTagNames KodakCameraTagNames = 
+const TTagNames KodakCameraTagNames =
 {
     { 0,     "KodakVersion" },
     { 1,     "DeletedTag" },
@@ -1310,18 +1310,18 @@ const char* getTiffTagName(uint32 tagNumber)
     auto iter1 = KodakCameraTagNames.find(tagNumber);
     if (iter1 != KodakCameraTagNames.end())
         return iter1->second;
-    
+
     auto iter2 = KodakTiffTagNames.find(tagNumber);
     if (iter2 != KodakTiffTagNames.end())
         return iter2->second;
-    
+
     auto iter3 = StdTiffTagNames.find(tagNumber);
     if (iter3 != StdTiffTagNames.end())
         return iter3->second;
-    
+
     auto iter4 = StdExifTagNames.find(tagNumber);
     if (iter4 != StdExifTagNames.end())
         return iter4->second;
-    
+
     return "";
 }

@@ -323,7 +323,7 @@ void lzLoadExpand(byte* packedBuf, byte* unpackBuf, uint32 realSize) {
 			bytesDone++;
 			lzWindow[lzwCurPos] = decByte;
 			lzwCurPos = (lzwCurPos + 1) & 0xFFF;
-		} else if (pos = lzExpandGetBits(bFrom, 0xC)) {
+		} else if ((pos = lzExpandGetBits(bFrom, 0xC))) {
 			uint32 size = lzExpandGetBits(bFrom, 4) + 1;
 			uint32 count = 0;
 			do {

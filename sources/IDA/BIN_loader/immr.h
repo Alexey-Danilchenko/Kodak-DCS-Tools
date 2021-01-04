@@ -21,16 +21,16 @@
 */
 
 struct immr_entry {
-    uint32 offset;    // offset against IMMR base
-    uint32 size;      // size in bytes
-    char*  name;      // IMMR name
-    char*  descr;     // textual description
-    char*  sectName;  // section name - only at a start of a section
-    
+    uint32      offset;    // offset against IMMR base
+    uint32      size;      // size in bytes
+    const char* name;      // IMMR name
+    const char* descr;     // textual description
+    const char* sectName;  // section name - only at a start of a section
+
 };
 
 // IMMR sections for MPC 823 - taken from Motorola PowerPC MPC823 Reference Manual
-const immr_entry immrMPC823[] = 
+const immr_entry immrMPC823[] =
 {
     // SYSTEM INTERFACE UNIT
     { 0x000, 4, "SIUMCR", "SIU Module Configuration Register", "SYSTEM INTERFACE UNIT" },
@@ -287,9 +287,9 @@ const immr_entry immrMPC823[] =
     { 0xAF0, 4, "SIRP",   "Serial Interface RAM Pointer Register", 0 },
 
     // SPECIALIZED RAM
-    { 0xB00, 256, "VCRAM",  "Video Controller RAM Array", "SPECIALIZED RAM" }, 
-    { 0xC00, 512, "SIRAM ", "Serial Interface RAM", 0 }, 
-    { 0xE00, 512, "LCOLR ", "LCD Color RAM", 0 } 
+    { 0xB00, 256, "VCRAM",  "Video Controller RAM Array", "SPECIALIZED RAM" },
+    { 0xC00, 512, "SIRAM ", "Serial Interface RAM", 0 },
+    { 0xE00, 512, "LCOLR ", "LCD Color RAM", 0 }
 
     // DUAL-PORT RAM
     //,{ 0x2000, 4096, "DPRAM",     "Dual-Port RAM", "DUAL-PORT RAM" }
@@ -298,7 +298,7 @@ const immr_entry immrMPC823[] =
 };
 
 // IMMR DPRAM sections for MPC 823 - taken from Motorola PowerPC MPC823 Reference Manual
-const immr_entry immrMPC823_DPRAM[] = 
+const immr_entry immrMPC823_DPRAM[] =
 {
     // DUAL-PORT RAM
     { 0x2000, 4096, "DPRAM",     "Dual-Port RAM", "DUAL-PORT RAM" },
@@ -306,7 +306,7 @@ const immr_entry immrMPC823_DPRAM[] =
 };
 
 // IMMR Parameter RAM for MPC 823 - taken from Motorola PowerPC MPC823 Reference Manual
-const immr_entry immrMPC823_PRAM[] = 
+const immr_entry immrMPC823_PRAM[] =
 {
     // USB section
     { 0x3C00, 2, "USB_EP0PTR",        "Endpoint 0 Register", "USB Base" },
@@ -318,7 +318,7 @@ const immr_entry immrMPC823_PRAM[] =
     { 0x3C10, 2, "USB_FRAME_N",       "Frame Number", 0 },
     { 0x3C12, 2, "USB_RBCNT",         "RX Internal Byte Count", 0 },
     { 0x3C14, 4, "USB_RTEMP",         "RX Temp", 0 },
-    
+
     // I2C section
     { 0x3C80, 2, "I2C_RBASE",         "RX Buffer Descriptor Base Address", "I2C Base" },
     { 0x3C82, 2, "I2C_TBASE",         "TX Buffer Descriptor Base Address", 0 },
@@ -338,7 +338,7 @@ const immr_entry immrMPC823_PRAM[] =
 
     // MISC section
     { 0x3CB0, 16, "MISC_AREA",        "Miscellaneous area", "MISC" },
-    
+
     // IDMA1 section
     { 0x3CC0, 2,  "IDMA1_IBASE",      "IDMA Buffer Descriptor Base Address Index Pointer", "IDMA1 Base" },
     { 0x3CC2, 2,  "IDMA1_DCMR",       "IDMA Channel Mode Register", 0 },
@@ -393,7 +393,7 @@ const immr_entry immrMPC823_PRAM[] =
     { 0x3DA0, 2, "SPI_TBPTR",         "TX Buffer Descriptor Pointer", 0 },
     { 0x3DA2, 2, "SPI_TCNT",          "TX Internal Byte Count", 0 },
     { 0x3DA4, 4, "SPI_TTMP",          "TX Temp", 0 },
-    
+
     // Timers section
     { 0x3DB0, 2, "TIMER_TM_BASE",     "RISC Timer Table Base Address Index Pointer", "Timer Base" },
     { 0x3DB2, 2, "TIMER_TM_PTR",      "RISC Timer Table Pointer", 0 },
@@ -419,7 +419,7 @@ const immr_entry immrMPC823_PRAM[] =
     { 0x3DF4, 2,  "IDMA2_TEMP_PTR",   "Temporary Storage Address Pointer", 0 },
     { 0x3DF6, 2,  "IDMA2_MEM_BYTES",  "SR_MEM Byte Count", 0 },
     { 0x3DF8, 4,  "IDMA2_D_STATE",    "Internal State", 0 },
-    
+
     // SCC3 section
     { 0x3E00, 2, "SCC3_RBASE",        "RX Buffer Descriptor Base Address", "SCC3 Base" },
     { 0x3E02, 2, "SCC3_TBASE",        "TX Buffer Descriptor Base Address", 0 },
@@ -439,7 +439,7 @@ const immr_entry immrMPC823_PRAM[] =
     { 0x3E28, 4, "SCC3_RCRC",         "Temp Receive CRC", 0 },
     { 0x3E2C, 4, "SCC3_TCRC",         "Temp Transmit CRC", 0 },
     { 0x3E30, 0x50, "SCC3_PROT_SPEC", "Protocol-Specific Area", 0 },
-    
+
     // SMC1 section
     { 0x3E80, 2, "SMC1_RBASE",        "RX Buffer Descriptor Base Address", "SMC1 Base" },
     { 0x3E82, 2, "SMC1_TBASE",        "TX Buffer Descriptor Base Address", 0 },
@@ -457,7 +457,7 @@ const immr_entry immrMPC823_PRAM[] =
     { 0x3EA2, 2, "SMC1_TCNT",         "TX Internal Byte Count", 0 },
     { 0x3EA4, 4, "SMC1_TTMP",         "TX Temp", 0 },
     { 0x3EA8, 0xE, "SMC1_PROT_SPEC",  "Protocol-Specific Area", 0 },
-    
+
     // DSP1 section
     { 0x3EC0, 4, "DSP1_FDBASE",       "Function Descriptor Table Base Address", "DSP1 Base" },
     { 0x3EC4, 4, "DSP1_FD_PTR",       "Function Descriptor Pointer", 0 },
@@ -477,7 +477,7 @@ const immr_entry immrMPC823_PRAM[] =
     { 0x3EE6, 2, "DSP1_OUT_BPTR",     "Current Function Descriptor Output Buffer Pointer", 0 },
     { 0x3EE8, 2, "DSP1_K",            "Current Function Descriptor Coefficient Buffer Size-1", 0 },
     { 0x3EEA, 2, "DSP1_K_BPTR",       "Current Function Descriptor Coefficient Buffer Pointer", 0 },
-    
+
     // SMC2 section
     { 0x3F80, 2, "SMC2_RBASE",        "RX Buffer Descriptor Base Address", "SMC2 Base" },
     { 0x3F82, 2, "SMC2_TBASE",        "TX Buffer Descriptor Base Address", 0 },
@@ -495,7 +495,7 @@ const immr_entry immrMPC823_PRAM[] =
     { 0x3FA2, 2, "SMC2_TCNT",         "TX Internal Byte Count", 0 },
     { 0x3FA4, 4, "SMC2_TTMP",         "TX Temp", 0 },
     { 0x3FA8, 0xE, "SMC2_PROT_SPEC",  "Protocol-Specific Area", 0 },
-    
+
     // DSP2 section
     { 0x3FC0, 4, "DSP2_FDBASE",       "Function Descriptor Table Base Address", "DSP2 Base" },
     { 0x3FC4, 4, "DSP2_FD_PTR",       "Function Descriptor Pointer", 0 },

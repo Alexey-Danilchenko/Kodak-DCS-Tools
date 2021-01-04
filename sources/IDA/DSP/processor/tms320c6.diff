@@ -1,0 +1,472 @@
+diff -au tms320c6/emu.cpp processor/emu.cpp
+--- tms320c6/emu.cpp	2017-09-14 15:09:28.000000000 +0100
++++ processor/emu.cpp	2021-01-04 08:56:37.000000000 +0000
+@@ -8,6 +8,9 @@
+  *
+  *      TMS320C6xx - VLIW (very long instruction word) architecture
+  *
++ *      Updated to handling calls and delays calculations better.
++ *      (C) 2013-2014, 2020 by Alexey Danilchenko.
++ *
+  */
+ 
+ #include "tms6.hpp"
+@@ -95,9 +98,9 @@
+ {
+   if ( !is_spec_ea(ea) )
+   {
+-    while ( (ea & 0x1F) != 0 )
++    ea_t ea2 = prev_not_tail(ea);
++    while ( (ea & 0x1F) != 0 || (get_dword(ea2) & BIT0) != 0)
+     {
+-      ea_t ea2 = prev_not_tail(ea);
+       if ( ea2 == BADADDR
+         || !is_code(get_flags(ea2))
+         || (get_dword(ea2) & BIT0) == 0 )
+@@ -105,6 +108,7 @@
+         break;
+       }
+       ea = ea2;
++      ea2 = prev_not_tail(ea);
+     }
+   }
+   return ea;
+@@ -124,12 +128,119 @@
+ }
+ 
+ //----------------------------------------------------------------------
++inline bool is_tms6_addkpc(uint32 code)
++{
++  return (code & 0x1FFCL) == 0x160;
++}
++
++//----------------------------------------------------------------------
++inline bool is_tms6_mvk_mvkh(uint32 code)
++{
++  return (code & 0x7CL)     == 0x28
++      || (code & 0x7CL)     == 0x68
++      || (code & 0x3EFFCL)  == 0xA358
++      || (code & 0x7C1FFCL) == 0x40;
++}
++
++//----------------------------------------------------------------------
++inline int get_dst_reg(uint32 code)
++{
++  return (code & BIT1) ? ((int(code >> 23) & 0x1F) + rB0)
++                       :  (int(code >> 23) & 0x1F);
++}
++
++//----------------------------------------------------------------------
++inline bool isLoadToReg(uint32 code, int reg)
++{
++  if ((code & 0x17C) == 0x134 ||   // LDNW
++      (code & 0x17C) == 0x64  ||   // LDW
++      (code & 0x7C)  == 0x6C)      // LDW with 15bit offset
++    return get_dst_reg(code) == reg;
++
++  return false;
++}
++
++//----------------------------------------------------------------------
++void process_dp_instr(ea_t ea)
++{
++  static uint32 bssEA = 0;
++  if (bssEA==0)
++  {
++    segment_t *bssSegm = get_segm_by_name(".bss");
++    if (!bssSegm)
++      // try one modified ny DCS loader
++      bssSegm = get_segm_by_name(".bss_");
++    if (bssSegm)
++      bssEA = (uint32)bssSegm->start_ea;
++  }
++
++  if (bssEA==0)
++    return;
++
++  // main functionality
++  uint32 code = get_dword(ea);
++  uint32 offset = (code>>8) & 0x7FFF;
++  uint32 address = bssEA;
++  // the codes below is for DP(B14) register
++  switch (code & 0xFC)
++  {
++    case 0xC:
++      // LDHU
++    case 0x4C:
++      // LDH
++      address += (offset<<1);
++      if (!is_off0(get_flags(ea)))
++          op_offset(ea, 0, REF_LOW16, address, bssEA);
++      break;
++
++    case 0x1C:
++      // LDBU
++    case 0x2C:
++      // LDB
++      address += offset;
++      if (!is_off0(get_flags(ea)))
++          op_offset(ea, 0, REF_LOW16, address, bssEA);
++      break;
++
++    case 0x6C:
++      // LDW
++      address += (offset<<2);
++      if (!is_off0(get_flags(ea)))
++          op_offset(ea, 0, REF_LOW16, address, bssEA);
++      break;
++
++    case 0x3C:
++      // STB
++      address += offset;
++      if (!is_off1(get_flags(ea)))
++          op_offset(ea, 1, REF_LOW16, address, bssEA);
++      break;
++
++    case 0x5C:
++      // STH
++      address += (offset<<1);
++      if (!is_off1(get_flags(ea)))
++          op_offset(ea, 1, REF_LOW16, address, bssEA);
++      break;
++
++    case 0x7C:
++      // STW
++      address += (offset<<2);
++      if (!is_off1(get_flags(ea)))
++          op_offset(ea, 1, REF_LOW16, address, bssEA);
++      break;
++  }
++}
++
++//----------------------------------------------------------------------
+ static int get_delay(uint32 code)
+ {
+   if ( is_tms6_nop(code) )                        // NOP
+     return int((code >> 13) & 0xF) + 1;
+   if ( is_tms6_bnop(code) )                       // BNOP
+     return int((code >> 13) & 0x7);
++  if ( is_tms6_addkpc(code) )                     // ADDKPC
++    return int((code >> 13) & 0x7) + 1;
+   return 1;
+ }
+ 
+@@ -138,19 +249,40 @@
+ {
+   ea_t mvk;
+   ea_t mvkh;
+-  uint32 next;
++  ea_t next;
++  ea_t addkpc;
+   int reg;
+-  call_info_t(ea_t n) : mvk(BADADDR), mvkh(BADADDR), next(n), reg(rB3) {}
+-  bool call_is_present(void) const { return mvk != BADADDR && mvkh != BADADDR; }
++  // call_info_t(ea_t n) : mvk(BADADDR), mvkh(BADADDR), next(n), addkpc(BADADDR), reg(-1) {}
++  call_info_t(ea_t n) : mvk(BADADDR), mvkh(BADADDR), next(n), addkpc(BADADDR), reg(rB3) {}
++  bool call_is_present() { return (mvk != BADADDR && mvkh != BADADDR) || addkpc != BADADDR; }
++  bool is_addkpc() { return addkpc != BADADDR; }
+   void test(ea_t ea, uint32 code);
+ };
+ 
+ //----------------------------------------------------------------------
+-inline ushort get_mvk_op(uint32 code) { return ushort(code >> 7); }
++inline uint16 get_mvk_op(uint32 code)
++{
++  return ((code & 0x3EFFCL)==0xA358)
++            ? uint16(code>>18) & 0x1F
++            : (((code & 0x7C1FFCL)==0x40)
++                ? uint16(code>>13) & 0x1F
++                : uint16(code >> 7));
++}
++
++inline uint32 get_addkpc_addr(ea_t addkpcAddr, uint32 code)
++{
++  return (addkpcAddr & (~0x1F)) + ((code >> 14) & 0x1FC);
++}
+ 
+ void call_info_t::test(ea_t ea, uint32 code)
+ {
+-  if ( (code & 0xF000007CL) == 0x28 && mvk == BADADDR )
++  if (call_is_present())
++    return;
++
++ if (((code & 0xF000007CL) == 0x28   ||  // unconditional MVK.S
++      (code & 0xF003EFFCL) == 0xA358 ||  // unconditional MVK.L
++      (code & 0xF07C1FFCL) == 0x40)  &&  // unconditional MVK.D
++    mvk == BADADDR)
+   { // unconditional MVK.S
+     int mvk_reg = int(code >> 23) & 0x1F;
+     if ( code & BIT1 )
+@@ -172,6 +304,164 @@
+       mvkh = ea;
+     }
+   }
++  else if ( (code & 0xF0001FFCL) == 0x160 && addkpc == BADADDR )
++  {
++    // unconditional ADDKPC
++    int addkpc_reg = int(code >> 23) & 0x1F;
++    if ( code & BIT1 )
++      addkpc_reg += rB0;
++    if (reg == -1 && next == get_addkpc_addr(ea, code))
++    {
++      reg = addkpc_reg;
++      addkpc = ea;
++    }
++  }
++}
++
++struct reg32k_set_info
++{
++  ea_t mvk;
++  uint16 mvkOp;
++  ea_t mvkh;
++  uint16 mvkhOp;
++  bool regOverloaded;  // whether the searched reg is written by LDW/LDNW or another MVK/MVKH
++  int reg;
++
++  reg32k_set_info(int regOp) : mvk(BADADDR), mvkh(BADADDR), regOverloaded(false), reg(regOp), mvkOp(0), mvkhOp(0) {}
++  bool found_address(void) { return mvk != BADADDR && mvkh != BADADDR; }
++  bool searchFinished() { return  regOverloaded || found_address(); }
++  void test(ea_t ea, uint32 code);
++  ea_t get_address() { return found_address() ? (uint32)mvkOp | (uint32)(mvkhOp<<16) : BADADDR; }
++};
++
++void reg32k_set_info::test(ea_t ea, uint32 code)
++{
++  if (isLoadToReg(code, reg))
++    regOverloaded = true;
++  else if (is_tms6_mvk_mvkh(code))
++  {
++    int mvk_reg = get_dst_reg(code);
++
++    if ((code & 0xF000007CL) == 0x28   ||   // unconditional MVK.S
++        (code & 0xF003EFFCL) == 0xA358 ||   // unconditional MVK.L
++        (code & 0xF07C1FFCL) == 0x40)       // unconditional MVK.D
++    {
++      if (mvk == BADADDR)
++        if (reg==-1 || reg == mvk_reg)
++        {
++          reg = mvk_reg;
++          mvk = ea;
++          mvkOp = get_mvk_op(code);
++        }
++      else if (reg == mvk_reg)
++        regOverloaded = true;
++    }
++    else if ((code & 0xF000007CL) == 0x68)  // unconditional MVKH.S
++    {
++      if (mvkh == BADADDR)
++        if (reg==-1 || reg == mvk_reg)
++        {
++          reg  = mvk_reg;
++          mvkh = ea;
++          mvkhOp = get_mvk_op(code);
++        }
++      else if (reg == mvk_reg)
++        regOverloaded = true;
++    }
++  }
++}
++
++
++//----------------------------------------------------------------------
++static void get_preceding_address_details(
++  insn_t insn, ea_t ea, reg32k_set_info *ci, bool includeStartEA = false, int lookupPackets = 5)
++{
++  // convert fetch packets to isntructions
++  int lookupInstr = ((ea & 0x1F)>>2) + lookupPackets*8;
++  bool isPacket = (get_dword(ea) & BIT0) != 0;;
++
++  if ( !is_spec_ea(ea) )
++  {
++    while ( lookupInstr>0 || isPacket )
++    {
++      ea_t ea2 = prev_not_tail(ea);
++      if ( ea2 == BADADDR || !is_code(get_flags(ea2)) )
++        break;
++      if ( includeStartEA )
++        ci->test(ea, get_dword(ea));
++      else
++        ci->test(ea2, get_dword(ea2));
++      if ( ci->searchFinished() )
++        break;
++      isPacket = (get_dword(ea2) & BIT0) != 0;
++      --lookupInstr;
++      ea = ea2;
++    }
++  }
++
++  // populate offsets
++  if (ci->found_address())
++  {
++    ea_t target = find_first_insn_in_packet(ci->get_address());
++    // add offset results
++    if ( !is_off0(get_flags(ci->mvk)) )
++      op_offset(ci->mvk, 0, REF_LOW16, target, insn.cs, 0);
++    if ( !is_off0(get_flags(ci->mvkh)) )
++      op_offset(ci->mvkh, 0, REF_HIGH16, target, insn.cs, 0);
++  }
++}
++
++//----------------------------------------------------------------------
++static void analyzeMvkMvkhOffsets(insn_t insn, ea_t ea, int lookupPackets = 3)
++{
++  // This attempts to analyze offsets in MVK/MVKH pairs
++  // It should be called for ea of the branch/call and
++  // walks upwards looking for MVK and searching corresponding
++  // MVKH pair to see if they produce a constant
++
++  // convert fetch packets to isntructions
++  int lookupInstr = ((ea & 0x1F)>>2) + lookupPackets*8;
++  bool isPacket = (get_dword(ea) & BIT0) != 0;
++  uint32 regMaskA = 0;
++  uint32 regMaskB = 0;
++
++  if (!is_spec_ea(ea))
++  {
++    while (lookupInstr>0 || isPacket)
++    {
++      ea_t ea2 = prev_not_tail(ea);
++      if ( ea2 == BADADDR || !is_code(get_flags(ea2)) )
++        break;
++
++      uint32 code = get_dword(ea2);
++      if ( is_tms6_mvk_mvkh(code) )
++      {
++        int regOp = get_dst_reg(code);
++        bool processed = (regOp < rB0) ? ((regMaskA & (BIT0<<regOp)) != 0)
++                                       : ((regMaskB & (BIT0<<(regOp-rB0))) != 0);
++
++        // walk up 3 packets searching matching MVK/MVKH and fill the offsets if found
++        if ( !processed )
++        {
++          reg32k_set_info reg(regOp);
++          get_preceding_address_details(insn, ea2, &reg, true);
++
++          // mark as processed
++          if ( reg.found_address() )
++          {
++            if (regOp < rB0)
++              regMaskA |= BIT0<<regOp;
++            else
++              regMaskB |= BIT0<<(regOp-rB0);
++          }
++        }
++      }
++
++      isPacket = (get_dword(ea2) & BIT0) != 0;
++      --lookupInstr;
++      ea = ea2;
++    }
++  }
+ }
+ 
+ //----------------------------------------------------------------------
+@@ -325,20 +615,46 @@
+           }
+           ndx2 = ea2node(target);
+         }
++        // attempt to implement branching by register
++        else if (brins.Op1.type == o_reg)
++        {
++          // walk up to 5 fetch packets up looking for MVK/MVKH relevant for this call
++          reg32k_set_info ci(brins.Op1.reg);
++          get_preceding_address_details(brins, brins.ea, &ci);
++          if ( ci.found_address() )
++          {
++            ea_t target = find_first_insn_in_packet(ci.get_address());
++
++            brins.add_cref(0, target, fl_CF);
++            if ( !func_does_return(target) )
++              flow = false;
++
++            tnode.altset(insn.ea, target);
++          }
++          else
++          {
++            tnode.altset(insn.ea, iscall ? 2 : 1);
++            flow = brins.cond ? true : false;
++          }
++        }
+         else
+         {
+           ndx2 = iscall ? 2 : 1;
+-          if ( !iscall )
++          if ( !iscall && !brins.cond )
+             flow = false;
+         }
+         tnode.altset_ea(insn.ea, ndx2);
+-        if ( iscall )
++
++        // add offsets to the commands setting up return address
++        if ( iscall && !ci.is_addkpc() )
+         {
+           if ( !is_off0(get_flags(ci.mvk)) )
+             op_offset(ci.mvk, 0, REF_LOW16, ci.next, brins.cs, 0);
+           if ( !is_off0(get_flags(ci.mvkh)) )
+             op_offset(ci.mvkh, 0, REF_HIGH16, ci.next, brins.cs, 0);
+         }
++        // analyze possible call parameters
++        analyzeMvkMvkhOffsets(insn, insn.ea + insn.size);
+         break;
+       }
+ 
+@@ -346,6 +662,7 @@
+       if ( is_bnop )
+         break;
+     }
++    process_dp_instr(insn.ea);
+   }
+ 
+   flags_t F = get_flags(insn.ea);
+diff -au tms320c6/out.cpp processor/out.cpp
+--- tms320c6/out.cpp	2017-09-14 15:09:28.000000000 +0100
++++ processor/out.cpp	2021-01-03 23:51:36.000000000 +0000
+@@ -438,6 +438,20 @@
+ void idaapi header(outctx_t &ctx)
+ {
+   ctx.gen_header(GH_PRINT_ALL);
++#if IDA_SDK_VERSION<730
++  ctx.gen_cmt_line("Processor       : %8.8s", inf.procname);
++  ctx.gen_cmt_line("Target assembler: %s", ash.name);
++  ctx.gen_cmt_line("Byte sex        : %s", inf.is_be() ? "Big endian" : "Little endian");
++#else
++  ctx.gen_cmt_line("Processor       : %8.8s", inf.procname);
++  ctx.gen_cmt_line("Target assembler: %s", ash.name);
++  ctx.gen_cmt_line("Byte sex        : %s", inf_is_be() ? "Big endian" : "Little endian");
++#endif
++  ctx.gen_cmt_line("  DP = B14");
++  ctx.gen_cmt_line("  SP = B15");
++  if ( ash.header != NULL )
++    for ( const char * const*ptr=ash.header; *ptr != NULL; ptr++ )
++      ctx.gen_printf(0,COLSTR("%s",SCOLOR_ASMDIR),*ptr);
+ }
+ 
+ //--------------------------------------------------------------------------
+diff -au tms320c6/reg.cpp processor/reg.cpp
+--- tms320c6/reg.cpp	2017-09-14 15:09:28.000000000 +0100
++++ processor/reg.cpp	2021-01-03 22:43:35.000000000 +0000
+@@ -22,7 +22,9 @@
+   "A16", "A17", "A18", "A19", "A20", "A21", "A22", "A23",
+   "A24", "A25", "A26", "A27", "A28", "A29", "A30", "A31",
+   "B0", "B1", "B2",  "B3",  "B4",  "B5",  "B6",  "B7",
+-  "B8", "B9", "B10", "B11", "B12", "B13", "B14", "B15",
++  "B8", "B9", "B10", "B11", "B12", "B13",
++  // these are comminly accepted mnemonics for B14, B15
++  "DP", "SP",
+   "B16", "B17", "B18", "B19", "B20", "B21", "B22", "B23",
+   "B24", "B25", "B26", "B27", "B28", "B29", "B30", "B31",
+   "AMR",
+Only in processor: tms320c6.diff
+diff -au tms320c6/tms6.hpp processor/tms6.hpp
+--- tms320c6/tms6.hpp	2017-09-14 15:09:28.000000000 +0100
++++ processor/tms6.hpp	2021-01-03 23:14:43.000000000 +0000
+@@ -13,7 +13,7 @@
+ #ifndef _TMS6_HPP
+ #define _TMS6_HPP
+ 
+-#include "../idaidp.hpp"
++#include "idaidp.hpp"
+ #include "ins.hpp"
+ 
+ //---------------------------------
