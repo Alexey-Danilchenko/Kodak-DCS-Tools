@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.17)
 project(DCS_IDA)
 
 # If building the patched version of TMS320C6 CPU module is required, uncomment this
-set(BUILD_TMS320C6 TRUE)
+#set(BUILD_TMS320C6 TRUE)
 
 # Search path for cmake modules
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
