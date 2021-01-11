@@ -1,12 +1,16 @@
 /*
-    kodakbinfw.cpp - Implementation of Total Commander packer plugin for 
-                     working with DCS BIN files for Kodak cameras as they 
-                     are archives. Allows to extract and pack in the 
-                     segments as binary files (respective to their encoding 
-                     options). Does not allow to add/pack in new segments 
+    kodakbinfw.cpp - Implementation of Total Commander packer plugin for
+                     working with DCS BIN files for Kodak cameras as they
+                     are archives. Allows to extract and pack in the
+                     segments as binary files (respective to their encoding
+                     options). Does not allow to add/pack in new segments
                      just override exsiting ones.
 
-    Copyright 2013 Alexey Danilchenko
+					 This could also be used with Double Commander without
+					 any changes (but compiled on appropriate DC supported
+					 platform).
+
+    Copyright 2013,2021 Alexey Danilchenko
     Written by Alexey Danilchenko
 
     This program is free software; you can redistribute it and/or modify
@@ -24,32 +28,27 @@
     Foundation, 51 Franklin Street - Fifth Floor, Boston,
     MA 02110-1301, USA.
 */
-#define _CRT_SECURE_NO_WARNINGS
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <ctype.h>
-#include <time.h>
+#include <cstdio>
+#include <cstring>
+#include <ctime>
+#include <filesystem>
+#include <fstream>
+#include <mutex>
 
-#include <windows.h>
-
-#ifdef _MSC_VER
-#include <sys/types.h>
 #include <sys/stat.h>
-#include <time.h>
-#endif
 
-#ifdef _WIN32
-#include <io.h>
-#include <dos.h>
+#if defined(_WIN32)
+	#define dll_export extern "C" __declspec(dllexport)
+#else
+    #define dll_export extern "C" __attribute__((visibility("default")))
+	#define __stdcall
 #endif
 
 #include "dcs_firm.h"
 
-/* Comment/uncomment this define to enable the addition of the new files or 
-   deleting of existing ones to the firmware. Default option is commented 
+/* Comment/uncomment this define to enable the addition of the new files or
+   deleting of existing ones to the firmware. Default option is commented
    out */
 #define ENABLE_ADD_DELETE 1
 
@@ -100,7 +99,7 @@
 #define PK_CAPS_SEARCHTEXT 128  /* Allow searching in this archive type */
 
 #define BACKGROUND_UNPACKUNPACK 1      /* Which operations are thread-safe?    */
-#define BACKGROUND_PACK 2
+#define BACKGROUND_PACK    2
 #define BACKGROUND_MEMPACK 4
 
 /* Options for memory packing */
@@ -133,7 +132,7 @@ struct tHeaderData {
 	int CmtState;
 };
 
-typedef struct {
+struct tHeaderDataEx {
 	char ArcName[1024];
 	char FileName[1024];
 	int Flags;
@@ -152,11 +151,9 @@ typedef struct {
 	int CmtSize;
 	int CmtState;
 	char Unused[1024];
-}
-tHeaderDataEx;
+};
 
-
-typedef struct {
+struct tOpenArchiveData {
 	char* ArcName;
 	int OpenMode;
 	int OpenResult;
@@ -164,16 +161,7 @@ typedef struct {
 	int CmtBufSize;
 	int CmtSize;
 	int CmtState;
-}
-tOpenArchiveData;
-
-typedef struct {
-	int size;
-	uint32 PluginInterfaceVersionLow;
-	uint32 PluginInterfaceVersionHi;
-	char DefaultIniName[MAX_PATH];
-}
-PackDefaultParamStruct;
+};
 
 /* Definition of callback functions called by the DLL
 Ask to swap disk for multi-volume archive */
@@ -181,10 +169,10 @@ typedef int (__stdcall *tChangeVolProc)(char *ArcName, int Mode);
 /* Notify that data is processed - used for progress dialog */
 typedef int (__stdcall *tProcessDataProc)(unsigned char *Addr, int Size);
 
-typedef struct 
+struct ArchiveRec
 {
 	char ArchiveName[260];
-	int ArchiveOpen;
+	bool ArchiveOpen;
 	int segmentCount;
 	uint32 ArchiveSize;
 	int ArchiveSizeHigh;
@@ -193,269 +181,255 @@ typedef struct
 	tProcessDataProc ProcessDataProc;
 	DcsHeader header;
 	char archInfo[0x3000];
-} ArchiveRec;
+};
 
-int maxarchives = 10;
+const int MAX_ARCHIVES = 10;
 
-CRITICAL_SECTION slotcriticalsection;
-BOOL slotcriticalsectioninitialized = false;
-
-uint32 FileSize(char *fileName) 
+bool streq_nocase(const char *a, const char *b)
 {
-	int arcHandle = 0;
-	if ((arcHandle = _open(fileName, _O_BINARY | _O_RDONLY)) == -1) {
-		return 0;
-	}
-	__int64 size64 = _lseeki64(arcHandle, 0, SEEK_END);
+    int la = 0;
+    int lb = 0;
+    do
+    {
+        la = tolower(*a++);
+        lb = tolower(*b++);
+    }
+    while (la && lb && la==lb);
 
-	_close(arcHandle);
-
-	return (uint32)(size64 & 0xFFFFFFFF);
-}
-
-int FileExists(char *FileName) 
-{
-	FILE *fp_r;
-	int res;
-	fp_r = fopen(FileName, "rb");
-	res = fp_r != NULL;
-	if (res)
-		fclose(fp_r);
-	return res;
+    return la==lb;
 }
 
 int GetTempName(char *FileName, char *RenamedName)    /* returns RenamedName */
 {
-	char *p;
-	char ch1;
-	char ch2;
-	strcpy(RenamedName, FileName);
-	p = RenamedName;
+	std::strcpy(RenamedName, FileName);
+    char *p = RenamedName;
 	while (p[0])
 		p++;
 	strncat(RenamedName, ".#00", 259);
 	p += 2;
-	for (ch1 = '0';ch1 <= '9';ch1++) {
+	for (char ch1 = '0';ch1 <= '9';ch1++)
+    {
 		p[0] = ch1;
-		for (ch2 = '0';ch2 <= '9';ch2++) {
+		for (char ch2 = '0'; ch2 <= '9'; ++ch2)
+        {
 			p[1] = ch2;
-			if (!FileExists(RenamedName))
+			if (!std::filesystem::exists(RenamedName))
 				return 1;
 		}
 	}
 	return 0;    /* unique name generation failed! */
 }
 
-int ArchiveReadHeader(char *fileName, DcsHeader &header) 
+int ArchiveReadHeader(char *fileName, DcsHeader &header)
 {
-	int arcHandle = 0;
-	if ((arcHandle = _open(fileName, _O_BINARY | _O_RDONLY)) == -1) {
+    std::fstream archive(fileName, std::fstream::binary | std::fstream::in);
+	if (!archive.is_open())
 		return E_EOPEN;
-	}
-	int n = _read (arcHandle, &header, sizeof(DcsHeader));
-	if (n != sizeof(DcsHeader)) {
-		_close(arcHandle);
-		return E_EREAD;
-	}
-	__int64 size64 = _lseeki64(arcHandle, 0, SEEK_END);
-	if (size64 != fromBigEndian(header.fileSize)) {
-		_close(arcHandle);
-		return E_UNKNOWN_FORMAT;
-	}
 
-	_close(arcHandle);
+    if (archive.read((char*)(&header), sizeof(header)).gcount() != sizeof(header))
+        return E_EREAD;
+
+    auto arcSize = archive.seekg(0, archive.end).tellg();
+    if (arcSize != fromBigEndian(header.fileSize))
+		return E_UNKNOWN_FORMAT;
 
 	uint32 segmentCount = fromBigEndian(header.segmentCount);
-	for (uint32 i = 0; i < segmentCount; i++) {
+	for (uint32 i = 0; i < segmentCount; ++i)
 		decodeSegmentName((byte*)header.segment[i].name, (byte*)header.segment[i].name);
-	}
 
 	return 0;
 }
-/* Keep a list of currently open archives (up to a maximum of maxarchives) */
-static ArchiveRec ArchiveList[11];   /* 0 for packing, 1-10 for unpacking! */
+
+/* Keep a list of currently open archives (up to a maximum of MAX_ARCHIVES) */
+static ArchiveRec archiveList[MAX_ARCHIVES+1];   /* 0 for packing, 1-10 for unpacking! */
+static std::mutex archiveMutex;
+
 /* Important: array must be initialized to all 0! */
-int __stdcall OpenArchive(tOpenArchiveData* ArchiveData) 
+dll_export int __stdcall OpenArchive(struct tOpenArchiveData* archiveData)
 {
-	int ArchiveHandle;
-	int n;
-	int i;
-	int ArcHandle;
-	int foundslot;
-	unsigned short date, time;
+	int arcHandle = 0;
+
+    // critical section
+    {
+        const std::lock_guard lock(archiveMutex);
+        for (int i = 1; i <= MAX_ARCHIVES; ++i)
+            if (!archiveList[i].ArchiveOpen)
+            {
+                arcHandle = i;
+                archiveList[arcHandle].ArchiveOpen = true;
+                break;
+            }
+    }
+
+	if (!arcHandle)
+    {
+		archiveData->OpenResult = E_NO_MEMORY;
+		archiveList[arcHandle].ArchiveOpen = false;
+		return 0;
+	}
+
+    std::fstream archive(archiveData->ArcName, std::fstream::binary | std::fstream::
+	in);
+	if (!archive.is_open())
+    {
+		archiveData->OpenResult = E_EOPEN;
+		archiveList[arcHandle].ArchiveOpen = false;
+		return 0;
+	}
+	if (archive.read((char*)(&(archiveList[arcHandle].header)),
+                     sizeof(DcsHeader)).gcount() != sizeof(DcsHeader))
+    {
+		archiveData->OpenResult = E_EREAD;
+		archiveList[arcHandle].ArchiveOpen = false;
+		return 0;
+	}
+
+    auto arcSize = archive.seekg(0, archive.end).tellg();
+    if (arcSize >= 0)
+    {
+	    archiveList[arcHandle].ArchiveSize = (uint32)(arcSize & 0xFFFFFFFF);
+	    archiveList[arcHandle].ArchiveSizeHigh = (uint32)((arcSize >> 32) & 0xFFFFFFFF);
+    }
+
+    // FileTime = (year - 1980) << 25 | month << 21 | day << 16 | hour << 11 | minute << 5 | second/2;
 #ifdef _MSC_VER
-
-	struct _stat ftbuf;
-	struct tm* fttm;
-#endif
-
-	if (!slotcriticalsectioninitialized) {
-		slotcriticalsectioninitialized = true;
-		InitializeCriticalSection (&slotcriticalsection);
-	}
-	EnterCriticalSection (&slotcriticalsection);
-	foundslot = 0;
-	for (i = 1;i <= maxarchives;i++)
-		if (ArchiveList[i].ArchiveOpen == 0) {
-			foundslot = 1;
-			ArcHandle = i;
-			ArchiveList[ArcHandle].ArchiveOpen = 1;
-			break;
-		}
-	LeaveCriticalSection (&slotcriticalsection);
-
-	if (foundslot == 0) {
-		ArchiveData->OpenResult = E_NO_MEMORY;
-		ArchiveList[ArcHandle].ArchiveOpen = 0;
-		return 0;
-	}
-	if ((ArchiveHandle = _open(ArchiveData->ArcName, _O_BINARY | _O_RDONLY)) == -1) {
-		ArchiveData->OpenResult = E_EOPEN;
-		ArchiveList[ArcHandle].ArchiveOpen = 0;
-		return 0;
-	}
-	n = _read (ArchiveHandle, &(ArchiveList[ArcHandle].header), sizeof(DcsHeader));
-	if (n != sizeof(DcsHeader)) {
-		_close(ArchiveHandle);
-		ArchiveData->OpenResult = E_EREAD;
-		ArchiveList[ArcHandle].ArchiveOpen = 0;
-		return 0;
-	}
-	__int64 size64 = _lseeki64(ArchiveHandle, 0, SEEK_END);
-
-	ArchiveList[ArcHandle].ArchiveSize = (uint32)(size64 & 0xFFFFFFFF);
-	ArchiveList[ArcHandle].ArchiveSizeHigh = (uint32)((size64 >> 32) & 0xFFFFFFFF);
-
-#ifdef _MSC_VER
-
-	_stat(ArchiveData->ArcName, &ftbuf);
-	fttm = localtime(&ftbuf.st_mtime);
-	time = fttm->tm_hour << 11 | fttm->tm_min << 5 | fttm->tm_sec;
-	date = (fttm->tm_year - 80) << 9 | (fttm->tm_mon + 1) << 5 | fttm->tm_mday;
+    struct _stat ftbuf;
+	_stat(archiveData->ArcName, &ftbuf);
 #else
-
-	_dos_getftime( ArchiveHandle, &date, &time );
+    struct stat ftbuf;
+	stat(archiveData->ArcName, &ftbuf);
 #endif
+    auto fttm = localtime(&ftbuf.st_mtime);
+	unsigned short time = fttm->tm_hour << 11 | fttm->tm_min << 5 | fttm->tm_sec;
+	unsigned short date = (fttm->tm_year - 80) << 9 | (fttm->tm_mon + 1) << 5 | fttm->tm_mday;
+	archiveList[arcHandle].ArchiveDate = (date << 16) + time;
 
-	ArchiveList[ArcHandle].ArchiveDate = 65536 * date + time;
-
-	_close(ArchiveHandle);
-
-	if (fromBigEndian(ArchiveList[ArcHandle].header.fileSize) != ArchiveList[ArcHandle].ArchiveSize) {
-		ArchiveData->OpenResult = E_UNKNOWN_FORMAT;
-		ArchiveList[ArcHandle].ArchiveOpen = 0;
+	if (fromBigEndian(archiveList[arcHandle].header.fileSize) != arcSize)
+    {
+		archiveData->OpenResult = E_UNKNOWN_FORMAT;
+		archiveList[arcHandle].ArchiveOpen = false;
 		return 0;
 	}
 
-	strcpy(ArchiveList[ArcHandle].ArchiveName, ArchiveData->ArcName);
-	ArchiveList[ArcHandle].ArchiveOpen = 1;
-	ArchiveList[ArcHandle].segmentCount = -2;
-	dumpFirmwareInfo(&(ArchiveList[ArcHandle].header), ArchiveList[ArcHandle].archInfo);
-	return ArcHandle;  /* returns pseudohandle */
+	std::strcpy(archiveList[arcHandle].ArchiveName, archiveData->ArcName);
+	archiveList[arcHandle].segmentCount = -2;
+	dumpFirmwareInfo(&(archiveList[arcHandle].header), archiveList[arcHandle].archInfo);
+
+    return arcHandle;  /* returns pseudohandle */
 }
 
-int __stdcall CloseArchive(int hArcData) 
+dll_export int __stdcall CloseArchive(int hArcData)
 {
-	if (hArcData > 0 && hArcData <= maxarchives) {
-		ArchiveList[hArcData].ArchiveOpen = 0;
+	if (hArcData > 0 && hArcData <= MAX_ARCHIVES)
+    {
+		archiveList[hArcData].ArchiveOpen = false;
 		return 0;
-	} else
-		return E_ECLOSE;
+	}
+
+    return E_ECLOSE;
 }
 
-int __stdcall ReadHeader(int hArcData, tHeaderData* HeaderData)
+dll_export int __stdcall ReadHeader(int hArcData, tHeaderData* HeaderData)
 {
-	if (hArcData > 0 && hArcData <= maxarchives && ArchiveList[hArcData].ArchiveOpen) {
-		int &segmentCount = ArchiveList[hArcData].segmentCount;
+	if (hArcData > 0 && hArcData <= MAX_ARCHIVES && archiveList[hArcData].ArchiveOpen)
+    {
+		int &segmentCount = archiveList[hArcData].segmentCount;
 
 		segmentCount++;
 
-		if (segmentCount >= (int)fromBigEndian(ArchiveList[hArcData].header.segmentCount))
+		if (segmentCount >= (int)fromBigEndian(archiveList[hArcData].header.segmentCount))
 			return E_END_ARCHIVE;
 
-		if (segmentCount < 0) {
+		if (segmentCount < 0)
+        {
 			// special case pseudo segment - generated archive info
-			strcpy(HeaderData->FileName, "_BIN_INFO_");
-			HeaderData->PackSize = (int)strlen(ArchiveList[hArcData].archInfo);
+			std::strcpy(HeaderData->FileName, "_BIN_INFO_");
+			HeaderData->PackSize = (int)strlen(archiveList[hArcData].archInfo);
 			HeaderData->UnpSize = HeaderData->PackSize;
-		} else {
-			DcsSegment& segment = ArchiveList[hArcData].header.segment[segmentCount];
+		}
+        else
+        {
+			DcsSegment& segment = archiveList[hArcData].header.segment[segmentCount];
 			decodeSegmentName((byte*)segment.name, (byte*)HeaderData->FileName);
 			HeaderData->PackSize = fromBigEndian(segment.size);
 			HeaderData->UnpSize = fromBigEndian(segment.realSize);
 		}
-		strcpy(HeaderData->ArcName, ArchiveList[hArcData].ArchiveName);
-		HeaderData->FileTime = ArchiveList[hArcData].ArchiveDate;
+		std::strcpy(HeaderData->ArcName, archiveList[hArcData].ArchiveName);
+		HeaderData->FileTime = archiveList[hArcData].ArchiveDate;
 
 		return 0;
-	} else {
-		return E_EREAD;
 	}
+
+    return E_EREAD;
 }
 
-
-int __stdcall ProcessFile(int hArcData, int Operation, char* DestPath, char* DestName) 
+dll_export int __stdcall ProcessFile(int hArcData, int Operation, char* DestPath, char* DestName)
 {
-	if (hArcData < 1 || hArcData > maxarchives)
+	if (hArcData < 1 || hArcData > MAX_ARCHIVES)
 		return E_EREAD;
 
 	if (Operation == PK_SKIP)
 		return 0;
 
-	if (ArchiveList[hArcData].ArchiveOpen && ArchiveList[hArcData].ArchiveName[0] &&
-	        ((Operation == PK_EXTRACT && DestName != NULL) || (Operation == PK_TEST))) {
-		uint32 len;
-		FILE *binFile;
-		FILE *fp_w;
+	if (archiveList[hArcData].ArchiveOpen && archiveList[hArcData].ArchiveName[0] &&
+        ((Operation == PK_EXTRACT && DestName) || (Operation == PK_TEST)))
+    {
+		uint32 len = 0;
+		FILE *binFile = nullptr;
+		FILE *fp_w = nullptr;
 		int aborted = 0;
 		int oldpos = 0;
 		int curpos = 0;
 
 		if (Operation == PK_EXTRACT)
-			if ((fp_w = fopen(DestName, "wb")) == NULL)
+			if ((fp_w = std::fopen(DestName, "wb")) == nullptr)
 				return E_ECREATE;
 
-
-		if (ArchiveList[hArcData].segmentCount < 0) {
+		if (archiveList[hArcData].segmentCount < 0)
+        {
 			// fake section - write bin info
 			if (Operation == PK_EXTRACT)
-				fwrite(ArchiveList[hArcData].archInfo,
+				fwrite(archiveList[hArcData].archInfo,
 				       1,
-				       strlen(ArchiveList[hArcData].archInfo),
+				       strlen(archiveList[hArcData].archInfo),
 				       fp_w);
-			if (ArchiveList[hArcData].ProcessDataProc(NULL, (int)strlen(ArchiveList[hArcData].archInfo)) == 0)
+			if (archiveList[hArcData].ProcessDataProc(nullptr, (int)strlen(archiveList[hArcData].archInfo)) == 0)
 				aborted = 1;
-		} else {
+		}
+        else
+        {
 			// process standard section
-			if (ArchiveList[hArcData].segmentCount >= 0)
-				if ((binFile = fopen(ArchiveList[hArcData].ArchiveName, "rb")) == NULL)
+			if (archiveList[hArcData].segmentCount >= 0)
+				if ((binFile = fopen(archiveList[hArcData].ArchiveName, "rb")) == nullptr)
 					return E_EOPEN;
 
-			DcsSegment& segment = ArchiveList[hArcData].header.segment[ArchiveList[hArcData].segmentCount];
+			DcsSegment& segment = archiveList[hArcData].header.segment[archiveList[hArcData].segmentCount];
             uint32 encType = fromBigEndian(segment.encType);
 			int encSize = fromBigEndian(segment.size);
 			int bufSize = encSize > 0 ? encSize : 1;
 			char * buff = new char[bufSize];
 			fseek(binFile, fromBigEndian(segment.offset), SEEK_SET);
 			len = (int)fread(buff, 1, encSize, binFile);
-			if (encSize == len) {
+			if (encSize == len)
+            {
 				char *outbuff = buff;
-				if (encType == 2) {
+				if (encType == 2)
+                {
 					len = fromBigEndian(segment.realSize);
 					outbuff = new char[len + 4];
 				}
 				decodeBuf((byte*)buff, (byte*)outbuff, encType, (uint32)len);
 				if (Operation == PK_EXTRACT)
 					fwrite(outbuff, 1, len, fp_w);
-				if (ArchiveList[hArcData].ProcessDataProc) {
+				if (archiveList[hArcData].ProcessDataProc)
+                {
 					curpos = ftell(binFile);
-					if (ArchiveList[hArcData].ProcessDataProc(NULL, curpos - oldpos) == 0)
+					if (archiveList[hArcData].ProcessDataProc(nullptr, curpos - oldpos) == 0)
 						aborted = 1;
 					oldpos = curpos;
 				}
-				if (encType == 2) {
+				if (encType == 2)
 					delete[] outbuff;
-				}
 			}
 
 			delete[] buff;
@@ -466,27 +440,29 @@ int __stdcall ProcessFile(int hArcData, int Operation, char* DestPath, char* Des
 			fclose(fp_w);
 		if (aborted)
 			return E_EABORTED;
-		else if (len < 0) {
-			_unlink(DestName);
+		else if (len < 0)
+        {
+			std::filesystem::remove(DestName);
 			return E_BAD_ARCHIVE;
-		} else
-			return 0;
-	} else
-		return E_EREAD;
+		}
 
+        return 0;
+	}
+
+    return E_EREAD;
 }
 
-void __stdcall SetChangeVolProc(int hArcData, tChangeVolProc pChangeVolProc) {}
+dll_export void __stdcall SetChangeVolProc(int hArcData, tChangeVolProc pChangeVolProc) {}
 
-void __stdcall SetProcessDataProc(int hArcData, tProcessDataProc pProcessDataProc) 
+dll_export void __stdcall SetProcessDataProc(int hArcData, tProcessDataProc pProcessDataProc)
 {
 	int index = hArcData;
-	if (hArcData < 1 || hArcData > maxarchives)
+	if (hArcData < 1 || hArcData > MAX_ARCHIVES)
 		index = 0;
-	ArchiveList[index].ProcessDataProc = pProcessDataProc;
+	archiveList[index].ProcessDataProc = pProcessDataProc;
 }
 
-int __stdcall GetPackerCaps() 
+dll_export int __stdcall GetPackerCaps()
 {
 #ifdef ENABLE_ADD_DELETE
 	return PK_CAPS_NEW | PK_CAPS_MODIFY | PK_CAPS_MULTIPLE | PK_CAPS_SEARCHTEXT | PK_CAPS_DELETE ;
@@ -496,13 +472,12 @@ int __stdcall GetPackerCaps()
 }
 
 /* Functions for packing files */
-int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *AddList, int Flags) 
+dll_export int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *AddList, int Flags)
 {
 	char *p;
-	FILE *arcFile = 0;
-	FILE *tempArcFile = 0;
+	FILE *arcFile = nullptr;
+	FILE *tempArcFile = nullptr;
 	size_t len = 0;
-	int retCode = 0;
 	DcsHeader header;
 	char *segmFileName[47];
 	char TempArchName[1024];
@@ -515,9 +490,8 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 		return E_NO_FILES;
 
 	// read header and check the file
-	if (retCode = ArchiveReadHeader(PackedFile, header)) {
+	if (auto retCode = ArchiveReadHeader(PackedFile, header))
 		return retCode;
-	}
 
 	uint32 segmentCount = fromBigEndian(header.segmentCount);
 
@@ -530,11 +504,11 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 			fileBaseName++;
 		else
 			fileBaseName = p;
-		if (fileBaseName) 
+		if (fileBaseName)
         {
             bool newFile = true;
 			for (uint32 i = 0; i < segmentCount; i++)
-				if (_stricmp(fileBaseName, header.segment[i].name) == 0) 
+				if (streq_nocase(fileBaseName, header.segment[i].name))
                 {
 					// found the file - remember the path
                     newFile = false;
@@ -550,7 +524,7 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
                 strncpy(header.segment[segmentCount].name, fileBaseName, 16);
                 header.segment[segmentCount].name[15] = 0;
                 for (int ch=0; header.segment[segmentCount].name[ch]; ch++)
-                    header.segment[segmentCount].name[ch] = 
+                    header.segment[segmentCount].name[ch] =
                         tolower(header.segment[segmentCount].name[ch]);
                 header.segment[segmentCount].offset = 1;    // non zero to start update
                 header.segment[segmentCount].physAddress = 0;
@@ -576,14 +550,15 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 		return E_EOPEN;
 
 	// open new temp file
-    time_t fwTimeEpoch = time(NULL);
-	if ((tempArcFile = fopen(TempArchName, "wb")) == NULL)
+    time_t fwTimeEpoch = time(nullptr);
+	if ((tempArcFile = fopen(TempArchName, "wb")) == nullptr)
 		return E_EOPEN;
 
     // open existing file
-	if ((arcFile = fopen(PackedFile, "rb")) == NULL) {
+	if ((arcFile = fopen(PackedFile, "rb")) == nullptr)
+    {
 		fclose(tempArcFile);
-		_unlink(TempArchName);
+		std::filesystem::remove(TempArchName);
 		return E_EOPEN;
 	}
 
@@ -594,7 +569,7 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 	if (fwrite(&header, 1, sizeof(DcsHeader), tempArcFile) != sizeof(DcsHeader)) {
 		fclose(arcFile);
 		fclose(tempArcFile);
-		_unlink(TempArchName);
+		std::filesystem::remove(TempArchName);
 		return E_EWRITE;
 	}
 
@@ -606,7 +581,7 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 		if (newOffset)
 			newOffset = toBigEndian(ftell(tempArcFile));
 
-		if (segmFileName[i]) 
+		if (segmFileName[i])
         {
 			// copy section from new file
 			FILE *fileToAdd = 0;
@@ -617,18 +592,18 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 			uint32 encType = fromBigEndian(header.segment[i].encType);
 
 			// prepare file name
-			strcpy(SegmFileName, SrcPath);
-			strcat(SegmFileName, segmFileName[i]);
+			std::strcpy(SegmFileName, SrcPath);
+			std::strcat(SegmFileName, segmFileName[i]);
 
-			uint32 inSize = FileSize(SegmFileName);
+			auto inSize = std::filesystem::file_size(SegmFileName);
 
 			if (inSize)
             {
-				if ((fileToAdd = fopen(SegmFileName, "rb")) == NULL) 
+				if ((fileToAdd = fopen(SegmFileName, "rb")) == nullptr)
                 {
 					fclose(arcFile);
 					fclose(tempArcFile);
-					_unlink(TempArchName);
+					std::filesystem::remove(TempArchName);
 					return E_EOPEN;
 				}
 
@@ -637,9 +612,10 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 				len = (int)fread(inBuf, 1, inSize, fileToAdd);
 				fclose(fileToAdd);
 
+            	int retCode = 0;
 				if (inSize != len)
 					retCode = E_EREAD;
-				else 
+				else
                 {
 					if (encType == 2)
 						outBuf = new char[inSize * 2];
@@ -650,10 +626,10 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 					header.segment[i].checksum =
 					    toBigEndian(dcsChecksum((byte*)outBuf, outSize));
                     header.segment[i].realSize = toBigEndian(inSize);
-                        
+
 					if (outSize == 0)
 						retCode = E_BAD_DATA;
-					else 
+					else
                     {
 						len = fwrite(outBuf, 1, outSize, tempArcFile);
 						if (outSize != len)
@@ -666,25 +642,26 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 				}
 				delete[] inBuf;
 
-				if (retCode) 
+				if (retCode)
                 {
 					fclose(arcFile);
 					fclose(tempArcFile);
-					_unlink(TempArchName);
+					std::filesystem::remove(TempArchName);
 					return retCode;
 				}
 			}
 
 			header.segment[i].size = toBigEndian(outSize);
-		} 
-        else 
+		}
+        else
         {
 			// copy section from existing file
 			uint32 outSize = fromBigEndian(header.segment[i].size);
 			if (outSize) {
 				char* inBuf = new char[outSize];
 
-				fseek(arcFile, fromBigEndian(header.segment[i].offset), SEEK_SET);
+				int retCode = 0;
+                fseek(arcFile, fromBigEndian(header.segment[i].offset), SEEK_SET);
 				len = (int)fread(inBuf, 1, outSize, arcFile);
 				if (outSize != len)
 					retCode = E_EREAD;
@@ -697,7 +674,7 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 				if (retCode) {
 					fclose(arcFile);
 					fclose(tempArcFile);
-					_unlink(TempArchName);
+					std::filesystem::remove(TempArchName);
 					return retCode;
 				}
 			}
@@ -719,15 +696,15 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
     if (fwTime)
     {
         header.fileTime = toBigEndian((uint32)fwTimeEpoch + DCS_TIME_OFFSET_MS);
-        
-        _snprintf(header.date, sizeof(header.date), "%s %02d %4d", 
-                  monthNames[fwTime->tm_mon], fwTime->tm_mday, fwTime->tm_year+1900);
+
+        std::snprintf(header.date, sizeof(header.date), "%s %02d %4d",
+                      monthNames[fwTime->tm_mon], fwTime->tm_mday, fwTime->tm_year+1900);
         if (fwTime->tm_hour<12)
-            _snprintf(header.time, sizeof(header.time), "%02d:%02d:%02d AM", 
-                      fwTime->tm_hour, fwTime->tm_min, fwTime->tm_sec);
+            std::snprintf(header.time, sizeof(header.time), "%02d:%02d:%02d AM",
+                          fwTime->tm_hour, fwTime->tm_min, fwTime->tm_sec);
         else
-            _snprintf(header.time, sizeof(header.time), "%02d:%02d:%02d PM", 
-                      fwTime->tm_hour, fwTime->tm_min, fwTime->tm_sec);
+            std::snprintf(header.time, sizeof(header.time), "%02d:%02d:%02d PM",
+                          fwTime->tm_hour, fwTime->tm_min, fwTime->tm_sec);
     }
 
     // update the checksum
@@ -736,13 +713,13 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 	header.headerChecksum = toBigEndian(dcsChecksum((byte*) & header, sizeof(DcsHeader)));
 	if (fwrite(&header, 1, sizeof(DcsHeader), tempArcFile) != sizeof(DcsHeader)) {
 		fclose(tempArcFile);
-		_unlink(TempArchName);
+		std::filesystem::remove(TempArchName);
 		return E_EWRITE;
 	}
 
 	// successful completion
 	fclose(tempArcFile);
-	_unlink(PackedFile);
+	std::filesystem::remove(PackedFile);
 	rename(TempArchName, PackedFile);
 
 	// now delete the archived files if asked for
@@ -750,24 +727,23 @@ int __stdcall PackFiles(char *PackedFile, char *SubPath, char *SrcPath, char *Ad
 		for (uint32 i = 0; i < segmentCount; i++)
 			if (segmFileName[i]) {
 				// prepare file name
-				strcpy(SegmFileName, SrcPath);
-				strcat(SegmFileName, segmFileName[i]);
+				std::strcpy(SegmFileName, SrcPath);
+				std::strcat(SegmFileName, segmFileName[i]);
 
-				_unlink(SegmFileName);
+				std::filesystem::remove(SegmFileName);
 			}
 
 	return 0;
 }
 
 
-int __stdcall DeleteFiles(char *PackedFile, char *DeleteList)
+dll_export int __stdcall DeleteFiles(char *PackedFile, char *DeleteList)
 {
 #ifdef ENABLE_ADD_DELETE
 	char *p;
 	FILE *arcFile = 0;
 	FILE *tempArcFile = 0;
 	size_t len = 0;
-	int retCode = 0;
 	DcsHeader header;
 	DcsHeader oldHeader;
 	bool deleteSegment[47];
@@ -780,9 +756,8 @@ int __stdcall DeleteFiles(char *PackedFile, char *DeleteList)
 		return E_NO_FILES;
 
 	// read header and check the file
-	if (retCode = ArchiveReadHeader(PackedFile, header)) {
+	if (auto retCode = ArchiveReadHeader(PackedFile, header))
 		return retCode;
-	}
 
 	oldHeader = header;
 	uint32 segmentCount = fromBigEndian(header.segmentCount);
@@ -797,12 +772,12 @@ int __stdcall DeleteFiles(char *PackedFile, char *DeleteList)
 			fileBaseName++;
 		else
 			fileBaseName = p;
-		if (fileBaseName) 
+		if (fileBaseName)
         {
 			for (uint32 i = 0; i < segmentCount; i++)
-				if (_stricmp(fileBaseName, header.segment[i].name) == 0) 
+				if (streq_nocase(fileBaseName, header.segment[i].name))
                 {
-					// found the file 
+					// found the file
                     if (header.segment[segmentCount].physAddress != 0)
                         return E_NOT_SUPPORTED;     // cannot delete non-files
 					deleteSegment[i] = true;
@@ -834,14 +809,14 @@ int __stdcall DeleteFiles(char *PackedFile, char *DeleteList)
 		return E_EOPEN;
 
 	// open new temp file
-    time_t fwTimeEpoch = time(NULL);
-	if ((tempArcFile = fopen(TempArchName, "wb")) == NULL)
+    time_t fwTimeEpoch = time(nullptr);
+	if ((tempArcFile = fopen(TempArchName, "wb")) == nullptr)
 		return E_EOPEN;
 
     // open existing file
-	if ((arcFile = fopen(PackedFile, "rb")) == NULL) {
+	if ((arcFile = fopen(PackedFile, "rb")) == nullptr) {
 		fclose(tempArcFile);
-		_unlink(TempArchName);
+		std::filesystem::remove(TempArchName);
 		return E_EOPEN;
 	}
 
@@ -849,7 +824,7 @@ int __stdcall DeleteFiles(char *PackedFile, char *DeleteList)
 	if (fwrite(&header, 1, sizeof(DcsHeader), tempArcFile) != sizeof(DcsHeader)) {
 		fclose(arcFile);
 		fclose(tempArcFile);
-		_unlink(TempArchName);
+		std::filesystem::remove(TempArchName);
 		return E_EWRITE;
 	}
 
@@ -863,26 +838,27 @@ int __stdcall DeleteFiles(char *PackedFile, char *DeleteList)
 
         // copy section from existing file
         uint32 outSize = fromBigEndian(header.segment[i].size);
-        if (outSize) 
+        if (outSize)
         {
             char* inBuf = new char[outSize];
 
             fseek(arcFile, fromBigEndian(header.segment[i].offset), SEEK_SET);
             len = (int)fread(inBuf, 1, outSize, arcFile);
+            int retCode = 0;
             if (outSize != len)
                 retCode = E_EREAD;
-            else 
+            else
             {
                 len = fwrite(inBuf, 1, outSize, tempArcFile);
                 if (outSize != len)
                     retCode = E_EWRITE;
             }
             delete[] inBuf;
-            if (retCode) 
+            if (retCode)
             {
                 fclose(arcFile);
                 fclose(tempArcFile);
-                _unlink(TempArchName);
+                std::filesystem::remove(TempArchName);
                 return retCode;
             }
         }
@@ -903,31 +879,31 @@ int __stdcall DeleteFiles(char *PackedFile, char *DeleteList)
     if (fwTime)
     {
         header.fileTime = toBigEndian((uint32)fwTimeEpoch + DCS_TIME_OFFSET_MS);
-        
-        _snprintf(header.date, sizeof(header.date), "%s %02d %4d", 
-                  monthNames[fwTime->tm_mon], fwTime->tm_mday, fwTime->tm_year+1900);
+
+        std::snprintf(header.date, sizeof(header.date), "%s %02d %4d",
+                      monthNames[fwTime->tm_mon], fwTime->tm_mday, fwTime->tm_year+1900);
         if (fwTime->tm_hour<12)
-            _snprintf(header.time, sizeof(header.time), "%02d:%02d:%02d AM", 
-                      fwTime->tm_hour, fwTime->tm_min, fwTime->tm_sec);
+            std::snprintf(header.time, sizeof(header.time), "%02d:%02d:%02d AM",
+                          fwTime->tm_hour, fwTime->tm_min, fwTime->tm_sec);
         else
-            _snprintf(header.time, sizeof(header.time), "%02d:%02d:%02d PM", 
-                      fwTime->tm_hour, fwTime->tm_min, fwTime->tm_sec);
+            std::snprintf(header.time, sizeof(header.time), "%02d:%02d:%02d PM",
+                          fwTime->tm_hour, fwTime->tm_min, fwTime->tm_sec);
     }
 
     // update the checksum
     header.fileSize =  toBigEndian(tempArcSize);
 	header.headerChecksum = toBigEndian(0x10);
 	header.headerChecksum = toBigEndian(dcsChecksum((byte*) & header, sizeof(DcsHeader)));
-	if (fwrite(&header, 1, sizeof(DcsHeader), tempArcFile) != sizeof(DcsHeader)) 
+	if (fwrite(&header, 1, sizeof(DcsHeader), tempArcFile) != sizeof(DcsHeader))
     {
 		fclose(tempArcFile);
-		_unlink(TempArchName);
+		std::filesystem::remove(TempArchName);
 		return E_EWRITE;
 	}
 
 	// successful completion
 	fclose(tempArcFile);
-	_unlink(PackedFile);
+	std::filesystem::remove(PackedFile);
 	rename(TempArchName, PackedFile);
 #endif
 	return 0;
