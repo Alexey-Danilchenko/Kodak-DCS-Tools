@@ -362,16 +362,6 @@ struct soundBuffer        // size (bytes): 8h(8)
     uint32 bufSize;    // offsets: byte 4h(4), uint16 2h(2), uint32 1h(1)
 };
 
-struct processObject           // size (bytes): 18h(24)
-{
-    void   (*func)()   ;    // offsets: byte 0h(0), uint16 0h(0), uint32 0h(0)
-    uint32 (*init)()   ;    // offsets: byte 4h(4), uint16 2h(2), uint32 1h(1)
-    void   (*destroy)();    // offsets: byte 8h(8), uint16 4h(4), uint32 2h(2)
-    void   (*dump)()   ;    // offsets: byte Ch(12), uint16 6h(6), uint32 3h(3)
-    uint32 dataSize    ;    // offsets: byte 10h(16), uint16 8h(8), uint32 4h(4)
-    uint32 type        ;    // offsets: byte 14h(20), uint16 Ah(10), uint32 5h(5)
-};
-
 struct JpegIOState                   // size (bytes): 14h(20)
 {
     uint32 put_buffer        ;    // offsets: byte 0h(0), uint16 0h(0), uint32 0h(0)
@@ -756,6 +746,16 @@ struct rgbtoyccData                  // size (bytes): 70h(112)
     imageBuffer ycbcr        ;    // offsets: byte 24h(36), uint16 12h(18), uint32 9h(9)
     int16*      deltaInputRow;    // offsets: byte 68h(104), uint16 34h(52), uint32 1Ah(26)
     int32*      firstInputRow;    // offsets: byte 6Ch(108), uint16 36h(54), uint32 1Bh(27)
+};
+
+struct processObject           // size (bytes): 18h(24)
+{
+    void   (*func)()   ;    // offsets: byte 0h(0), uint16 0h(0), uint32 0h(0)
+    uint32 (*init)()   ;    // offsets: byte 4h(4), uint16 2h(2), uint32 1h(1)
+    void   (*destroy)();    // offsets: byte 8h(8), uint16 4h(4), uint32 2h(2)
+    void   (*dump)()   ;    // offsets: byte Ch(12), uint16 6h(6), uint32 3h(3)
+    uint32 dataSize    ;    // offsets: byte 10h(16), uint16 8h(8), uint32 4h(4)
+    uint32 type        ;    // offsets: byte 14h(20), uint16 Ah(10), uint32 5h(5)
 };
 
 struct process                     // size (bytes): 2Ch(44)

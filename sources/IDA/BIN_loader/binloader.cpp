@@ -82,7 +82,24 @@ static uint32 permanentPage   = 0x10F60000;
 static uint32 preloadMask     = 0x10000;
 static uint32 immrBase        = 0x20000000;
 
+static uint32 sbssSegStart = 0;
+static uint32 sbssSegEnd   = 0;
+static enum_t sbssEnumId = BADNODE;
+
 // ------------------------ Functions ------------------------
+
+// creates IDA enum for TIFF and Kodak tag names
+void check_and_add_sbss_enum(uint32 addr, const char* name)
+{
+    if (sbssEnumId != BADNODE && addr >= sbssSegStart && addr < sbssSegEnd)
+    {
+        qstring strName("_");
+        strName += name;
+        int err = add_enum_member(sbssEnumId, strName.c_str(), addr);
+        if (err)
+            msg("Error adding SBSS_SYMBOLS.%s enum member\n", strName.c_str());
+    }
+}
 
 // creates IDA enum for TIFF and Kodak tag names
 void populate_tiff_tags_enum()
@@ -200,6 +217,10 @@ void process_symbols(linput_t *li, DcsSegment& symbolSegment)
                 // for _preload correct the address
                 address |= preloadMask;
 
+            // add SBSS enum if its in that area
+            check_and_add_sbss_enum(address, qstr.c_str());
+
+            // set the name
             if (!validate_name(&qstr, VNT_IDENT, SN_IDBENC) || !force_name(address, qstr.c_str(), SN_IDBENC))
             {
 				msg("Cannot set symbol name \"%s\" for the address 0x%08X\n", qstr.c_str(), address);
@@ -374,6 +395,16 @@ void add_segment(linput_t *li, DcsSegment& segm, uint32 romAddress)
         preloadAddress = address;
         preloadAddressEnd = address+realSize;
         segmAddress |= preloadMask;
+	}
+
+    // IDA PowerPC decompiler has troubles using symbols in SBSS segment
+    // with short addressing (16bit) - hence create a ENUM so it is easier
+    // to read
+    if (!qstrcmp(segm.name, ".sbss"))
+    {
+        sbssEnumId = add_enum(-1, "SBSS_SYMBOLS", hex_flag());
+        sbssSegStart = address;
+        sbssSegEnd   = address+realSize;
 	}
 
     if ((qstrstr(segm.name, ".sym") || streq(segm.name, "name.txt")) && realSize>0)

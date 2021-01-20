@@ -4,6 +4,125 @@
 
 #include <dcs7xx.h>
 
+struct process processNoPreview[] = // 8
+{
+    { { captureImageLine, captureImageInit, captureImageDestroy, captureImageDump, 0xB0, 2 }, 0, 0, 0, 0, 0 },
+    { { defectLine,       defectInit,       defectDestroy,       defectDump,       0x30, 0 }, 0, 0, 0, 0, 0 },
+    { { saveLine,         saveInit,         saveDestroy,         saveDump,         0x10, 0 }, 0, 0, 0, 0, 0 },
+    { { patternLine,      patternInit,      patternDestroy,      patternDump,     0x108, 1 }, 0, 0, 0, 0, 0 },
+    { { cropLine,         cropInit,         cropDestroy,         cropDump,          0xC, 2 }, 0, 0, 0, 0, 0 },
+    { { compressLine,     compressInit,     compressDestroy,     compressDump,     0x2C, 1 }, 0, 0, 0, 0, 0 },
+    { { thumbnailLine,    thumbnailInit,    thumbnailDestroy,    thumbnailDump,    0x78, 0 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processPreview[] = // 11
+{
+    { { captureImageLine, captureImageInit, captureImageDestroy, captureImageDump, 0xB0, 2 }, 0, 0, 0, 0, 0 },
+    { { defectLine,       defectInit,       defectDestroy,       defectDump,       0x30, 0 }, 0, 0, 0, 0, 0 },
+    { { saveLine,         saveInit,         saveDestroy,         saveDump,         0x10, 0 }, 0, 0, 0, 0, 0 },
+    { { patternLine,      patternInit,      patternDestroy,      patternDump,     0x108, 1 }, 0, 0, 0, 0, 0 },
+    { { cropLine,         cropInit,         cropDestroy,         cropDump,          0xC, 2 }, 0, 0, 0, 0, 0 },
+    { { compressLine,     compressInit,     compressDestroy,     compressDump,     0x2C, 1 }, 0, 0, 0, 0, 0 },
+    { { previewLine,      previewInit,      previewDestroy,      previewDump,      0x6C, 0 }, 0, 0, 0, 0, 0 },
+    { { compressLine,     compressInit,     compressDestroy,     compressDump,     0x2C, 2 }, 0, 0, 0, 0, 0 },
+    { { saveLine,         saveInit,         saveDestroy,         saveDump,         0x10, 2 }, 0, 0, 0, 0, 0 },
+    { { downsampleLine,   downsampleInit,   downsampleDestroy,   downsampleDump,   0x7C, 1 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processDefectFind[] = // 3
+{
+    { { captureImageLine, captureImageInit, captureImageDestroy, captureImageDump, 0xB0, 2 }, 0, 0, 0, 0, 0 },
+    { { defectFindLine,   defectFindInit,   defectFindDestroy,   defectFindDump,   0x40, 0 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processDisplay[] = // 9
+{
+    { { sourceLine,        sourceInit,        sourceDestroy,        sourceDump,        0x34, 0 }, 0, 0, 0, 0, 0 },
+    { { ah2Line,           ah2Init,           ah2Destroy,           ah2Dump,           0x78, 0 }, 0, 0, 0, 0, 0 },
+    { { downsampleLine,    downsampleInit,    downsampleDestroy,    downsampleDump,    0x7C, 2 }, 0, 0, 0, 0, 0 },
+    { { resizeLine,        resizeInit,        resizeDestroy,        resizeDump,       0x148, 1 }, 0, 0, 0, 0, 0 },
+    { { displayColorLine,  displayColorInit,  displayColorDestroy,  displayColorDump,  0x88, 1 }, 0, 0, 0, 0, 0 },
+    { { saveLine,          saveInit,          saveDestroy,          saveDump,          0x10, 4 }, 0, 0, 0, 0, 0 },
+    { { sharpenLine,       sharpenInit,       sharpenDestroy,       sharpenDump,       0x7C, 0 }, 0, 0, 0, 0, 0 },
+    { { displayYCbYCrLine, displayYCbYCrInit, displayYCbYCrDestroy, displayYCbYCrDump, 0x28, 0 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processJpegDecodeOnly[] = // 2
+{
+    { { jpegDecodeLine, jpegDecodeInit, jpegDecodeDestroy, jpegDecodeDump, 1A88h, 1 }, 0, 0, 0, 0, 0 }
+    { 0 }
+};
+
+struct process processFinishedJpeg[] = // 14
+{
+    { { sourceLine,       sourceInit,       sourceDestroy,       sourceDump,       0x34, 0 }, 0, 0, 0, 0, 0 },
+    { { displayColorLine, displayColorInit, displayColorDestroy, displayColorDump, 0x88, 2 }, 0, 0, 0, 0, 0 },
+    { { defectSDLine,     defectSDInit,     defectSDDestroy,     defectSDDump,     0x78, 0 }, 0, 0, 0, 0, 0 },
+    { { sigmaLine,        sigmaInit,        sigmaDestroy,        sigmaDump,        0x6C, 0 }, 0, 0, 0, 0, 0 },
+    { { ah2Line,          ah2Init,          ah2Destroy,          ah2Dump,          0x78, 0 }, 0, 0, 0, 0, 0 },
+    { { downsampleLine,   downsampleInit,   downsampleDestroy,   downsampleDump,   0x7C, 2 }, 0, 0, 0, 0, 0 },
+    { { resizeLine,       resizeInit,       resizeDestroy,       resizeDump,      0x148, 1 }, 0, 0, 0, 0, 0 },
+    { { sharpenLine,      sharpenInit,      sharpenDestroy,      sharpenDump,      0x7C, 1 }, 0, 0, 0, 0, 0 },
+    { { displayColorLine, displayColorInit, displayColorDestroy, displayColorDump, 0x88, 3 }, 0, 0, 0, 0, 0 },
+    { { rgbtoyccLine,     rgbtoyccInit,     rgbtoyccDestroy,     rgbtoyccDump,     0x70, 0 }, 0, 0, 0, 0, 0 },
+    { { jpegEncodeLine,   jpegEncodeInit,   jpegEncodeDestroy,   jpegEncodeDump, 0x1134, 0 }, 0, 0, 0, 0, 0 },
+    { { rgbtoyccLine,     rgbtoyccInit,     rgbtoyccDestroy,     rgbtoyccDump,     0x70, 1 }, 0, 0, 0, 0, 0 },
+    { { jpegEncodeLine,   jpegEncodeInit,   jpegEncodeDestroy,   jpegEncodeDump, 0x1134, 2 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processFinishedTiff[] = // 10
+{
+    { { sourceLine,       sourceInit,       sourceDestroy,       sourceDump,       0x34, 0 }, 0, 0, 0, 0, 0 },
+    { { displayColorLine, displayColorInit, displayColorDestroy, displayColorDump, 0x88, 2 }, 0, 0, 0, 0, 0 },
+    { { defectSDLine,     defectSDInit,     defectSDDestroy,     defectSDDump,     0x78, 0 }, 0, 0, 0, 0, 0 },
+    { { sigmaLine,        sigmaInit,        sigmaDestroy,        sigmaDump,        0x6C, 0 }, 0, 0, 0, 0, 0 },
+    { { ah2Line,          ah2Init,          ah2Destroy,          ah2Dump,          0x78, 0 }, 0, 0, 0, 0, 0 },
+    { { downsampleLine,   downsampleInit,   downsampleDestroy,   downsampleDump,   0x7C, 2 }, 0, 0, 0, 0, 0 },
+    { { resizeLine,       resizeInit,       resizeDestroy,       resizeDump,      0x148, 1 }, 0, 0, 0, 0, 0 },
+    { { sharpenLine,      sharpenInit,      sharpenDestroy,      sharpenDump,      0x7C, 1 }, 0, 0, 0, 0, 0 },
+    { { displayColorLine, displayColorInit, displayColorDestroy, displayColorDump, 0x88, 4 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processFinishedLinearTiff[] = // 4
+{
+    { { sourceLine,       sourceInit,       sourceDestroy,       sourceDump,       0x34, 0 }, 0, 0, 0, 0, 0 },
+    { { defectSDLine,     defectSDInit,     defectSDDestroy,     defectSDDump,     0x78, 0 }, 0, 0, 0, 0, 0 },
+    { { displayColorLine, displayColorInit, displayColorDestroy, displayColorDump, 0x88, 7 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processFinishedThumbnailTiff[] = // 5
+{
+    { { sourceLine,       sourceInit,       sourceDestroy,       sourceDump,       0x34, 0 }, 0, 0, 0, 0, 0 },
+    { { downsampleLine,   downsampleInit,   downsampleDestroy,   downsampleDump,   0x7C, 2 }, 0, 0, 0, 0, 0 },
+    { { resizeLine,       resizeInit,       resizeDestroy,       resizeDump,      0x148, 1 }, 0, 0, 0, 0, 0 },
+    { { displayColorLine, displayColorInit, displayColorDestroy, displayColorDump, 0x88, 6 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processFinishedThumbnailJpeg[] = // 7
+{
+    { { sourceLine,       sourceInit,       sourceDestroy,       sourceDump,       0x34, 0 }, 0, 0, 0, 0, 0 },
+    { { downsampleLine,   downsampleInit,   downsampleDestroy,   downsampleDump,   0x7C, 2 }, 0, 0, 0, 0, 0 },
+    { { resizeLine,       resizeInit,       resizeDestroy,       resizeDump,      0x148, 1 }, 0, 0, 0, 0, 0 },
+    { { displayColorLine, displayColorInit, displayColorDestroy, displayColorDump, 0x88, 5 }, 0, 0, 0, 0, 0 },
+    { { rgbtoyccLine,     rgbtoyccInit,     rgbtoyccDestroy,     rgbtoyccDump,     0x70, 2 }, 0, 0, 0, 0, 0 },
+    { { jpegEncodeLine,   jpegEncodeInit,   jpegEncodeDestroy,   jpegEncodeDump, 0x1134, 1 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
+struct process processCheckChecksum[] = // 2
+{
+    { { sourceLine, sourceInit, sourceDestroy, sourceDump, 34h, 1 }, 0, 0, 0, 0, 0 },
+    { 0 }
+};
+
 void processSymbolPrint(char*  string        /* = A4 */,
                         uint32 symbolAddress /* = B4 */)
 {
