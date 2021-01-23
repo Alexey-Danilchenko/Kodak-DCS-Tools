@@ -2,7 +2,7 @@
 
 All the tools that I have devised are written in C/C++. They range from tools to support reverse engineering Kodak camera firmwares and DSP to the sensor remap and extraction of built in profiles.
 
-All of the tools come with Microsoft Visual C++ 2017 project files that are designed to be location independent for external dependencies. External dependencies (libraries like QT or Libraw) are configured in corresponding .props files for MSVC 2017. These files are XML based properties and are easily editable.
+Most of the sources were moved to CMake built system with a few remaining utilities still using Microsoft Visual C++ 2017 project files. See appropriate build instruction in relevant source folders for more details.
 
 The list of all the tools:
 
