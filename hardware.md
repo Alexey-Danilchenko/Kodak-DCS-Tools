@@ -9,7 +9,7 @@ These cameras use 50x50mm square, 1mm thick glass IR Cut filter with the followi
 * 750-1000nm, average transmission < 0.02%, maximum transmission < 0.04%
 * 1000-1100nm, maximum transmission < 1%
 
-ProBack filters should have sharp cutoff edge closely following specification to match Kodak's profiles. In fact the better colour reproduction has ben observed for filters where cut off area is atthefar end of tolerance - 660-665nm. 
+ProBack filters should have sharp cutoff edge closely following specification to match Kodak's profiles. In fact the better colour reproduction has ben observed for filters where cut off area is at the far end of transmissive area - 660-665nm. 
 
 The best commercially available alternative that is close to those specifications is [Knight Optical IR Cut filters](https://www.knightoptical.com/stock/optical-components/uvvisnir-optics/filters/ir-cut-filters/). The spectral trasmission curves for one sample of Knight Optical filter compared with standard Kodak ones [could be seen here](https://drive.google.com/file/d/1-58zvv20XH8T5d2wr0gaVNZsHv_yeqn3/view?usp=sharing) with corresponding [.CSV files here](https://drive.google.com/file/d/0Bw2ZohnbXtyASVRReHUzd0gzWGc/view?usp=sharing).
 
