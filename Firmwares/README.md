@@ -89,10 +89,11 @@ The overall list of enhancements:
 
 ## Proback and Proback Plus Firmwares
 
-### [Proback and Proback Plus firmware 3.2.10](http://wowcamera.info/viewtopic.php?p=86748#p86748)
+### [Proback and Proback Plus firmware 3.2.10](ProBack/3.2.10/PROBACK.BIN)
 
 This firmware adds the following to the stock Kodak 3.2.9 firmware:
 
+* Extends maximum available date to 2099 
 * Enables shooting with the [following manual trigger](http://wowcamera.info/viewtopic.php?p=86748#p86748) (link is in Russian please use Google translate) for Pro Back used on Hasseldlad 200/2000. Removes modal synchronization errors display that prevent normal shooting with this trigger. 
 
 ## Kodak DCS 14nx, SLR/n и SLR/c Firmwares
