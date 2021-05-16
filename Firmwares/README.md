@@ -94,7 +94,7 @@ The overall list of enhancements:
 This firmware adds the following to the stock Kodak 3.2.9 firmware:
 
 * Extends maximum available date to 2099 
-* Enables shooting with the [following manual trigger](http://wowcamera.info/viewtopic.php?p=86748#p86748) (link is in Russian please use Google translate) for Pro Back used on Hasseldlad 200/2000. Removes modal synchronization errors display that prevent normal shooting with this trigger. 
+* Permanently enables service mode (and adds "Save IF file" option to Imager menu) - this allows defective pixels remap
 
 ## Kodak DCS 14nx, SLR/n и SLR/c Firmwares
 
