@@ -73,7 +73,7 @@ The overall list of enhancements over Kodak 3.3.7 last official firmware:
 ### [Firmware 3.4.5A.M for Proback 645 Mamiya](ProBack645/3.4.5M_Alt/PB645.BIN) 
 This firmware is an alternative implementation of the 3.4.5.M firmware and delivers the same functionality. It also changes a bit logic of state transitioning from 3.4.4A.M firmware to allow for earlier back availability to capture next message (that should help a bit with rapid nature of 645 DF/DF+ cameras). For more details see [firmware sources here](ProBack645/3.4.5M_Alt). It is only here for the curious and to show that a different approach operating firmware is very functional. For all normal users - use the standard 3.4.5.M firmware above. I however had used this firmware extensively without any problems.
 
-### [Firmware 3.4.0.CH for Proback 645 Contax/Hasselblad](https://drive.google.com/open?id=1l-_l9BQmKuJeVKslYlQg1K6n2kEW3bLw) 
+### [Firmware 3.4.0.CH for Proback 645 Contax/Hasselblad](ProBack645/3.4.0CH/PB645.BIN) 
 Firmware [sources are here](ProBack645/3.4.0CH) - those are all incremental from previous firmware versions I have produced. 
 
 The overall list of enhancements:
@@ -100,11 +100,11 @@ This firmware adds the following to the stock Kodak 3.2.9 firmware:
 
 Here you will find a custom build firmwares for the above Kodak cameras with modifications to fix or remove certain limitations. Installation procedure for all these is the same as for standard Kodak firmwares - it needs to be copied on card and updated twice from the camera menus. Firmware [sources are here](SLRs). 
 
-[Firmware 5.4.10 for Kodak DCS Pro 14n(x)](https://drive.google.com/open?id=0Bw2ZohnbXtyAdkFGYjN0cnZaRGs)
+[Firmware 5.4.10 for Kodak DCS Pro 14n(x)](SLRs/PRO14N.bin)
 
-[Firmware 5.4.10 for Kodak DCS Pro SLR/n](https://drive.google.com/open?id=0Bw2ZohnbXtyAcFlwTjJUdlpaeFU)
+[Firmware 5.4.10 for Kodak DCS Pro SLR/n](SLRs/PROSLRN.bin)
 
-[Firmware 5.4.10 for Kodak DCS Pro SLR/c](https://drive.google.com/open?id=0Bw2ZohnbXtyATko1aWtBc2xtX2s)
+[Firmware 5.4.10 for Kodak DCS Pro SLR/c](SLRs/PROSLRC.bin)
 
 This firmwares have two changes:
 
