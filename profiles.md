@@ -15,7 +15,7 @@ Older version of Lightroom/ACR (ACR 4.2) contained quite neutral profile for the
 
 Pretty much all Kodak raw files (.DCR) for cameras supported here come with set of data that contain standard camera profiling information as well as information specific to this instance of the camera (profiled at a factory). The standard information pretty much matches the generic camera profiles Kodak shiped with these cameras. This data can be used to extract and generate camera profiles for various raw converters. 
 
-I have created a utility to do just that - extract that data into profiles in various shapes and formats. This is called `dcrprofile` with sources available [here](sources/dcrprofile) and binaries could be downloaded [here](https://drive.google.com/file/d/0Bw2ZohnbXtyAZVJJaWZhWjdnUWs/view?usp=sharing). It is a command line utility accepting the following set of options:
+I have created a utility to do just that - extract that data into profiles in various shapes and formats. This is called `dcrprofile` with sources available [here](sources/dcrprofile) and binaries could be downloaded [here](sources/dcrprofile/bin). It is a command line utility accepting the following set of options:
 
 
 ```
