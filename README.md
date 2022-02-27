@@ -16,4 +16,4 @@ The following is the list of topics:
 * [Sources of some of the code that I reverse engineered from firmwares and DSP](Firmwares/Reversed_Sources)
 * [Kodak ProBack 645M/C/H hardware info - viewfinder masks, IR filters etc](hardware.md)
 
-The details of some of these explorations are published [here](https://dalex-257.livejournal.com/) and [here (in Russian)](http://wowcamera.info/viewtopic.php?f=18&t=283). The latter link is now dormant - I am not involved there any longer.
+The details of some of these explorations are published [here](https://dalex-257.livejournal.com/). 
