@@ -258,7 +258,7 @@ States other than 0 prevent camera from shooting - the camera simply awaits for 
 * 1 - other error (DB is not available)
 * 3 - no memory, card is full or missing (Mem DB message on the camera)
 * 5 - battery low (Batt DB message on the camera)
-* 8 - DB is busy processing (Busy DB message on the camera). Can be used to prevent camera from
+* 8 - DB is busy processing (Busy DB message on the camera). Can be used to prevent camera from operating whilst processing the previously taken shot
 
 
 ### Message ID 03 - request from the camera following DB REQ
