@@ -89,7 +89,7 @@ The overall list of enhancements:
 
 ## Proback and Proback Plus Firmwares
 
-### [Proback and Proback Plus firmware 3.2.10](ProBack/3.2.10/PROBACK.BIN)
+### [Proback and Proback Plus firmware 3.2.11](ProBack/3.2.11/PROBACK.BIN)
 
 This firmware adds the following to the stock Kodak 3.2.9 firmware:
 
