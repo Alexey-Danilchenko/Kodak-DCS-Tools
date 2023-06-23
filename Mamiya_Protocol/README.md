@@ -103,14 +103,14 @@ With exception of the camera on/off message above, all other messages have the f
 
 | Byte Num.  |  0   |  1   |    2   |    3   | ...  |_\<LEN>_+7|_\<LEN>_+8|
 |------------|:----:|:----:|:------:|:------:|:----:|:--------:|:--------:|
-| **Message**| `01` | `00` |_\<MID>_|_\<LEN>_| ...  | _\<SV>_  |   `AA`   |
+| **Message**| `01` | `00` |_\<MID>_|_\<LEN>_| ...  | _\<PV>_  |   `AA`   |
 | **Reply**  | `00` | `01` |  `81`  |_\<MID>_| ...  | _\<CSM>_ |   `00`   |
 
 Where:
 
 * _\<MID>_ is a message identifier. For DB valid values are: 03, 81, 82, 83 and 84. FB messages use A0, A2, A3, A7 and A8 but these should be ignored by DB.
 * _\<LEN>_ is optional extra length of message in bytes above standard 8 bytes. This should be added to 8 to get full message size It can also be supplied in replies.
-* _\<SV>_ is `00` for Mamiya 645 AF/AFD and `01` for all other (newer) cameras
+* _\<PV>_ is a protocol version `0` for Mamiya 645 AF/AFD and `1` for all other (newer) cameras
 * _\<CSM>_=Byte(2) XOR Byte(3) ... XOR Byte(N-2) is a checksum of corresponding reply bytes-
 
 The rest of the message content varies for each message ID and will be considered in separate sections below. All of the subsequent sections will list the message contents from message ID byte only to shorten data listed.
@@ -123,7 +123,7 @@ This message is usually sent by camera after turning on (following `7D 82` messa
 
 | Byte Num.  |  2   |  3   |  4   |  5   |    6   |  7   |    8   |  9   |
 |------------|:----:|:----:|:----:|:----:|:------:|:----:|:------:|:----:|
-| **Message**| `81` | `00` | `00` | `00` |  `00`  | `00` |_\<SV>_ | `AA` |
+| **Message**| `81` | `00` | `00` | `00` |  `00`  | `00` |_\<PV>_ | `AA` |
 | **Reply**  | `81` | `81` | `00` | `02` |_\<ISO>_| `01` |_\<CSM>_| `00` |
 
 
@@ -191,11 +191,11 @@ Format of the incoming command messages
 
 | Command\Byte Num.      |  2   |  3   |4(_\<CID>_)|   5   |   6   |   7   |   8   |   9   |   10  |  11   |  12   |   13  |  14   |
 |------------------------|:----:|:----:|:----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
-|Camera state changed    | `82` | `04` | `13` |_\<ST>_|_\<CI>_|_\<MD>_|  `00` |  `00` |_\<SV>_|  `AA` |       |       |       |
-|Post-shot data exchange | `82` | `07` | `26` |_\<ST>_|_\<AV>_|_\<TV>_|_\<CV>_|_\<L1>_|_\<L0>_|  `00` |  `00` |_\<SV>_|  `AA` |
-|Get/set camera settings | `82` | `06` | `35` |_\<ST>_|_\<MD>_|_\<AV>_|_\<TV>_|_\<CV>_|  `00` |  `00` |_\<SV>_|  `AA` |       |
-|DB request to camera    | `82` | `03` | `42` |_\<ST>_|  `00` |  `00` |  `00` |_\<SV>_|  `AA` |       |       |       |       |
-|Shutter early warning   | `82` | `05` | `54` |_\<ST>_|_\<AV>_|_\<SU>_|_\<SL>_|  `00` |  `00` |_\<SV>_|  `AA` |       |       |
+|Camera state changed    | `82` | `04` | `13` |_\<ST>_|_\<CI>_|_\<MD>_|  `00` |  `00` |_\<PV>_|  `AA` |       |       |       |
+|Post-shot data exchange | `82` | `07` | `26` |_\<ST>_|_\<AV>_|_\<TV>_|_\<CV>_|_\<L1>_|_\<L0>_|  `00` |  `00` |_\<PV>_|  `AA` |
+|Get/set camera settings | `82` | `06` | `35` |_\<ST>_|_\<MD>_|_\<AV>_|_\<TV>_|_\<CV>_|  `00` |  `00` |_\<PV>_|  `AA` |       |
+|DB request to camera    | `82` | `03` | `42` |_\<ST>_|  `00` |  `00` |  `00` |_\<PV>_|  `AA` |       |       |       |       |
+|Shutter early warning   | `82` | `05` | `54` |_\<ST>_|_\<AV>_|_\<SU>_|_\<SL>_|  `00` |  `00` |_\<PV>_|  `AA` |       |       |
 
 Where:
 
@@ -215,7 +215,7 @@ This message sends one of the commands from DB to camera. The message itself is 
 
 | Byte Num.  |  2   |  3   |  4   |    5   |    6   |  ...  |   N-1  |  N   |
 |------------|:----:|:----:|:----:|:------:|:------:|:-----:|:------:|:----:|
-| **Message**| `83` | `00` | `00` |  `00`  |  `00`  |  ...  |_\<SV>_ | `AA` |
+| **Message**| `83` | `00` | `00` |  `00`  |  `00`  |  ...  |_\<PV>_ | `AA` |
 | **Reply**  | `81` | `83` | `00` |_\<LEN>_|_\<CID>_|  ...  |_\<CSM>_| `00` |
 
 Format of all command replies:
@@ -258,7 +258,7 @@ States other than 0 prevent camera from shooting - the camera simply awaits for 
 * 1 - other error (DB is not available)
 * 3 - no memory, card is full or missing (Mem DB message on the camera)
 * 5 - battery low (Batt DB message on the camera)
-* 8 - DB is busy processing (Busy DB message on the camera). Can be used to prevent camera from
+* 8 - DB is busy processing (Busy DB message on the camera). Can be used to prevent camera from operating whilst processing the previously taken shot
 
 
 ### Message ID 03 - request from the camera following DB REQ
@@ -269,7 +269,7 @@ Message format:
 
 | Byte Num.  |  2   |  3   |  4   |  5   |  6   |   7    |   8    |   9    |  10  |
 |------------|:----:|:----:|:----:|:----:|:----:|:------:|:------:|:------:|:----:|
-| **Message**| `03` | `00` | `00` | `00` | `00` |  `00`  |  `00`  |_\<SV>_ | `AA` |
+| **Message**| `03` | `00` | `00` | `00` | `00` |  `00`  |  `00`  |_\<PV>_ | `AA` |
 | **Reply**  | `81` | `03` | `00` | `03` | `10` |_\<MID>_|_\<CID>_|_\<CSM>_| `00` |
 
 Where:
@@ -285,7 +285,7 @@ Message format:
 
 | Byte Num.  |  2   |  3   |  4   |  5   |   6    |   7  |
 |------------|:----:|:----:|:----:|:----:|:------:|:----:|
-| **Message**| `84` | `00` | `00` | `00` |_\<SV>_ | `AA` |
+| **Message**| `84` | `00` | `00` | `00` |_\<PV>_ | `AA` |
 | **Reply**  | `81` | `84` | `00` | `00` |_\<CSM>_| `00` |
 
 This message is always preceded by shutter early warning command (message 82 command 5). After the camera stopped taking exposure and lowered MOSI pin, the DB is expected to issue post-shot data command (message 82 command 2). The overall sequence of messages can be seen in diagram below:

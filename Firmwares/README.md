@@ -45,11 +45,11 @@ The overall list of enhancements over Kodak 3.3.7 last official firmware:
 
    * Manual lenses are selected on the main screen in a similar way to white balances - via drop-down menu (it is faster and more convenient in a field):
 
-   ![Lens](http://www.aletan.com/img/s/v-3/p2700542434-2.jpg "image1")
+   ![Lens](http://www.aletan.com/img/s/v-10/p2700542434-2.jpg "image1")
 
    * The data for the selected lens is always present on the status screen (in this respect the layout of the screen has changed slightly to accommodate it):
 
-   ![Lens](http://www.aletan.com/img/s/v-3/p2700542431-2.jpg "image2")
+   ![Lens](http://www.aletan.com/img/s/v-10/p2700542431-2.jpg "image2")
 
    * You can make up and load your own list of lenses (up to 20 in total). The list can be loaded from _lens.txt_ file that has the following textual format (example):
 
@@ -63,11 +63,11 @@ The overall list of enhancements over Kodak 3.3.7 last official firmware:
 
    * Added menu Manual Lens Data
 
-   ![Lens](http://www.aletan.com/img/s/v-3/p2700542429-2.jpg "image3")
+   ![Lens](http://www.aletan.com/img/s/v-10/p2700542429-2.jpg "image3")
 
    this now contains the options for loading user's manual lens list and resetting the list to the default configuration
 
-   ![Lens](http://www.aletan.com/img/s/v-3/p2700542428-2.jpg "image4")
+   ![Lens](http://www.aletan.com/img/s/v-10/p2700542428-2.jpg "image4")
 
 
 ### [Firmware 3.4.5A.M for Proback 645 Mamiya](ProBack645/3.4.5M_Alt/PB645.BIN) 
@@ -89,7 +89,7 @@ The overall list of enhancements:
 
 ## Proback and Proback Plus Firmwares
 
-### [Proback and Proback Plus firmware 3.2.10](ProBack/3.2.10/PROBACK.BIN)
+### [Proback and Proback Plus firmware 3.2.11](ProBack/3.2.11/PROBACK.bin)
 
 This firmware adds the following to the stock Kodak 3.2.9 firmware:
 
