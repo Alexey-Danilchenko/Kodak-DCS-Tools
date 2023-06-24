@@ -12175,6 +12175,9 @@ Standard 11x14 US Ledger frame</description>
 <sheets>
 <sheet>
 <plain>
+<text x="40.64" y="38.1" size="2.1844" layer="97">R2 value select for your LEDs current I(LED):
+R (Ohms) = 95 mV / I(LED) mA
+Current value is for 60mA LEDs</text>
 </plain>
 <instances>
 <instance part="GND1" gate="1" x="25.4" y="48.26" smashed="yes"/>
@@ -12344,6 +12347,10 @@ Standard 11x14 US Ledger frame</description>
 </schematic>
 </drawing>
 <compatibility>
+<note version="6.3" minversion="6.2.2" severity="warning">
+Since Version 6.2.2 text objects can contain more than one line,
+which will not be processed correctly with this version.
+</note>
 <note version="8.2" severity="warning">
 Since Version 8.2, EAGLE supports online libraries. The ids
 of those online libraries will not be understood (or retained)

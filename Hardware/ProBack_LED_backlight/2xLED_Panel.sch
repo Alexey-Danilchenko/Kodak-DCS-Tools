@@ -158,8 +158,8 @@
 <library name="Yuji_LED">
 <packages>
 <package name="2835_SMD">
-<smd name="ANODE" x="-1.3" y="0" dx="2.2" dy="1.8" layer="1" rot="R270"/>
-<smd name="CATHODE" x="0.95" y="0" dx="2.2" dy="1.1" layer="1" rot="R90"/>
+<smd name="CATHODE" x="-1.3" y="0" dx="2.2" dy="1.8" layer="1" rot="R270"/>
+<smd name="ANODE" x="0.95" y="0" dx="2.2" dy="1.1" layer="1" rot="R90"/>
 <text x="-2.48" y="1.47" size="0.8128" layer="21">&gt;NAME</text>
 </package>
 </packages>
@@ -250,9 +250,9 @@ You are welcome to use this library for commercial purposes. For attribution, we
 </symbol>
 <symbol name="FRAME_LEDGER">
 <wire x1="0" y1="0" x2="0" y2="121.92" width="0.4064" layer="94"/>
-<wire x1="0" y1="121.92" x2="200.66" y2="121.92" width="0.4064" layer="94"/>
-<wire x1="200.66" y1="121.92" x2="200.66" y2="0" width="0.4064" layer="94"/>
-<wire x1="200.66" y1="0" x2="0" y2="0" width="0.4064" layer="94"/>
+<wire x1="0" y1="121.92" x2="228.6" y2="121.92" width="0.4064" layer="94"/>
+<wire x1="228.6" y1="121.92" x2="228.6" y2="0" width="0.4064" layer="94"/>
+<wire x1="228.6" y1="0" x2="0" y2="0" width="0.4064" layer="94"/>
 </symbol>
 </symbols>
 <devicesets>
@@ -261,7 +261,7 @@ You are welcome to use this library for commercial purposes. For attribution, we
 Standard 11x14 US Ledger frame</description>
 <gates>
 <gate name="G$1" symbol="FRAME_LEDGER" x="0" y="0"/>
-<gate name="G$2" symbol="DOCFIELD" x="99.06" y="0" addlevel="must"/>
+<gate name="G$2" symbol="DOCFIELD" x="127" y="0" addlevel="must"/>
 </gates>
 <devices>
 <device name="" package="CREATIVE_COMMONS">
