@@ -10,6 +10,6 @@ The alternative to 6x LED board and direct replacement is to place 3x LED lights
 
 The LED driver board provides constant current source from 3.3V and can be adjusted for your LEDs (by calculating R2 values for your LEDs current - see note on schematic with a few sample values). The LED driver board is very small and is designed to fit onto free space on ProBack board close to LCD and power source. 
 
-Current design was tested with Yuji LEDs [[YJ-BC-2835L](https://www.yujiintl.com/bc-2835l-0-2w/) (20 lumens per LED - CRI95). 
+Current design was tested with Yuji LEDs [YJ-BC-2835L](https://www.yujiintl.com/bc-2835l-0-2w/) (20 lumens per LED - CRI95). 
 
 Photos and description of the process of replacement to follow
