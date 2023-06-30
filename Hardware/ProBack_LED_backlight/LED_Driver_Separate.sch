@@ -7282,6 +7282,15 @@ Production Part - 8199
 <technology name=""/>
 </technologies>
 </device>
+<device name="SOD-523Z" package="SOD-523">
+<connects>
+<connect gate="G$1" pin="A" pad="A"/>
+<connect gate="G$1" pin="C" pad="C"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
 </devices>
 </deviceset>
 </devicesets>
@@ -12161,7 +12170,7 @@ Standard 11x14 US Ledger frame</description>
 <part name="U1" library="LT1937ES5" deviceset="LINEAR_TECHNOLOGY_LT1937ES5#TRMPBF" device="LINEAR_TECHNOLOGY_LT1937ES5#TRMPBF_0_1" value="LT1937ES5"/>
 <part name="L1" library="SparkFun-Passives" deviceset="INDUCTOR" device="1210" value="22uH"/>
 <part name="R2" library="rcl" library_urn="urn:adsk.eagle:library:334" deviceset="R-EU_" device="M1206" package3d_urn="urn:adsk.eagle:package:23566/2" value="1.6"/>
-<part name="D2" library="SparkFun-DiscreteSemi" deviceset="DIODE-ZENER" device=""/>
+<part name="D2" library="SparkFun-DiscreteSemi" deviceset="DIODE-ZENER" device="SOD-523Z" value="MM5Z20"/>
 <part name="P+1" library="Spectron2" deviceset="3.3V" device=""/>
 <part name="FRAME1" library="SparkFun-Aesthetics" deviceset="FRAME-LEDGER" device="">
 <attribute name="AUTHOR" value="Alexey Danilchenko"/>
@@ -12175,9 +12184,16 @@ Standard 11x14 US Ledger frame</description>
 <sheets>
 <sheet>
 <plain>
-<text x="40.64" y="38.1" size="2.1844" layer="97">R2 value select for your LEDs current I(LED):
-R (Ohms) = 95 mV / I(LED) mA
-Current value is for 60mA LEDs</text>
+<text x="99.06" y="48.26" size="2.1844" layer="97" rot="R180">Zener - current DZ9F20S92
+R2 value select for your LEDs current I(LED):
+R (Ohms) = 95 mV / I(LED) mA. Preset values:
+ - 1.6 Ohm  - 60mA LEDs
+ - 2.1 Ohm  - 45mA LEDs
+ - 2.37 Ohm - 40mA LEDs
+ - 2.71 Ohm - 35mA LEDs
+ - 3.16 Ohm - 30mA LEDs
+</text>
+<text x="73.66" y="81.28" size="1.778" layer="96">MM5Z20</text>
 </plain>
 <instances>
 <instance part="GND1" gate="1" x="25.4" y="48.26" smashed="yes"/>
