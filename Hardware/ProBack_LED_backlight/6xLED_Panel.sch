@@ -350,20 +350,12 @@ Standard 11x14 US Ledger frame</description>
 <attribute name="AUTHOR" value="Alexey Danilchenko"/>
 <attribute name="VER" value="1.0"/>
 </part>
-<part name="PAD1" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1" value="WIREPAD1,6/0,9"/>
-<part name="PAD2" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1"/>
+<part name="+" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1" value="WIREPAD1,6/0,9"/>
+<part name="-" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1"/>
 <part name="D3" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="D7" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="D8" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="PAD3" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1" value="WIREPAD1,6/0,9"/>
-<part name="PAD4" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1"/>
-<part name="D9" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
 <part name="D4" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
 <part name="D5" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
 <part name="D6" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="D10" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="D11" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="D12" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -384,31 +376,15 @@ Standard 11x14 US Ledger frame</description>
 <attribute name="VER" x="200.406" y="7.366" size="2.7432" layer="94" font="vector" rot="R180" align="top-left"/>
 </instance>
 <instance part="FRAME1" gate="G$1" x="0" y="0" smashed="yes"/>
-<instance part="PAD1" gate="1" x="27.94" y="96.52" smashed="yes">
+<instance part="+" gate="1" x="27.94" y="96.52" smashed="yes">
 <attribute name="NAME" x="24.003" y="97.4598" size="1.778" layer="95" rot="R180"/>
 </instance>
-<instance part="PAD2" gate="1" x="106.68" y="96.52" smashed="yes" rot="R180">
+<instance part="-" gate="1" x="106.68" y="96.52" smashed="yes" rot="R180">
 <attribute name="NAME" x="112.649" y="95.8342" size="1.778" layer="95"/>
 <attribute name="VALUE" x="107.823" y="99.822" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="D3" gate="G$1" x="66.04" y="96.52" smashed="yes">
 <attribute name="NAME" x="60.96" y="101.092" size="1.778" layer="95"/>
-</instance>
-<instance part="D7" gate="G$1" x="40.64" y="86.36" smashed="yes">
-<attribute name="NAME" x="36.322" y="90.932" size="1.778" layer="95"/>
-</instance>
-<instance part="D8" gate="G$1" x="53.34" y="86.36" smashed="yes">
-<attribute name="NAME" x="48.26" y="90.932" size="1.778" layer="95"/>
-</instance>
-<instance part="PAD3" gate="1" x="27.94" y="86.36" smashed="yes">
-<attribute name="NAME" x="24.003" y="87.2998" size="1.778" layer="95" rot="R180"/>
-</instance>
-<instance part="PAD4" gate="1" x="106.68" y="86.36" smashed="yes" rot="R180">
-<attribute name="NAME" x="112.649" y="85.6742" size="1.778" layer="95"/>
-<attribute name="VALUE" x="107.823" y="89.662" size="1.778" layer="96" rot="R180"/>
-</instance>
-<instance part="D9" gate="G$1" x="66.04" y="86.36" smashed="yes">
-<attribute name="NAME" x="60.96" y="90.932" size="1.778" layer="95"/>
 </instance>
 <instance part="D4" gate="G$1" x="76.2" y="96.52" smashed="yes">
 <attribute name="NAME" x="71.12" y="101.092" size="1.778" layer="95"/>
@@ -418,15 +394,6 @@ Standard 11x14 US Ledger frame</description>
 </instance>
 <instance part="D6" gate="G$1" x="96.52" y="96.52" smashed="yes">
 <attribute name="NAME" x="91.44" y="101.092" size="1.778" layer="95"/>
-</instance>
-<instance part="D10" gate="G$1" x="76.2" y="86.36" smashed="yes">
-<attribute name="NAME" x="71.12" y="90.932" size="1.778" layer="95"/>
-</instance>
-<instance part="D11" gate="G$1" x="86.36" y="86.36" smashed="yes">
-<attribute name="NAME" x="81.28" y="90.932" size="1.778" layer="95"/>
-</instance>
-<instance part="D12" gate="G$1" x="96.52" y="86.36" smashed="yes">
-<attribute name="NAME" x="91.44" y="90.932" size="1.778" layer="95"/>
 </instance>
 </instances>
 <busses>
@@ -441,7 +408,7 @@ Standard 11x14 US Ledger frame</description>
 </net>
 <net name="N$2" class="0">
 <segment>
-<pinref part="PAD1" gate="1" pin="P"/>
+<pinref part="+" gate="1" pin="P"/>
 <pinref part="D1" gate="G$1" pin="ANODE"/>
 <wire x1="30.48" y1="96.52" x2="35.56" y2="96.52" width="0.1524" layer="91"/>
 </segment>
@@ -455,37 +422,9 @@ Standard 11x14 US Ledger frame</description>
 </net>
 <net name="N$4" class="0">
 <segment>
-<pinref part="PAD2" gate="1" pin="P"/>
+<pinref part="-" gate="1" pin="P"/>
 <wire x1="99.06" y1="96.52" x2="104.14" y2="96.52" width="0.1524" layer="91"/>
 <pinref part="D6" gate="G$1" pin="CATHODE"/>
-</segment>
-</net>
-<net name="N$5" class="0">
-<segment>
-<pinref part="D7" gate="G$1" pin="CATHODE"/>
-<pinref part="D8" gate="G$1" pin="ANODE"/>
-<wire x1="43.18" y1="86.36" x2="48.26" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$6" class="0">
-<segment>
-<pinref part="PAD3" gate="1" pin="P"/>
-<pinref part="D7" gate="G$1" pin="ANODE"/>
-<wire x1="30.48" y1="86.36" x2="35.56" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="D8" gate="G$1" pin="CATHODE"/>
-<pinref part="D9" gate="G$1" pin="ANODE"/>
-<wire x1="55.88" y1="86.36" x2="60.96" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$8" class="0">
-<segment>
-<pinref part="PAD4" gate="1" pin="P"/>
-<wire x1="99.06" y1="86.36" x2="104.14" y2="86.36" width="0.1524" layer="91"/>
-<pinref part="D12" gate="G$1" pin="CATHODE"/>
 </segment>
 </net>
 <net name="N$9" class="0">
@@ -507,27 +446,6 @@ Standard 11x14 US Ledger frame</description>
 <pinref part="D5" gate="G$1" pin="CATHODE"/>
 <wire x1="88.9" y1="96.52" x2="91.44" y2="96.52" width="0.1524" layer="91"/>
 <pinref part="D6" gate="G$1" pin="ANODE"/>
-</segment>
-</net>
-<net name="N$12" class="0">
-<segment>
-<pinref part="D9" gate="G$1" pin="CATHODE"/>
-<wire x1="68.58" y1="86.36" x2="71.12" y2="86.36" width="0.1524" layer="91"/>
-<pinref part="D10" gate="G$1" pin="ANODE"/>
-</segment>
-</net>
-<net name="N$13" class="0">
-<segment>
-<pinref part="D10" gate="G$1" pin="CATHODE"/>
-<wire x1="78.74" y1="86.36" x2="81.28" y2="86.36" width="0.1524" layer="91"/>
-<pinref part="D11" gate="G$1" pin="ANODE"/>
-</segment>
-</net>
-<net name="N$14" class="0">
-<segment>
-<pinref part="D11" gate="G$1" pin="CATHODE"/>
-<wire x1="88.9" y1="86.36" x2="91.44" y2="86.36" width="0.1524" layer="91"/>
-<pinref part="D12" gate="G$1" pin="ANODE"/>
 </segment>
 </net>
 </nets>

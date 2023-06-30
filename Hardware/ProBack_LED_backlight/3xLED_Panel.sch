@@ -277,30 +277,13 @@ Standard 11x14 US Ledger frame</description>
 <description>&lt;b&gt;Single Pads&lt;/b&gt;&lt;p&gt;
 &lt;author&gt;Created by librarian@cadsoft.de&lt;/author&gt;</description>
 <packages>
-<package name="2,15/1,0" urn="urn:adsk.eagle:footprint:30813/1">
-<description>&lt;b&gt;THROUGH-HOLE PAD&lt;/b&gt;</description>
-<wire x1="1.143" y1="-1.143" x2="1.143" y2="-0.635" width="0.1524" layer="21"/>
-<wire x1="1.143" y1="-1.143" x2="0.635" y2="-1.143" width="0.1524" layer="21"/>
-<wire x1="1.143" y1="0.635" x2="1.143" y2="1.143" width="0.1524" layer="21"/>
-<wire x1="1.143" y1="1.143" x2="0.635" y2="1.143" width="0.1524" layer="21"/>
-<wire x1="-0.635" y1="1.143" x2="-1.143" y2="1.143" width="0.1524" layer="21"/>
-<wire x1="-1.143" y1="1.143" x2="-1.143" y2="0.635" width="0.1524" layer="21"/>
-<wire x1="-1.143" y1="-0.635" x2="-1.143" y2="-1.143" width="0.1524" layer="21"/>
-<wire x1="-1.143" y1="-1.143" x2="-0.635" y2="-1.143" width="0.1524" layer="21"/>
-<circle x="0" y="0" radius="1.016" width="0.1524" layer="51"/>
-<pad name="1" x="0" y="0" drill="1.016" diameter="2.159" shape="octagon"/>
-<text x="-1.143" y="1.397" size="1.27" layer="25" ratio="10">&gt;NAME</text>
-<text x="0" y="1" size="0.0254" layer="27">&gt;VALUE</text>
+<package name="SMD3-2,15">
+<description>&lt;b&gt;SMD PAD&lt;/b&gt;</description>
+<smd name="1" x="0" y="0" dx="3" dy="2.15" layer="1"/>
+<text x="0" y="1.27" size="0.0254" layer="27">&gt;VALUE</text>
+<text x="-2.07" y="-2.4" size="1.27" layer="25" rot="R90">&gt;NAME</text>
 </package>
 </packages>
-<packages3d>
-<package3d name="2,15/1,0" urn="urn:adsk.eagle:package:30831/1" type="box">
-<description>THROUGH-HOLE PAD</description>
-<packageinstances>
-<packageinstance name="2,15/1,0"/>
-</packageinstances>
-</package3d>
-</packages3d>
 <symbols>
 <symbol name="PAD" urn="urn:adsk.eagle:symbol:30808/1">
 <wire x1="-1.016" y1="1.016" x2="1.016" y2="-1.016" width="0.254" layer="94"/>
@@ -311,23 +294,18 @@ Standard 11x14 US Ledger frame</description>
 </symbol>
 </symbols>
 <devicesets>
-<deviceset name="2,15/1,0" urn="urn:adsk.eagle:component:30850/2" prefix="PAD" uservalue="yes">
-<description>&lt;b&gt;THROUGH-HOLE PAD&lt;/b&gt;</description>
+<deviceset name="SMD3X2.15" prefix="PAD">
+<description>SMD PAD</description>
 <gates>
-<gate name="1" symbol="PAD" x="0" y="0"/>
+<gate name="G$1" symbol="PAD" x="0" y="0"/>
 </gates>
 <devices>
-<device name="" package="2,15/1,0">
+<device name="" package="SMD3-2,15">
 <connects>
-<connect gate="1" pin="P" pad="1"/>
+<connect gate="G$1" pin="P" pad="1"/>
 </connects>
-<package3dinstances>
-<package3dinstance package3d_urn="urn:adsk.eagle:package:30831/1"/>
-</package3dinstances>
 <technologies>
-<technology name="">
-<attribute name="POPULARITY" value="11" constant="no"/>
-</technology>
+<technology name=""/>
 </technologies>
 </device>
 </devices>
@@ -350,14 +328,9 @@ Standard 11x14 US Ledger frame</description>
 <attribute name="AUTHOR" value="Alexey Danilchenko"/>
 <attribute name="VER" value="1.0"/>
 </part>
-<part name="+" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1" value="WIREPAD1,6/0,9"/>
-<part name="-" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1"/>
+<part name="+" library="wirepad" deviceset="SMD3X2.15" device="" value="WIREPAD1,6/0,9"/>
+<part name="-" library="wirepad" deviceset="SMD3X2.15" device="" value=""/>
 <part name="D3" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="D4" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="D5" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
-<part name="+1" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1" value="WIREPAD1,6/0,9"/>
-<part name="-1" library="wirepad" deviceset="2,15/1,0" device="" package3d_urn="urn:adsk.eagle:package:30831/1"/>
-<part name="D6" library="Yuji_LED" deviceset="YUJI_2835_SMD" device=""/>
 </parts>
 <sheets>
 <sheet>
@@ -378,31 +351,15 @@ Standard 11x14 US Ledger frame</description>
 <attribute name="VER" x="200.406" y="7.366" size="2.7432" layer="94" font="vector" rot="R180" align="top-left"/>
 </instance>
 <instance part="FRAME1" gate="G$1" x="0" y="0" smashed="yes"/>
-<instance part="+" gate="1" x="27.94" y="96.52" smashed="yes">
+<instance part="+" gate="G$1" x="27.94" y="96.52" smashed="yes">
 <attribute name="NAME" x="24.003" y="97.4598" size="1.778" layer="95" rot="R180"/>
 </instance>
-<instance part="-" gate="1" x="78.74" y="96.52" smashed="yes" rot="R180">
+<instance part="-" gate="G$1" x="78.74" y="96.52" smashed="yes" rot="R180">
 <attribute name="NAME" x="84.709" y="95.8342" size="1.778" layer="95"/>
 <attribute name="VALUE" x="79.883" y="99.822" size="1.778" layer="96" rot="R180"/>
 </instance>
 <instance part="D3" gate="G$1" x="66.04" y="96.52" smashed="yes">
 <attribute name="NAME" x="60.96" y="101.092" size="1.778" layer="95"/>
-</instance>
-<instance part="D4" gate="G$1" x="40.64" y="86.36" smashed="yes">
-<attribute name="NAME" x="36.322" y="90.932" size="1.778" layer="95"/>
-</instance>
-<instance part="D5" gate="G$1" x="53.34" y="86.36" smashed="yes">
-<attribute name="NAME" x="48.26" y="90.932" size="1.778" layer="95"/>
-</instance>
-<instance part="+1" gate="1" x="27.94" y="86.36" smashed="yes">
-<attribute name="NAME" x="24.003" y="87.2998" size="1.778" layer="95" rot="R180"/>
-</instance>
-<instance part="-1" gate="1" x="78.74" y="86.36" smashed="yes" rot="R180">
-<attribute name="NAME" x="84.709" y="85.6742" size="1.778" layer="95"/>
-<attribute name="VALUE" x="79.883" y="89.662" size="1.778" layer="96" rot="R180"/>
-</instance>
-<instance part="D6" gate="G$1" x="66.04" y="86.36" smashed="yes">
-<attribute name="NAME" x="60.96" y="90.932" size="1.778" layer="95"/>
 </instance>
 </instances>
 <busses>
@@ -417,7 +374,7 @@ Standard 11x14 US Ledger frame</description>
 </net>
 <net name="N$2" class="0">
 <segment>
-<pinref part="+" gate="1" pin="P"/>
+<pinref part="+" gate="G$1" pin="P"/>
 <pinref part="D1" gate="G$1" pin="ANODE"/>
 <wire x1="30.48" y1="96.52" x2="35.56" y2="96.52" width="0.1524" layer="91"/>
 </segment>
@@ -432,36 +389,8 @@ Standard 11x14 US Ledger frame</description>
 <net name="N$4" class="0">
 <segment>
 <pinref part="D3" gate="G$1" pin="CATHODE"/>
-<pinref part="-" gate="1" pin="P"/>
+<pinref part="-" gate="G$1" pin="P"/>
 <wire x1="68.58" y1="96.52" x2="76.2" y2="96.52" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$5" class="0">
-<segment>
-<pinref part="D4" gate="G$1" pin="CATHODE"/>
-<pinref part="D5" gate="G$1" pin="ANODE"/>
-<wire x1="43.18" y1="86.36" x2="48.26" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$6" class="0">
-<segment>
-<pinref part="+1" gate="1" pin="P"/>
-<pinref part="D4" gate="G$1" pin="ANODE"/>
-<wire x1="30.48" y1="86.36" x2="35.56" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$7" class="0">
-<segment>
-<pinref part="D5" gate="G$1" pin="CATHODE"/>
-<pinref part="D6" gate="G$1" pin="ANODE"/>
-<wire x1="55.88" y1="86.36" x2="60.96" y2="86.36" width="0.1524" layer="91"/>
-</segment>
-</net>
-<net name="N$8" class="0">
-<segment>
-<pinref part="D6" gate="G$1" pin="CATHODE"/>
-<pinref part="-1" gate="1" pin="P"/>
-<wire x1="68.58" y1="86.36" x2="76.2" y2="86.36" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
@@ -483,11 +412,6 @@ Standard 11x14 US Ledger frame</description>
 Since Version 8.3, EAGLE supports URNs for individual library
 assets (packages, symbols, and devices). The URNs of those assets
 will not be understood (or retained) with this version.
-</note>
-<note version="8.3" severity="warning">
-Since Version 8.3, EAGLE supports the association of 3D packages
-with devices in libraries, schematics, and board files. Those 3D
-packages will not be understood (or retained) with this version.
 </note>
 </compatibility>
 </eagle>
