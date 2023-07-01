@@ -12184,8 +12184,7 @@ Standard 11x14 US Ledger frame</description>
 <sheets>
 <sheet>
 <plain>
-<text x="99.06" y="48.26" size="2.1844" layer="97" rot="R180">Zener - current DZ9F20S92
-R2 value select for your LEDs current I(LED):
+<text x="99.06" y="48.26" size="2.1844" layer="97" rot="R180">R2 value select for your LEDs current I(LED):
 R (Ohms) = 95 mV / I(LED) mA. Preset values:
  - 1.6 Ohm  - 60mA LEDs
  - 2.1 Ohm  - 45mA LEDs
