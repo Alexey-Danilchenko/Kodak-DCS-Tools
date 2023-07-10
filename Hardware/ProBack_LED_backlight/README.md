@@ -1,6 +1,6 @@
 # ProBack screen upgrade to use LED backlighting
 
-Proback is an old digital back using Sanyo ALP230CCX LCD with CCFL tube as backlighting (that was a technology back in 2001). The CCFL tube lights up the edge of the screen and light guide plate with diffusers and light concentrator sheets providing a backlight. The backlighting achieved this way is very weak and in a strong daylight practically nothing can be seen on the LCD. Besides CCFL tubes have limited lifespan and cannot be replaced. The aim of this hardware project is a complete replacement of this backlighting system with LED board instead of CCFL tube driven from the same on/off signal as the main backlight.
+Proback is an old digital back using [Sanyo ALP230CCX LCD](Ref/ALP230CCX.pdf) with CCFL tube as backlighting (that was a technology back in 2001). The CCFL tube lights up the edge of the screen and light guide plate with diffusers and light concentrator sheets providing a backlight. The backlighting achieved this way is very weak and in a strong daylight practically nothing can be seen on the LCD. Besides CCFL tubes have limited lifespan and cannot be replaced. The aim of this hardware project is a complete replacement of this backlighting system with LED board instead of CCFL tube driven from the same on/off signal as the main backlight.
 
 This project followed the footsteps of something similar already done [here (link in russian)](https://web.archive.org/web/20171017015512/http://wowcamera.info/viewtopic.php?f=18&t=815&sid=7ef8761ab0095eecd0e935a0096e5fdd&start=740) but does a properly designed LED light source with constant current control.
 
@@ -12,4 +12,18 @@ The LED driver board provides constant current source from 3.3V and can be adjus
 
 Current design was tested with Yuji LEDs [YJ-BC-2835L](https://www.yujiintl.com/bc-2835l-0-2w/) (20 lumens per LED - CRI95). 
 
-Photos and description of the process of replacement to follow
+This is assembled driver and LED light source for 3x LEDs designed to go behind LCD frame:
+ 
+![3LED](Ref/LED-230708-003.jpg)
+
+This is assembled driver and LED light source look for 6x LEDs designed to go in place as direct replacement of CCFFL tube:
+ 
+![3LED](Ref/LED-230708-001.jpg)
+
+And this is 6x LED light source installed in place of CCFL and powered with LCD off - this shows drawback of this type of lighting caused by the linear structure of light guide panel. It could be addressed by sorcing the replacement for light guide panel with diagonal etching pattern but I have not managed to source any just yet.
+
+[3LED](Ref/LED-230708-002.jpg)
+
+Even with the visible backlight pattern, this is far easier to install since it is essentially taking CCFL tunbe out and placing LED strip instead there.
+
+To be continued...
