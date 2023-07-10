@@ -24,7 +24,7 @@ And this is 6x LED light source installed in place of CCFL and powered with LCD 
 
 ![6LED2](Ref/LED-230708-002.jpg)
 
-Even with the visible backlight pattern, this is far easier to install since it is essentially taking CCFL tunbe out and placing LED strip instead there and requires no drilling and no modifications of LCD frame.
+Even with the visible backlight pattern, this is far easier to install since it is essentially taking CCFL tunbe out and placing LED strip instead there and requires no drilling and no modifications of LCD frame. The brightness here on photo was reduced in postprocessing to show the pattern - in reality the backlight is much brighter.
 
 For the Yuji LEDs above, the board in examples uses regulated LED current of 35mA with for string of 6 LEDs produces voltage of 17V (slightly less but that is highly dependent on LED variations). This gives overall consumption of 595mW which is still slightly less than original CCFL light 600mW yet substantially brighter.
 
