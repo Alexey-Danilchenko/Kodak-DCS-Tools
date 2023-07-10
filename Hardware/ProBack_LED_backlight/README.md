@@ -18,12 +18,12 @@ This is assembled driver and LED light source for 3x LEDs designed to go behind 
 
 This is assembled driver and LED light source look for 6x LEDs designed to go in place as direct replacement of CCFFL tube:
  
-![6LED](Ref/LED-230708-001.jpg)
+![6LED1](Ref/LED-230708-001.jpg)
 
 And this is 6x LED light source installed in place of CCFL and powered with LCD off - this shows drawback of this type of lighting caused by the linear structure of light guide panel. It could be addressed by sorcing the replacement for light guide panel with diagonal etching pattern but I have not managed to source any just yet.
 
-![6LED](Ref/LED-230708-002.jpg)
+![6LED2](Ref/LED-230708-002.jpg)
 
-Even with the visible backlight pattern, this is far easier to install since it is essentially taking CCFL tunbe out and placing LED strip instead there.
+Even with the visible backlight pattern, this is far easier to install since it is essentially taking CCFL tunbe out and placing LED strip instead there and requires no drilling and no modifications of LCD frame.
 
 To be continued...
