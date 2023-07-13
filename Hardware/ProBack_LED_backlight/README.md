@@ -1,6 +1,15 @@
 # ProBack screen upgrade to use LED backlighting
 
-Proback is an old digital back using [Sanyo ALP230CCX LCD](Ref/ALP230CCX.pdf) with CCFL tube as backlighting (that was a technology back in 2001). The CCFL tube lights up the edge of the screen and light guide plate with diffusers and light concentrator sheets providing a backlight. The backlighting achieved this way is very weak and in a strong daylight practically nothing can be seen on the LCD. Besides CCFL tubes have limited lifespan and cannot be replaced. The aim of this hardware project is a complete replacement of this backlighting system with LED board instead of CCFL tube driven from the same on/off signal as the main backlight.
+Proback is an old digital back using [Sanyo ALP230CCX LCD](Ref/ALP230CCX.pdf) with CCFL tube as backlighting (that was a technology back in 2001). The CCFL tube lights up the edge of the screen and light guide plate with diffusers and light concentrator sheets providing a backlight. The backlighting achieved this way is very weak and in a strong daylight practically nothing can be seen on the LCD. Besides CCFL tubes have limited lifespan and cannot be replaced. The aim of this hardware project is a complete replacement of this backlighting system with LED board instead of CCFL tube driven from the same on/off signal as the main backlight. The goal of it is to make it more usable in direct sunlight. This is the end result:
+
+![PB1](Ref/PB-230713-003.jpg)
+
+![PB2](Ref/PB-230713-004.jpg)
+
+![PB2](Ref/PB-230713-002.jpg)
+
+
+## Project history
 
 This project followed the footsteps of something similar already done [here (link in russian)](https://web.archive.org/web/20171017015512/http://wowcamera.info/viewtopic.php?f=18&t=815&sid=7ef8761ab0095eecd0e935a0096e5fdd&start=740) but does a properly designed LED light source with constant current control.
 
@@ -70,4 +79,5 @@ Then attach the LCD connector and put the LCD in place with the ProBack board on
 ![DRV3](Ref/LED-230713-002.jpg)
 
 Then assemble the ProBack and test it on camera in the field.
+
 
