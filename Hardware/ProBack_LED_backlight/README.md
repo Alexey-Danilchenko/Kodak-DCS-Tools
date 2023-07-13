@@ -47,7 +47,7 @@ Then, gently take away diffusion sheet, again noting round corner and where it s
 
 ![LCD3](Ref/LED-230712-003.jpg)
 
-All the components here are numbered with their order in the assembly top starting with LCD panel. The last, take the light guide assembly from the frame, peel off the CCFL tube with the little sleave holding it and discard.
+All the components here are numbered with their order in the assembly from the top starting with LCD panel. The last, take the light guide assembly from the frame, peel off the CCFL tube with the little sleave holding it and discard.
 
 Next, push the LCD light board into the metal frame (it should be pretty tight) as far as it can go:
 
