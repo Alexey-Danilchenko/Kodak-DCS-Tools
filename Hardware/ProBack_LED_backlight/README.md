@@ -47,7 +47,7 @@ Then, gently take away diffusion sheet, again noting round corner and where it s
 
 ![LCD3](Ref/LED-230712-003.jpg)
 
-All the components here are numbered with their order in the assembly from the top starting with LCD panel. The last, take the light guide assembly from the frame, peel off the CCFL tube with the little sleave holding it and discard.
+All the components here are numbered with their order in the assembly from the top starting with LCD panel. Lastly, take the light guide assembly from the frame, peel off the CCFL tube with the little sleave holding it and discard.
 
 Next, push the LCD light board into the metal frame (it should be pretty tight) as far as it can go:
 
@@ -57,15 +57,15 @@ After that, place all the components back in reverse order: light guide panel (4
 
 ## Board attachment
 
-The LED driver board is designed to go on the empty space of the last board connecting to LCD - that sits directly behind CF card slot in assembled postion. Solder two short insulated wires to LRD driver board, postion it close to C15 and C21 capacitors and solder ground and + wires as shown on this photo:
+The LED driver board is designed to go on the empty space of the last board connecting to LCD - that sits directly behind CF card slot in the assembled position. Solder two short insulated wires to LED driver board, postion it close to C15 and C21 capacitors and solder ground and + wires as shown on this photo:
 
 ![DRV1](Ref/LED-230712-006.jpg)
 
-Both C15 and C21 are connected in parallel so it really does not matter which one of them wires soldered to but the sides of them: top one for GND and lower side for +3.3V. When soldered, plug in ProBack batter briefly to check backlight working. Then glue the LED driver board to the ProBack board. I used Sugru to attach the board to the main board and insulate the contacts:
+Both C15 and C21 are connected in parallel so it really does not matter which one of them wires soldered to but the sides of them: top one for GND and lower side for +3.3V. When soldered, plug in ProBack battery briefly to check backlight working. Then glue the LED driver board to the ProBack board. I used Sugru to attach the board to the main board and insulate the contacts:
 
 ![DRV2](Ref/LED-230713-001.jpg)
 
-Then attach the LCD connector and put the LCD in place with the Provback board on top. For adde safety, loosely cover LED driver board by capton tape:
+Then attach the LCD connector and put the LCD in place with the ProBack board on top. For added safety, loosely cover LED driver board by Capton tape:
 
 ![DRV3](Ref/LED-230713-002.jpg)
 
