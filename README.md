@@ -15,6 +15,6 @@ The following is the list of topics:
 * [All the source code (defective pixels remap tools, IDA plugins, profile extraction, etc)](sources)
 * [Sources of some of the code that I reverse engineered from firmwares and DSP](Firmwares/Reversed_Sources)
 * [Kodak ProBack 645M/C/H hardware info - viewfinder masks, IR filters etc](hardware.md)
-* [ProBack LCD upgrade to LED backlighting - daylight visible](Hardware/ProBack_LED_backlight/README.md)
+* [ProBack LCD upgrade to LED backlighting - daylight visible](Hardware/ProBack_LED_backlight)
 
 The details of some of these explorations are published [here](https://dalex-257.livejournal.com/). 
