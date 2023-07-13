@@ -39,6 +39,14 @@ For the Yuji LEDs above, the board in examples uses regulated LED current of 35m
 This is how it looks all connected and lit:
 ![6LED3](Ref/LED-230712-001.jpg)
 
+## What is provided
+
+In this repository you can find Eagle CAD [schematics](LED_Driver_Separate.sch) and [board](LED_Driver_Separate.brd) for LED driver, [schematics](3xLED_Panel.sch) and [board](3xLED_Panel.brd) for 3x LED board and [schematics](6xLED_Panel.sch) and [board](6xLED_Panel.brd) for 6x LED board. I have tested both LED boards but ended up using 6x one as it required no modification to LCD assembly and is more compact.
+
+Separately you can also find [list of parts](BOM.csv) as well.
+
+Gerber files for all the boards are in [Gerbers](Gerbers) subfirectory and are produced for [PCBWay](https://www.pcbway.com/) specifications (they are the only ones I found who will produce tiny LED strip boards).
+
 ## LCD disassembly and light replacement
 
 LCD assembly in a metal frame is a sandwich consisting of LCD panel itself (1), light boosting sheet of material under it (2), then diffusion sheet of material (3), then light guide acrylic panel (4) with white reflective material behind it and CCFL tube on one of the sides. All of that is packed within a metal frame.
