@@ -8,7 +8,6 @@ Proback is an old digital back using [Sanyo ALP230CCX LCD](Ref/ALP230CCX.pdf) wi
 
 ![PB2](Ref/PB-230713-002.jpg)
 
-
 ## Project history
 
 This project followed the footsteps of something similar already done [here (link in russian)](https://web.archive.org/web/20171017015512/http://wowcamera.info/viewtopic.php?f=18&t=815&sid=7ef8761ab0095eecd0e935a0096e5fdd&start=740) but does a properly designed LED light source with constant current control.
@@ -33,7 +32,7 @@ And this is 6x LED light source installed in place of CCFL and powered with LCD 
 
 ![6LED2](Ref/LED-230708-002.jpg)
 
-Even with the visible backlight pattern, this is far easier to install since it is essentially taking CCFL tunbe out and placing LED strip instead there and requires no drilling and no modifications of LCD frame. The brightness here on photo was reduced in postprocessing to show the pattern - in reality the backlight is much brighter.
+Even with the visible backlight pattern, this is far easier to install since it is essentially taking CCFL tube out and placing LED strip board in its place and requires no drilling and no modifications of LCD frame. The brightness here on photo was reduced in postprocessing to show the pattern - in reality the backlight is much brighter.
 
 For the Yuji LEDs above, the board in examples uses regulated LED current of 35mA (with resistor values as selected in schematics) for a string of 6 LEDs it produces voltage of 17V (slightly less but that is highly dependent on LED variations). This gives overall consumption of 595mW which is still slightly less than original CCFL light 600mW yet substantially brighter.
 
