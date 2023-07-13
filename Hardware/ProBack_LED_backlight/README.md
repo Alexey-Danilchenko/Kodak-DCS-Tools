@@ -35,7 +35,7 @@ And this is 6x LED light source installed in place of CCFL and powered with LCD 
 
 Even with the visible backlight pattern, this is far easier to install since it is essentially taking CCFL tunbe out and placing LED strip instead there and requires no drilling and no modifications of LCD frame. The brightness here on photo was reduced in postprocessing to show the pattern - in reality the backlight is much brighter.
 
-For the Yuji LEDs above, the board in examples uses regulated LED current of 35mA with for string of 6 LEDs produces voltage of 17V (slightly less but that is highly dependent on LED variations). This gives overall consumption of 595mW which is still slightly less than original CCFL light 600mW yet substantially brighter.
+For the Yuji LEDs above, the board in examples uses regulated LED current of 35mA (with resistor values as selected in schematics) for a string of 6 LEDs it produces voltage of 17V (slightly less but that is highly dependent on LED variations). This gives overall consumption of 595mW which is still slightly less than original CCFL light 600mW yet substantially brighter.
 
 This is how it looks all connected and lit:
 ![6LED3](Ref/LED-230712-001.jpg)
@@ -70,7 +70,7 @@ The LED driver board is designed to go on the empty space of the last board conn
 
 ![DRV1](Ref/LED-230712-006.jpg)
 
-Both C15 and C21 are connected in parallel so it really does not matter which one of them wires soldered to but the sides of them: top one for GND and lower side for +3.3V. When soldered, plug in ProBack battery briefly to check backlight working. Then glue the LED driver board to the ProBack board. I used Sugru to attach the board to the main board and insulate the contacts:
+Both C15 and C21 are connected in parallel so it really does not matter which one of them wires soldered to but the sides of them: top one for GND and lower side for +3.3V. When soldered, plug in ProBack battery briefly to check backlight working. Then glue the LED driver board to the ProBack board. I used Sugru to attach the board to the main board and insulate the contacts (this is mainly to be able to detach bord should I ever need to replace it):
 
 ![DRV2](Ref/LED-230713-001.jpg)
 
