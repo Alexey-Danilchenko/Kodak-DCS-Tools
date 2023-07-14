@@ -5,6 +5,6 @@ D1,,SOD-523,Schottky diode,RB521S30T1G,ONSEMI
 D2,,SOD-523,"Zener Diode, 20V, >0.1mA",BZT585B20T-7,Diodes Incorporated
 L1,22uH,1210,Inductors,LQH32CN220K53L,Murata Electronics
 R1,1K,0805,"Resistor, 1%",CRCW08051K00FKEA,Vishay Dale
-R2,2.67,1206,High precision 0.1% resistor,CPF1206B2R67E1,TE Connectivity Passive Product
+R2,2.67,1206,High precision 0.1% resistor. Value calculated as 95mV/LED current mA,CPF1206B2R67E1,TE Connectivity Passive Product
 U1,,TSOT-23-5,"LED regulator from LT, TSOT-23 5pin package",LT1937ES5#TRMPBF,Linear Technologies
 LEDS,,2835,YUJILEDS high CRI 2835 SMD,YJ-BC-2835L-G02,YUJILEDS
