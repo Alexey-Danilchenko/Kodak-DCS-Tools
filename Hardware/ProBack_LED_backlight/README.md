@@ -37,6 +37,7 @@ Even with the visible backlight pattern, this is far easier to install since it 
 For the Yuji LEDs above, the board in examples uses regulated LED current of 35mA (with resistor values as selected in schematics and specified in parts list below). For a string of 6 LEDs it produces voltage of 17V (slightly less but that is highly dependent on LED variations). This gives overall power consumption of 595mW which is still slightly less than original CCFL light at 600mW yet it is substantially brighter.
 
 This is how it looks all connected and lit:
+
 ![6LED3](Ref/LED-230712-001.jpg)
 
 ## What is provided
