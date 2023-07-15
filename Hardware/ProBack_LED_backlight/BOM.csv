@@ -9,3 +9,4 @@ R2,2.67,1206,High precision 0.1% resistor for 35mA LED current. Value calculated
 R2,3.16,1206,High precision 0.1% resistor for 30mA LED current. Value calculated as 95 mV / LED current mA,CPF1206B3R16E1,TE Connectivity Passive Product
 U1,,TSOT-23-5,"LED regulator from LT, TSOT-23 5pin package",LT1937ES5#TRMPBF,Linear Technologies
 LEDS,,2835,YUJILEDS high CRI 2835 SMD,YJ-BC-2835L-G02,YUJILEDS
+LEDS,,2835,Lumileds CRI95 White SMD LED,L128-5095HA35000B1,Lumileds
