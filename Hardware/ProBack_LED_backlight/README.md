@@ -18,7 +18,7 @@ The alternative to 6x LED board and direct replacement is to place 3x LED lights
 
 The LED driver board provides constant current source from 3.3V and can be adjusted for your LEDs (by calculating R2 values for your LEDs current and is R2 = 95 mV / LED current mA (also see a note on schematic with a few sample values). The driver board was intentionally designed to be very small to fit onto a free space on ProBack board close to LCD and backlight power source.
 
-Current design was tested with Yuji LEDs [YJ-BC-2835L](https://www.yujiintl.com/bc-2835l-0-2w/) (20-24 lumens per LED at rated current - CRI95). You can also use any other LEDs in 2835 packaging - make sure they have low forward voltage (<3.3V) and not a very high current. The Lumileds White CRI95 LED (manufacturer part number L128-5095HA35000B1) seems to be an ideal alternative that is widely available (it was also specified below in parts list as alternative).
+Current design was tested with Yuji LEDs [YJ-BC-2835L](https://www.yujiintl.com/bc-2835l-0-2w/) (20-24 lumens per LED at rated current - CRI95). You can also use any other LEDs in 2835 packaging - make sure they have low forward voltage (<3.3V) and not a very high current. The [Lumileds White CRI95 LED](https://eu.mouser.com/ProductDetail/Lumileds/L128-5095HA35000B1?qs=W%2FMpXkg%252BdQ4dqd7YM%2FLVnw%3D%3D) (manufacturer part number L128-5095HA35000B1) seems to be an ideal alternative that is widely available (it was also specified below in parts list as alternative).
 
 This is assembled driver and LED light source for 3x LEDs designed to go behind LCD frame:
 
