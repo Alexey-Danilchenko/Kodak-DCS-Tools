@@ -72,7 +72,7 @@ Then, gently take away diffusion sheet, again noting round corner and where it s
 
 All the components here are numbered with their order in the assembly from the top starting with LCD panel.
 
-Lastly, take the light guide assembly from the frame, peel off the CCFL tube with the little white reflective sleave holding it and discard the tube. Cut off the parts of white sleave that stick to the light guide panel, both top and bottom bits and stick them both back to the light guide panel (this is important to avoid light bleeds). See the photo above where sleave was already cut off and both parts were put back on with indication of the top part.
+Lastly, take the light guide assembly from the frame, peel off the CCFL tube with the little white reflective sleeve holding it and discard the tube. Cut off the parts of white sleeve that stick to the light guide panel, both top and bottom bits and stick them both back to the light guide panel (this is important to avoid light bleeds). See the photo above where sleeve was already cut off and both parts were put back on with indication of the top part.
 
 Next, push the LCD light board into the metal frame (it should be pretty tight) as far as it can go:
 
