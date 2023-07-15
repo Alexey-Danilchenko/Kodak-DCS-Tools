@@ -36,6 +36,8 @@ Even with the visible backlight pattern, this is far easier to install since it 
 
 For the Yuji LEDs above, the board in examples uses regulated LED current of 35mA (with resistor values as selected in schematics and specified in parts list below). For a string of 6 LEDs it produces voltage of 17V (slightly less but that is highly dependent on LED variations). This gives overall power consumption of 595mW which is still slightly less than original CCFL light at 600mW yet it is substantially brighter.
 
+For the 6x LED board of the Yuji LEDs above, I would not recommend to go for brighter than with LED current of 35mA (30..35mA is the ideal range) since it then gets too bright and beyond capabilities of the LCD itself to handle (black becomes too bright). So the resistor values in the list of parts section below reflect this. I personally ended up using 35mA current and it is just about right balance.
+
 This is how it looks all connected and lit:
 
 ![6LED3](Ref/LED-230712-001.jpg)
@@ -46,9 +48,11 @@ In this repository you can find Eagle CAD [schematics](LED_Driver_Separate.sch) 
 
 Separately you can also find [list of parts](BOM.csv) as well.
 
-Gerber files for all the boards are in [Gerbers](Gerbers) subfirectory and are produced for [PCBWay](https://www.pcbway.com/) specifications (they were the only ones I found who can produce tiny LED boards).
+Gerber files for all the boards are in [Gerbers](Gerbers) subfirectory and are produced for [PCBWay](https://www.pcbway.com/) specifications (they were the only ones I found who can produce LED boards at 3mm minimum width).
 
-When ordering the boards, LED lights board should be finished in white and have a thickness of 1.6mm - this ensures tight fit into a frame and sitting just tight to the light guide panel. The driver board for aesthetic reason should be green (to match the main board) and be any thickness of up to 1.6mm - ideally I would choose 0.8mm.
+When ordering the boards, LED lights board should be finished in white and have a thickness of 1.6mm - this ensures precise fit into a frame and sitting very close to the light guide panel. Minimal board width in PCBWay is 3mm and it is exact size of the gap in LED aluminium frame - so the fit is very tight. I would recommend to file boards a bit to 2.9mm for slightly easier fit.
+
+The driver board for aesthetic reason should be green (to match the main board) and be any thickness of up to 1.6mm - ideally I would choose 0.8mm.
 
 ## LCD disassembly and light replacement
 
