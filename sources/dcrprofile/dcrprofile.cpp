@@ -35,7 +35,7 @@
 #include "dng_image_writer.h"
 #include "dng_matrix.h"
 
-// DNG SDK redefines basic datatypes and incorrecrly so we need 
+// DNG SDK redefines basic datatypes and incorrecrly so we need
 // local version of the fromBigEndian functions hence the include
 #include "dcs_common.cpp"
 
@@ -67,13 +67,16 @@ std::string imagerSerial;
 dng_matrix_3by3 proPhotoMatrix(0.7976685, 0.1351929, 0.0313416,
                                0.2880402, 0.7118835, 0.0000916,
                                0.0000000, 0.0000000, 0.8249054);
-                               
-dng_matrix_3by3 erimmMatrix(0.7347, 0.1596, 0.0366, 	
-                            0.2653, 0.8404, 0.0001, 
+
+dng_matrix_3by3 erimmMatrix(0.7347, 0.1596, 0.0366,
+                            0.2653, 0.8404, 0.0001,
                             0.0,    0.0,    0.9633);
 
 
 dng_vector_3 D50XYZ(cmsD50X, cmsD50Y, cmsD50Z);
+dng_vector_3 whitePoint;
+
+double iccGamma = 1.8;
 
 #define  StandardMatrixDaylight    2000
 #define  StandardMatrixTungsten    2001
@@ -179,36 +182,36 @@ const byte tagTypeSize[] =
 
 
 dng_matrix_3by3 getAdaptationMatrix(const dng_vector_3 &whiteFrom,
-						            const dng_vector_3 &whiteTo)
+                                    const dng_vector_3 &whiteTo)
 {
 
-	// Use the linearized Bradford adaptation matrix.
-	dng_matrix_3by3 Mb ( 0.8951,  0.2664, -0.1614,
-		 		        -0.7502,  1.7135,  0.0367,
-		  			     0.0389, -0.0685,  1.0296);
+    // Use the linearized Bradford adaptation matrix.
+    dng_matrix_3by3 Mb ( 0.8951,  0.2664, -0.1614,
+                         -0.7502,  1.7135,  0.0367,
+                           0.0389, -0.0685,  1.0296);
 
-	dng_vector_3 w1 = Mb * whiteFrom;
-	dng_vector_3 w2 = Mb * whiteTo;
+    dng_vector_3 w1 = Mb * whiteFrom;
+    dng_vector_3 w2 = Mb * whiteTo;
 
-	// Negative white coordinates are kind of meaningless.
-	w1 [0] = Max_real64 (w1 [0], 0.0);
-	w1 [1] = Max_real64 (w1 [1], 0.0);
-	w1 [2] = Max_real64 (w1 [2], 0.0);
+    // Negative white coordinates are kind of meaningless.
+    w1 [0] = Max_real64 (w1 [0], 0.0);
+    w1 [1] = Max_real64 (w1 [1], 0.0);
+    w1 [2] = Max_real64 (w1 [2], 0.0);
 
-	w2 [0] = Max_real64 (w2 [0], 0.0);
-	w2 [1] = Max_real64 (w2 [1], 0.0);
-	w2 [2] = Max_real64 (w2 [2], 0.0);
+    w2 [0] = Max_real64 (w2 [0], 0.0);
+    w2 [1] = Max_real64 (w2 [1], 0.0);
+    w2 [2] = Max_real64 (w2 [2], 0.0);
 
-	// Limit scaling to something reasonable.
-	dng_matrix_3by3 A;
+    // Limit scaling to something reasonable.
+    dng_matrix_3by3 A;
 
-	A [0] [0] = Pin_real64 (0.1, w1 [0] > 0.0 ? w2 [0] / w1 [0] : 10.0, 10.0);
-	A [1] [1] = Pin_real64 (0.1, w1 [1] > 0.0 ? w2 [1] / w1 [1] : 10.0, 10.0);
-	A [2] [2] = Pin_real64 (0.1, w1 [2] > 0.0 ? w2 [2] / w1 [2] : 10.0, 10.0);
+    A [0] [0] = Pin_real64 (0.1, w1 [0] > 0.0 ? w2 [0] / w1 [0] : 10.0, 10.0);
+    A [1] [1] = Pin_real64 (0.1, w1 [1] > 0.0 ? w2 [1] / w1 [1] : 10.0, 10.0);
+    A [2] [2] = Pin_real64 (0.1, w1 [2] > 0.0 ? w2 [2] / w1 [2] : 10.0, 10.0);
 
-	dng_matrix_3by3 B = Invert (Mb) * A * Mb;
+    dng_matrix_3by3 B = Invert (Mb) * A * Mb;
 
-	return B;
+    return B;
 }
 
 uint32 getTagDataSize(uint32 dataType, uint32 count)
@@ -234,6 +237,22 @@ uint32 FileSize(char *fileName)
 
     return (uint32)(size64 & 0xFFFFFFFF);
 }
+
+void normalizeColorMatrix(dng_matrix &m)
+{
+    if (m.NotEmpty())
+    {
+        // Find scale factor to normalize the matrix.
+        dng_vector coord = m * D50XYZ;
+        real64 maxCoord = coord.MaxEntry();
+
+        if (maxCoord > 0.0 && (maxCoord < 0.9999 || maxCoord > 1.0001))
+        {
+            m.Scale (1.0 / maxCoord);
+        }
+    }
+}
+
 
 void printMatrix(const char *title, const dng_matrix &m)
 {
@@ -392,12 +411,18 @@ void processTag(uint16 tiffTag, uint16 dataType, uint32 dataCount, byte *data)
         else
             *matrix = proPhotoMatrix * (*matrix);
 
+        normalizeColorMatrix(*matrix);
+
         // get max white XYZ (whitepoint)
         dng_vector_3 maxRGB(1,1,1);
-        dng_vector wp = (*matrix)*maxRGB;
+        whitePoint = (*matrix)*maxRGB;
 
-        // adaptation
-        *matrix = getAdaptationMatrix(wp, D50XYZ) * (*matrix);
+        // adaptation for DCP profiles only, ICC do not need that
+        if (!doICC)
+        {
+            *matrix = getAdaptationMatrix(whitePoint, D50XYZ) * (*matrix);
+            normalizeColorMatrix(*matrix);
+        }
     }
 }
 
@@ -430,7 +455,6 @@ void processIfd(byte* buf, uint32 size, uint32 ifdOffset)
         ifdOffset = fromBigEndian(*(uint32*)tagData);
     }
 }
-
 
 bool processDcr(char* dcrFileName)
 {
@@ -494,10 +518,10 @@ std::string makeDcpName(const char* profName)
         name += ' ';
 
     name += profName;
-    
+
     if (useLinearCurve && !doICC)
         name += " Linear";
-    
+
     if (useKodakMatrix)
         name += " Kodak";
 
@@ -516,10 +540,10 @@ std::string makeName(const char* profName)
 
     name += ' ';
     name += profName;
-    
-    if (useLinearCurve && !doICC)
+
+    if (useLinearCurve)
         name += " Linear";
-    
+
     if (useKodakMatrix)
         name += " Kodak";
 
@@ -536,7 +560,6 @@ void correctFileName(std::string &fileName)
         ++iter;
     }
 }
-
 
 bool setTextICCTag(cmsHPROFILE hProfile, cmsTagSignature sig, const char* data)
 {
@@ -582,8 +605,7 @@ void createICC(const char* profName, dng_matrix_3by3 &matrix)
     cmsSetColorSpace(hICC,       cmsSigRgbData);
     cmsSetPCS(hICC,              cmsSigXYZData);
 
-    cmsSetHeaderRenderingIntent(hICC,  INTENT_PERCEPTUAL);
-
+    cmsSetHeaderRenderingIntent(hICC,  INTENT_RELATIVE_COLORIMETRIC);
 
     // Implement profile using following tags:
     //
@@ -601,8 +623,21 @@ void createICC(const char* profName, dng_matrix_3by3 &matrix)
     success = success && setTextICCTag(hICC, cmsSigDeviceModelDescTag, cameraModel.c_str());
     success = success && setTextICCTag(hICC, cmsSigCopyrightTag, "Free to use");
 
-    // write D50 as white point
-    success = success && cmsWriteTag(hICC, cmsSigMediaWhitePointTag, cmsD50_XYZ());
+    // write white point
+    cmsCIEXYZ wp;
+    wp.X = whitePoint[0];
+    wp.Y = whitePoint[1];
+    wp.Z = whitePoint[2];
+    success = success && cmsWriteTag(hICC, cmsSigMediaWhitePointTag, &wp);
+
+    // prepare and write black point
+    cmsCIEXYZ cmsBp;
+    dng_vector_3 minRGB(1.0/4096,1.0/4096,1.0/4096);
+    dng_vector bp = matrix*minRGB;
+    cmsBp.X = bp[0];
+    cmsBp.Y = bp[1];
+    cmsBp.Z = bp[2];
+    success = success && cmsWriteTag(hICC, cmsSigMediaBlackPointTag, &cmsBp);
 
     // prepare XYZ matrix
     Colorants.Red.X   = matrix[0][0];
@@ -621,8 +656,8 @@ void createICC(const char* profName, dng_matrix_3by3 &matrix)
     success = success && cmsWriteTag(hICC, cmsSigGreenColorantTag, (void*) &Colorants.Green);
     success = success && cmsWriteTag(hICC, cmsSigBlueColorantTag,  (void*) &Colorants.Blue);
 
-    // use gamma 1.8 tone curve
-    cmsToneCurve* tone = cmsBuildGamma(0, 1.8);
+    // use gamma tone curve
+    cmsToneCurve* tone = cmsBuildGamma(0, useLinearCurve ? 1.0 : iccGamma);
 
     success = success && cmsWriteTag(hICC, cmsSigRedTRCTag, (void*)tone);
     success = success && cmsLinkTag (hICC, cmsSigGreenTRCTag, cmsSigRedTRCTag);
@@ -649,7 +684,7 @@ void createDualDCP(const char* profName, uint32 light1, dng_matrix_3by3 &matrix1
 {
     std::string name = makeName(profName);
     std::string dcpName = makeDcpName(profName);
-    
+
     std::cout << "   Creating \"" << name << "\" DCP profile" << std::endl;
 
     bool success = true;
@@ -683,7 +718,7 @@ void createDualDCP(const char* profName, uint32 light1, dng_matrix_3by3 &matrix1
         dng_file_stream fs(fName.c_str(), true);
         tiff_dng_extended_color_profile writer(dcp);
         writer.Put(fs);
-		fs.Flush();
+        fs.Flush();
     }
     catch (...)
     {
@@ -725,7 +760,7 @@ void createDCP(const char* profName, uint32 light, dng_matrix_3by3 &matrix, dng_
         dng_file_stream fs(fName.c_str(), true);
         tiff_dng_extended_color_profile writer(dcp);
         writer.Put(fs);
-		fs.Flush();
+        fs.Flush();
     }
     catch (...)
     {
@@ -735,17 +770,18 @@ void createDCP(const char* profName, uint32 light, dng_matrix_3by3 &matrix, dng_
 
 void printUsage(char* appName)
 {
-    fprintf(stderr,"Usage: %s -dikls <dcr>\n", appName);
+    fprintf(stderr,"Usage: %s -gikls [gamma] <dcr>\n", appName);
+    fprintf(stderr,"    -g - specifies manual gamma value for ICC profile curve (default 1.8) - ignored for -l flag\n");
     fprintf(stderr,"    -i - generates .ICC profiles (DCPs is not specified)\n");
     fprintf(stderr,"    -k - uses Kodak old ERIMM primaries as opposed to ProPhoto RGB\n");
-    fprintf(stderr,"    -l - generates DCP profiles with linear curve as opposed to Adobe standard\n");
+    fprintf(stderr,"    -l - generates DCP/ICC profiles with linear curve as opposed to Adobe standard or gamma in ICC\n");
     fprintf(stderr,"    -s - generates profiles from standard matrices as opposed to unique for this camera\n\n");
 }
 
 int main(int argc, char *argv[])
 {
-    if ((argc != 2 && argc != 3)
-        || (argc == 3 && *argv[1] != '-'))
+    if ((argc != 2 && argc != 3 && argc != 4)
+        || ((argc == 3 || argc ==4) && *argv[1] != '-'))
     {
         printUsage(argv[0]);
         return 1;
@@ -760,6 +796,15 @@ int main(int argc, char *argv[])
         {
             switch (*param)
             {
+                case 'g':
+                    if (argc != 4)
+                    {
+                        printUsage(argv[0]);
+                        return 1;
+                    }
+                    iccGamma = atof(argv[0]);
+                    break;
+
                 case 'i':
                     doICC = true;
                     break;
@@ -783,7 +828,7 @@ int main(int argc, char *argv[])
             param++;
         }
     }
-    
+
     char* dcr_name = argv[argc-1];
 
     if (processDcr(dcr_name))
@@ -794,7 +839,7 @@ int main(int argc, char *argv[])
             imagerSerial.clear();
 
             std::cout << "Generating profiles from standard matrices..." << std::endl;
-            
+
             if (doICC)
             {
                 // create ICCs
@@ -807,19 +852,19 @@ int main(int argc, char *argv[])
             {
                 // create dual illuminant DCP
                 createDualDCP("Daylight/Tungsten Standard",
-                              lsD55,         stdMatrixDaylight,    
+                              lsD55,         stdMatrixDaylight,
                                              stdWhiteDaylight.MaxEntry()>0 ? stdWhiteDaylight : uniqueWhiteDaylight,
-                              lsTungsten,    stdMatrixTungsten,    
+                              lsTungsten,    stdMatrixTungsten,
                                              stdWhiteTungsten.MaxEntry()>0 ? stdWhiteTungsten : uniqueWhiteTungsten);
 
                 // create single illuminant DCPs
-                createDCP("Daylight Standard",    lsD55,         stdMatrixDaylight,    
+                createDCP("Daylight Standard",    lsD55,         stdMatrixDaylight,
                           stdWhiteDaylight.MaxEntry()>0 ? stdWhiteDaylight : uniqueWhiteDaylight);
-                createDCP("Tungsten Standard",    lsTungsten,    
+                createDCP("Tungsten Standard",    lsTungsten,
                           stdMatrixTungsten,    stdWhiteTungsten.MaxEntry()>0 ? stdWhiteTungsten : uniqueWhiteTungsten);
-                createDCP("Fluorescent Standard", lsFluorescent, stdMatrixFluorescent, 
+                createDCP("Fluorescent Standard", lsFluorescent, stdMatrixFluorescent,
                           stdWhiteFluorescent.MaxEntry()>0 ? stdWhiteFluorescent : uniqueWhiteFluorescent);
-                createDCP("Flash Standard",       lsD65,         stdMatrixFlash,       
+                createDCP("Flash Standard",       lsD65,         stdMatrixFlash,
                           stdWhiteFlash.MaxEntry()>0 ? stdWhiteFlash : uniqueWhiteFlash);
             }
 
