@@ -19,12 +19,12 @@ I have created a utility to do just that - extract that data into profiles in va
 
 
 ```
-dcrprofile.exe -ikls <.DCR>
-    -i - generate .ICC profiles (by default generates .DCP profiles for ACR/Lightroom)
-    -k - use old Kodak ProPhoto matrix instead of current ProPhoto for space conversion (experimental)
-    -l - generate DCP profiles with linear curve instead of ACR/Lightroom standard one
-    -s - generate profiles from standard camera data (without this key - generates from camera instance specific data)
-
+dcrprofile.exe -gikls [gamma] <.DCR>
+    -g - specifies manual gamma value for ICC profile curve (default 1.8) - ignored for -l flag
+    -i - generates .ICC profiles (DCPs is not specified)
+    -k - uses Kodak old ERIMM primaries as opposed to ProPhoto RGB
+    -l - generates DCP/ICC profiles with linear curve as opposed to Adobe standard or gamma in ICC
+    -s - generates profiles from standard matrices as opposed to unique for this camera
 ```
 
 Example `dcrprofile` run:
