@@ -11,7 +11,7 @@ These cameras use 50x50mm square, 1mm thick glass IR Cut filter with the followi
 
 ProBack filters should have sharp cutoff edge closely following specification to match Kodak's profiles. In fact the better colour reproduction has ben observed for filters where cut off area is at the far end of transmissive area - 660-665nm. 
 
-The best commercially available alternative that is close to those specifications is [Knight Optical IR Cut filters]([https://www.knightoptical.com/stock/optical-components/uvvisnir-optics/filters/ir-cut-filters](https://www.knightoptical.com/stock/precision-ir-cut-filter-400-650nm-t-94-50mm-x-50mm-x-1-1mm-thick.html)/). The spectral trasmission curves for one sample of Knight Optical filter compared with standard Kodak ones [could be seen here](https://drive.google.com/file/d/1-58zvv20XH8T5d2wr0gaVNZsHv_yeqn3/view?usp=sharing) with corresponding [.CSV files here](https://drive.google.com/file/d/0Bw2ZohnbXtyASVRReHUzd0gzWGc/view?usp=sharing).
+The best commercially available alternative that is close to those specifications is [Knight Optical IR Cut filters](https://www.knightoptical.com/stock/precision-ir-cut-filter-400-650nm-t-94-50mm-x-50mm-x-1-1mm-thick.html)/). The spectral trasmission curves for one sample of Knight Optical filter compared with standard Kodak ones [could be seen here](https://drive.google.com/file/d/1-58zvv20XH8T5d2wr0gaVNZsHv_yeqn3/view?usp=sharing) with corresponding [.CSV files here](https://drive.google.com/file/d/0Bw2ZohnbXtyASVRReHUzd0gzWGc/view?usp=sharing).
 
 ## Mamiya viewfinder masks for Kodak DCS ProBack 645M
 
