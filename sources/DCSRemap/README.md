@@ -4,9 +4,9 @@ This software allows to perform defective pixels, rows and columns remap for Kod
 
 ## Building from sources
 The build system has been ported to CMake so it should be easier to build. The usage of OMP has also been replaced with open source Thread Building Blocks (TBB) library. The dependencies for this project are (with minimum versions - those were tested):
-* QT v5.15
-* LibRaw v0.20.2
-* Intel TBB v2021.1
+* QT v6.x
+* LibRaw v0.22.0
+* Intel oneTBB v2022.3
 
 Once those are installed/compiled build procedure is pretty standard for CMake project.
 
