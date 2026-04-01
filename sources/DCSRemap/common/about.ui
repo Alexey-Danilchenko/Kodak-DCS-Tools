@@ -3,7 +3,7 @@
  <class>About</class>
  <widget class="QDialog" name="About">
   <property name="windowModality">
-   <enum>Qt::ApplicationModal</enum>
+   <enum>Qt::WindowModality::ApplicationModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -175,10 +175,10 @@
     <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="text">
-    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;DCS Remap&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;version 1.2&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Sensor/imager remapping for&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Kodak DCS Proback 645/H/C/M&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;14n, 14nx, SLR/n, SLR/c&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;DCS Remap&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:12pt;&quot;&gt;version 1.3&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Sensor/imager remapping for&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;Kodak DCS Proback 645/H/C/M&lt;/span&gt;&lt;/p&gt;&lt;p align=&quot;center&quot;&gt;&lt;span style=&quot; font-size:10pt;&quot;&gt;14n, 14nx, SLR/n, SLR/c&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
    </property>
    <property name="alignment">
-    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+    <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
@@ -246,7 +246,7 @@
     <rect>
      <x>40</x>
      <y>170</y>
-     <width>151</width>
+     <width>171</width>
      <height>71</height>
     </rect>
    </property>
@@ -260,10 +260,10 @@ version 2.1. Copyright
 its subsidiary(-ies)</string>
    </property>
    <property name="textFormat">
-    <enum>Qt::PlainText</enum>
+    <enum>Qt::TextFormat::PlainText</enum>
    </property>
    <property name="alignment">
-    <set>Qt::AlignCenter</set>
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="CopirightIconLabel">
@@ -296,15 +296,21 @@ its subsidiary(-ies)</string>
     <rect>
      <x>49</x>
      <y>269</y>
-     <width>251</width>
+     <width>341</width>
      <height>31</height>
     </rect>
    </property>
    <property name="cursor">
     <cursorShape>PointingHandCursor</cursorShape>
    </property>
+   <property name="layoutDirection">
+    <enum>Qt::LayoutDirection::LeftToRight</enum>
+   </property>
    <property name="text">
     <string>Copyright (C) Alexey Danilchenko, 2013-2014</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
   <widget class="QLabel" name="libRawLabel">
@@ -320,58 +326,13 @@ its subsidiary(-ies)</string>
     <cursorShape>PointingHandCursor</cursorShape>
    </property>
    <property name="text">
-    <string>LibRaw version 0.16.0. Copyright (C) 2008-2014 LibRaw LLC</string>
+    <string>LibRaw version 0.22.0. Copyright (C) 2008-2026 LibRaw LLC</string>
    </property>
    <property name="textFormat">
-    <enum>Qt::PlainText</enum>
+    <enum>Qt::TextFormat::PlainText</enum>
    </property>
    <property name="alignment">
-    <set>Qt::AlignCenter</set>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="btnDonate">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>270</y>
-     <width>92</width>
-     <height>26</height>
-    </rect>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>92</width>
-     <height>26</height>
-    </size>
-   </property>
-   <property name="maximumSize">
-    <size>
-     <width>92</width>
-     <height>26</height>
-    </size>
-   </property>
-   <property name="cursor">
-    <cursorShape>PointingHandCursor</cursorShape>
-   </property>
-   <property name="text">
-    <string/>
-   </property>
-   <property name="icon">
-    <iconset>
-     <normalon>:/MainForm/images/Donate.png</normalon>
-    </iconset>
-   </property>
-   <property name="iconSize">
-    <size>
-     <width>92</width>
-     <height>26</height>
-    </size>
-   </property>
-   <property name="autoDefault">
-    <bool>true</bool>
-   </property>
-   <property name="flat">
-    <bool>true</bool>
+    <set>Qt::AlignmentFlag::AlignCenter</set>
    </property>
   </widget>
  </widget>

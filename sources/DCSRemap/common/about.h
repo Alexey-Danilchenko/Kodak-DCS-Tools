@@ -26,26 +26,19 @@
 
 #include <QWidget>
 #include <QDialog>
-#include <QTranslator>
 
 class About : public QDialog
 {
     Q_OBJECT
 
 public:
-    About(int language, QWidget *parent = 0);
+    About(QWidget *parent = 0);
     ~About();
 
 private:
 
     Ui::About ui;
-    int language;
 
-    void mousePressEvent(QMouseEvent * event);
-
-private Q_SLOTS:
-
-    void donate();
-};
+    void mousePressEvent(QMouseEvent * event);};
 
 #endif // ABOUT_H

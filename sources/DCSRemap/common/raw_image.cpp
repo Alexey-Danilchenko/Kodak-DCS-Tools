@@ -342,8 +342,8 @@ void DCSRawImage::mouseMoveEvent(QMouseEvent * e)
 {
     if (rawData_)
     {
-        uint16 col = uint16(double(e->x()-pX)/scale_);
-        uint16 row = uint16(double(e->y()-pY)/scale_);
+        uint16 col = uint16(double(e->position().rx()-pX)/scale_);
+        uint16 row = uint16(double(e->position().ry()-pY)/scale_);
 
         if (col<width_ && row<height_)
             Q_EMIT imageCursorPosUpdated(row, col);
@@ -354,8 +354,8 @@ void DCSRawImage::mousePressEvent(QMouseEvent * e)
 {
     if (defects_ && curDefSetMode_ != M_NONE)
     {
-        uint16 col = uint16(double(e->x()-pX)/scale_);
-        uint16 row = uint16(double(e->y()-pY)/scale_);
+        uint16 col = uint16(double(e->position().rx()-pX)/scale_);
+        uint16 row = uint16(double(e->position().ry()-pY)/scale_);
 
         if (col>=width_ || row>=height_)
             return;

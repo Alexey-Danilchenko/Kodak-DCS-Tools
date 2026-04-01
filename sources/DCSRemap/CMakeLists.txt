@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.17)
 
+# For MacOS only
+set(CMAKE_OSX_DEPLOYMENT_TARGET "26.0" CACHE STRING "Minimum OS X deployment version")
+
 project(DCSRemap)
 
 # Search path for cmake modules
@@ -20,13 +23,16 @@ set(CMAKE_AUTORCC ON)
 ADD_DEFINITIONS(-DQT_NO_KEYWORDS)
 
 message("Looking for Qt...")
-# Qt modules (https://doc.qt.io/qt-5/qtmodules.html) you're using in your application
-find_package(Qt5 REQUIRED ThemeSupport Core Gui Widgets Network Xml XmlPatterns)
-if (${Qt5_FOUND})
-    message("Found Qt " ${Qt5_VERSION})
+# Qt modules (https://doc.qt.io/qt-6/qtmodules.html) you're using in your application
+find_package(Qt6 REQUIRED Core Gui Widgets Network Xml)
+if (${Qt6_FOUND})
+    message("Found Qt " ${Qt6_VERSION})
 else()
     message("Couldn't find Qt")
 endif()
+
+# For LibRaw
+find_package(ZLIB)
 
 # LibRaw
 find_package(LibRaw REQUIRED)
@@ -44,24 +50,20 @@ else()
     message("Couldn't find TBB")
 endif()
 
-# Main executable and version
+# Main executable - no version for new macOS
 add_executable(DCSRemap)
-set_target_properties(DCSRemap PROPERTIES
-    VERSION 1.2
-)
 
 # Add common include
 include_directories(common)
 
 target_link_libraries(DCSRemap
-                      Qt5::ThemeSupport
-                      Qt5::Core
-                      Qt5::Gui
-                      Qt5::Widgets
-                      Qt5::Network
-                      Qt5::Xml
-                      Qt5::XmlPatterns
+                      Qt::Core
+                      Qt::Gui
+                      Qt::Widgets
+                      Qt::Network
+                      Qt::Xml
                       TBB::tbb
+                      ZLIB::ZLIB
                       LibRaw::LibRaw)
 
 add_subdirectory(common)
@@ -76,14 +78,12 @@ endif()
 
 # Post build steps - copy libraries and other dependencies
 copy_libraries(DCSRemap
-               Qt5::Core
-               Qt5::Gui
-               Qt5::Widgets
-               Qt5::Network
-               Qt5::Xml
-               Qt5::XmlPatterns
-               TBB::tbb
-               LibRaw::LibRaw)
+               Qt::Core
+               Qt::Gui
+               Qt::Widgets
+               Qt::Network
+               Qt::Xml
+               TBB::tbb)
 
 copy_qt_plugins(DCSRemap)
 

@@ -3,7 +3,7 @@
  <class>DCSRemap</class>
  <widget class="QMainWindow" name="DCSRemap">
   <property name="windowModality">
-   <enum>Qt::NonModal</enum>
+   <enum>Qt::WindowModality::NonModal</enum>
   </property>
   <property name="geometry">
    <rect>
@@ -32,10 +32,10 @@
    </size>
   </property>
   <property name="focusPolicy">
-   <enum>Qt::NoFocus</enum>
+   <enum>Qt::FocusPolicy::NoFocus</enum>
   </property>
   <property name="contextMenuPolicy">
-   <enum>Qt::DefaultContextMenu</enum>
+   <enum>Qt::ContextMenuPolicy::DefaultContextMenu</enum>
   </property>
   <property name="acceptDrops">
    <bool>false</bool>
@@ -98,7 +98,7 @@
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
+           <enum>QFrame::Shape::NoFrame</enum>
           </property>
           <layout class="QHBoxLayout" name="horizontalLayout_16">
            <property name="spacing">
@@ -131,7 +131,7 @@
               </size>
              </property>
              <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
+              <enum>QFrame::Shape::NoFrame</enum>
              </property>
              <property name="lineWidth">
               <number>0</number>
@@ -152,7 +152,7 @@
               <property name="bottomMargin">
                <number>0</number>
               </property>
-              <item alignment="Qt::AlignVCenter">
+              <item alignment="Qt::AlignmentFlag::AlignVCenter">
                <widget class="QToolButton" name="btnZoom100">
                 <property name="minimumSize">
                  <size>
@@ -161,7 +161,7 @@
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Actual Pixels (/)</string>
@@ -188,7 +188,7 @@
                 </property>
                </widget>
               </item>
-              <item alignment="Qt::AlignVCenter">
+              <item alignment="Qt::AlignmentFlag::AlignVCenter">
                <widget class="QToolButton" name="btnZoomFit">
                 <property name="minimumSize">
                  <size>
@@ -197,7 +197,7 @@
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Fit Window (*)</string>
@@ -233,7 +233,7 @@
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Zoom In (+)</string>
@@ -269,7 +269,7 @@
                  </size>
                 </property>
                 <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+                 <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
                  <string>Zoom level, %</string>
@@ -281,7 +281,7 @@
                  <number>10</number>
                 </property>
                 <property name="sizeAdjustPolicy">
-                 <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+                 <enum>QComboBox::SizeAdjustPolicy::AdjustToContentsOnFirstShow</enum>
                 </property>
                 <property name="modelColumn">
                  <number>0</number>
@@ -300,7 +300,7 @@
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Zoom Out (-)</string>
@@ -336,10 +336,10 @@
            <item>
             <spacer name="horizontalSpacer_3">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeType">
-              <enum>QSizePolicy::Fixed</enum>
+              <enum>QSizePolicy::Policy::Fixed</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -454,7 +454,7 @@ on the image will mark/unmark row as defective</string>
            <item>
             <spacer name="horizontalSpacer_5">
              <property name="orientation">
-              <enum>Qt::Horizontal</enum>
+              <enum>Qt::Orientation::Horizontal</enum>
              </property>
              <property name="sizeHint" stdset="0">
               <size>
@@ -463,58 +463,6 @@ on the image will mark/unmark row as defective</string>
               </size>
              </property>
             </spacer>
-           </item>
-           <item>
-            <widget class="QToolButton" name="btnEnglish">
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="toolTip">
-              <string>English Language</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="dcs_remap.qrc">
-               <normaloff>:/MainForm/images/USA.png</normaloff>:/MainForm/images/USA.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QToolButton" name="btnRussian">
-             <property name="focusPolicy">
-              <enum>Qt::NoFocus</enum>
-             </property>
-             <property name="toolTip">
-              <string>Russian Language</string>
-             </property>
-             <property name="text">
-              <string/>
-             </property>
-             <property name="icon">
-              <iconset resource="dcs_remap.qrc">
-               <normaloff>:/MainForm/images/RU.png</normaloff>:/MainForm/images/RU.png</iconset>
-             </property>
-             <property name="iconSize">
-              <size>
-               <width>16</width>
-               <height>16</height>
-              </size>
-             </property>
-             <property name="autoRaise">
-              <bool>true</bool>
-             </property>
-            </widget>
            </item>
           </layout>
          </widget>
@@ -534,10 +482,10 @@ on the image will mark/unmark row as defective</string>
            </size>
           </property>
           <property name="frameShape">
-           <enum>QFrame::NoFrame</enum>
+           <enum>QFrame::Shape::NoFrame</enum>
           </property>
           <property name="frameShadow">
-           <enum>QFrame::Sunken</enum>
+           <enum>QFrame::Shadow::Sunken</enum>
           </property>
           <property name="lineWidth">
            <number>0</number>
@@ -564,24 +512,24 @@ on the image will mark/unmark row as defective</string>
            <item>
             <widget class="QScrollArea" name="rawScrollArea">
              <property name="frameShape">
-              <enum>QFrame::Box</enum>
+              <enum>QFrame::Shape::Box</enum>
              </property>
              <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
+              <enum>QFrame::Shadow::Sunken</enum>
              </property>
              <property name="widgetResizable">
               <bool>true</bool>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
              <widget class="DCSRawImage" name="rawImage">
               <property name="geometry">
                <rect>
                 <x>0</x>
                 <y>0</y>
-                <width>532</width>
-                <height>539</height>
+                <width>530</width>
+                <height>515</height>
                </rect>
               </property>
               <property name="sizePolicy">
@@ -609,13 +557,13 @@ on the image will mark/unmark row as defective</string>
                <bool>true</bool>
               </property>
               <property name="focusPolicy">
-               <enum>Qt::ClickFocus</enum>
+               <enum>Qt::FocusPolicy::ClickFocus</enum>
               </property>
               <property name="frameShape">
-               <enum>QFrame::NoFrame</enum>
+               <enum>QFrame::Shape::NoFrame</enum>
               </property>
               <property name="frameShadow">
-               <enum>QFrame::Plain</enum>
+               <enum>QFrame::Shadow::Plain</enum>
               </property>
               <property name="lineWidth">
                <number>0</number>
@@ -643,10 +591,10 @@ on the image will mark/unmark row as defective</string>
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::Shape::NoFrame</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
+         <enum>QFrame::Shadow::Sunken</enum>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2">
          <property name="leftMargin">
@@ -794,10 +742,10 @@ file for the sensor being remapped</string>
               </sizepolicy>
              </property>
              <property name="frameShape">
-              <enum>QFrame::NoFrame</enum>
+              <enum>QFrame::Shape::NoFrame</enum>
              </property>
              <property name="frameShadow">
-              <enum>QFrame::Plain</enum>
+              <enum>QFrame::Shadow::Plain</enum>
              </property>
              <property name="lineWidth">
               <number>0</number>
@@ -824,7 +772,7 @@ file for the sensor being remapped</string>
                  <string>ISO:</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -837,7 +785,7 @@ file for the sensor being remapped</string>
                  </sizepolicy>
                 </property>
                 <property name="contextMenuPolicy">
-                 <enum>Qt::NoContextMenu</enum>
+                 <enum>Qt::ContextMenuPolicy::NoContextMenu</enum>
                 </property>
                 <property name="toolTip">
                  <string>Select ISO to remap and display defects for. With specific ISO selected 
@@ -852,7 +800,7 @@ at are applicable.</string>
                  <number>10</number>
                 </property>
                 <property name="sizeAdjustPolicy">
-                 <enum>QComboBox::AdjustToContentsOnFirstShow</enum>
+                 <enum>QComboBox::SizeAdjustPolicy::AdjustToContentsOnFirstShow</enum>
                 </property>
                 <property name="modelColumn">
                  <number>0</number>
@@ -1226,7 +1174,7 @@ for defective pixel auto remap</string>
               <item row="0" column="2">
                <spacer name="horizontalSpacer_2">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -1315,7 +1263,7 @@ RAW file and selected defect thresholds</string>
                  <string>Min</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1331,7 +1279,7 @@ RAW file and selected defect thresholds</string>
                  <string>Max</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1347,7 +1295,7 @@ RAW file and selected defect thresholds</string>
                  <string>Avg</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1398,7 +1346,7 @@ red channel -5..+5 stops</string>
                  <string>Red:</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1449,7 +1397,7 @@ green channel -5..+5 stops</string>
                  <string>Green:</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1500,7 +1448,7 @@ blue channel -5..+5 stops</string>
                  <string>Blue:</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1551,7 +1499,7 @@ green2 channel -5..+5 stops</string>
                  <string>Green2:</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1567,7 +1515,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1583,7 +1531,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1599,7 +1547,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1615,7 +1563,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1631,7 +1579,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1647,7 +1595,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1663,7 +1611,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1679,7 +1627,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1695,7 +1643,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1711,7 +1659,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1727,7 +1675,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1743,7 +1691,7 @@ green2 channel -5..+5 stops</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1797,7 +1745,7 @@ with thresholds as selected above</string>
                  <string>Auto Def.</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1851,7 +1799,7 @@ with thresholds as selected above</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1905,7 +1853,7 @@ with thresholds as selected above</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -1959,7 +1907,7 @@ with thresholds as selected above</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -2013,7 +1961,7 @@ with thresholds as selected above</string>
                  <string>0</string>
                 </property>
                 <property name="alignment">
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
                 </property>
                </widget>
               </item>
@@ -2030,13 +1978,13 @@ with thresholds as selected above</string>
              </property>
              <layout class="QFormLayout" name="formLayout">
               <property name="fieldGrowthPolicy">
-               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+               <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
               </property>
               <property name="labelAlignment">
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTrailing|Qt::AlignmentFlag::AlignVCenter</set>
               </property>
               <property name="formAlignment">
-               <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+               <set>Qt::AlignmentFlag::AlignRight|Qt::AlignmentFlag::AlignTop|Qt::AlignmentFlag::AlignTrailing</set>
               </property>
               <property name="rightMargin">
                <number>9</number>
@@ -2119,7 +2067,7 @@ to achieve a uniformly lit raw file.</string>
               <item>
                <spacer name="horizontalSpacer_6">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -2136,7 +2084,7 @@ to achieve a uniformly lit raw file.</string>
                 </property>
                 <layout class="QFormLayout" name="frmLayout_4">
                  <property name="formAlignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+                  <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignVCenter</set>
                  </property>
                  <property name="horizontalSpacing">
                   <number>4</number>
@@ -2197,7 +2145,7 @@ to achieve a uniformly lit raw file.</string>
              </property>
              <layout class="QFormLayout" name="formLayout_2">
               <property name="fieldGrowthPolicy">
-               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+               <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
               </property>
               <property name="horizontalSpacing">
                <number>2</number>
@@ -2236,7 +2184,7 @@ all the channels -5..+5 stops</string>
                 <item>
                  <widget class="QSlider" name="expAll">
                   <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Global exposure correction applied for
@@ -2255,7 +2203,7 @@ all the channels -10..+10 stops</string>
                    <bool>false</bool>
                   </property>
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="invertedAppearance">
                    <bool>false</bool>
@@ -2264,7 +2212,7 @@ all the channels -10..+10 stops</string>
                    <bool>false</bool>
                   </property>
                   <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
+                   <enum>QSlider::TickPosition::NoTicks</enum>
                   </property>
                   <property name="tickInterval">
                    <number>6</number>
@@ -2286,7 +2234,7 @@ all the channels -10..+10 stops</string>
                    </size>
                   </property>
                   <property name="focusPolicy">
-                   <enum>Qt::WheelFocus</enum>
+                   <enum>Qt::FocusPolicy::WheelFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Global exposure correction applied for
@@ -2367,7 +2315,7 @@ red channel -5..+5 stops</string>
                 <item>
                  <widget class="QSlider" name="expRed">
                   <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Exposure correction for the
@@ -2386,7 +2334,7 @@ red channel -10..+10 stops</string>
                    <bool>false</bool>
                   </property>
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="invertedAppearance">
                    <bool>false</bool>
@@ -2395,7 +2343,7 @@ red channel -10..+10 stops</string>
                    <bool>false</bool>
                   </property>
                   <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
+                   <enum>QSlider::TickPosition::NoTicks</enum>
                   </property>
                   <property name="tickInterval">
                    <number>6</number>
@@ -2417,7 +2365,7 @@ red channel -10..+10 stops</string>
                    </size>
                   </property>
                   <property name="focusPolicy">
-                   <enum>Qt::WheelFocus</enum>
+                   <enum>Qt::FocusPolicy::WheelFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Exposure correction for the
@@ -2498,7 +2446,7 @@ green channel -5..+5 stops</string>
                 <item>
                  <widget class="QSlider" name="expGreen">
                   <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Exposure correction for the
@@ -2517,13 +2465,13 @@ green channel -10..+10 stops</string>
                    <bool>false</bool>
                   </property>
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="invertedControls">
                    <bool>false</bool>
                   </property>
                   <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
+                   <enum>QSlider::TickPosition::NoTicks</enum>
                   </property>
                   <property name="tickInterval">
                    <number>6</number>
@@ -2545,7 +2493,7 @@ green channel -10..+10 stops</string>
                    </size>
                   </property>
                   <property name="focusPolicy">
-                   <enum>Qt::WheelFocus</enum>
+                   <enum>Qt::FocusPolicy::WheelFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Exposure correction for the
@@ -2626,7 +2574,7 @@ blue channel -5..+5 stops</string>
                 <item>
                  <widget class="QSlider" name="expBlue">
                   <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Exposure correction for the
@@ -2645,13 +2593,13 @@ blue channel -10..+10 stops</string>
                    <bool>false</bool>
                   </property>
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="invertedControls">
                    <bool>false</bool>
                   </property>
                   <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
+                   <enum>QSlider::TickPosition::NoTicks</enum>
                   </property>
                   <property name="tickInterval">
                    <number>6</number>
@@ -2673,7 +2621,7 @@ blue channel -10..+10 stops</string>
                    </size>
                   </property>
                   <property name="focusPolicy">
-                   <enum>Qt::WheelFocus</enum>
+                   <enum>Qt::FocusPolicy::WheelFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Exposure correction for the
@@ -2754,7 +2702,7 @@ green2 channel -5..+5 stops</string>
                 <item>
                  <widget class="QSlider" name="expGreen2">
                   <property name="focusPolicy">
-                   <enum>Qt::NoFocus</enum>
+                   <enum>Qt::FocusPolicy::NoFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Exposure correction for the
@@ -2773,7 +2721,7 @@ green2 channel -10..+10 stops</string>
                    <bool>false</bool>
                   </property>
                   <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
+                   <enum>Qt::Orientation::Horizontal</enum>
                   </property>
                   <property name="invertedAppearance">
                    <bool>false</bool>
@@ -2782,7 +2730,7 @@ green2 channel -10..+10 stops</string>
                    <bool>false</bool>
                   </property>
                   <property name="tickPosition">
-                   <enum>QSlider::NoTicks</enum>
+                   <enum>QSlider::TickPosition::NoTicks</enum>
                   </property>
                   <property name="tickInterval">
                    <number>6</number>
@@ -2804,7 +2752,7 @@ green2 channel -10..+10 stops</string>
                    </size>
                   </property>
                   <property name="focusPolicy">
-                   <enum>Qt::WheelFocus</enum>
+                   <enum>Qt::FocusPolicy::WheelFocus</enum>
                   </property>
                   <property name="toolTip">
                    <string>Exposure correction for the
@@ -2845,7 +2793,7 @@ green2 channel -10..+10 stops</string>
              </property>
              <layout class="QFormLayout" name="formLayout_10">
               <property name="fieldGrowthPolicy">
-               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+               <enum>QFormLayout::FieldGrowthPolicy::AllNonFixedFieldsGrow</enum>
               </property>
               <property name="horizontalSpacing">
                <number>2</number>
@@ -2884,7 +2832,7 @@ green2 channel -10..+10 stops</string>
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Contrast increase applied to all channels</string>
@@ -2899,10 +2847,10 @@ green2 channel -10..+10 stops</string>
                  <bool>false</bool>
                 </property>
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="tickPosition">
-                 <enum>QSlider::NoTicks</enum>
+                 <enum>QSlider::TickPosition::NoTicks</enum>
                 </property>
                 <property name="tickInterval">
                  <number>10</number>
@@ -2934,7 +2882,7 @@ green2 channel -10..+10 stops</string>
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
+                 <enum>Qt::FocusPolicy::NoFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Contrast midpoint (turning point of S-curve) selection</string>
@@ -2952,10 +2900,10 @@ green2 channel -10..+10 stops</string>
                  <bool>false</bool>
                 </property>
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="tickPosition">
-                 <enum>QSlider::TicksBelow</enum>
+                 <enum>QSlider::TickPosition::TicksBelow</enum>
                 </property>
                 <property name="tickInterval">
                  <number>32</number>
@@ -3218,7 +3166,7 @@ row/column for easy spotting of defective rows/columns.</string>
               <item row="0" column="1">
                <spacer name="horizontalSpacer_4">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -3364,7 +3312,7 @@ either by filling with zeroes or scaling down</string>
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::WheelFocus</enum>
+                 <enum>Qt::FocusPolicy::WheelFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Blue channel black level 0..4095</string>
@@ -3430,7 +3378,7 @@ either by filling with zeroes or scaling down</string>
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::WheelFocus</enum>
+                 <enum>Qt::FocusPolicy::WheelFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Green channel black level 0..4095</string>
@@ -3449,7 +3397,7 @@ either by filling with zeroes or scaling down</string>
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::WheelFocus</enum>
+                 <enum>Qt::FocusPolicy::WheelFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Green2 channel black level 0..4095</string>
@@ -3515,7 +3463,7 @@ either by filling with zeroes or scaling down</string>
                  </size>
                 </property>
                 <property name="focusPolicy">
-                 <enum>Qt::WheelFocus</enum>
+                 <enum>Qt::FocusPolicy::WheelFocus</enum>
                 </property>
                 <property name="toolTip">
                  <string>Red channel black level 0..4095</string>
@@ -3622,7 +3570,7 @@ either by filling with zeroes or scaling down</string>
               <item row="0" column="2">
                <spacer name="horizontalSpacer">
                 <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
+                 <enum>Qt::Orientation::Horizontal</enum>
                 </property>
                 <property name="sizeHint" stdset="0">
                  <size>
@@ -3706,10 +3654,10 @@ zeroing the data up to selected values </string>
          </size>
         </property>
         <property name="frameShape">
-         <enum>QFrame::NoFrame</enum>
+         <enum>QFrame::Shape::NoFrame</enum>
         </property>
         <property name="frameShadow">
-         <enum>QFrame::Sunken</enum>
+         <enum>QFrame::Shadow::Sunken</enum>
         </property>
         <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0">
          <property name="spacing">
@@ -3736,10 +3684,10 @@ zeroing the data up to selected values </string>
             </size>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="lineWidth">
             <number>1</number>
@@ -3748,7 +3696,7 @@ zeroing the data up to selected values </string>
             <string>Row:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -3764,7 +3712,7 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -3780,16 +3728,16 @@ zeroing the data up to selected values </string>
             </size>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="text">
             <string>Column:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -3805,7 +3753,7 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -3821,7 +3769,7 @@ zeroing the data up to selected values </string>
             <string>  RAW values:   </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -3871,13 +3819,13 @@ zeroing the data up to selected values </string>
             </palette>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="text">
             <string>R:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -3893,7 +3841,7 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -3943,16 +3891,16 @@ zeroing the data up to selected values </string>
             </palette>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="text">
             <string>G:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -3968,7 +3916,7 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4018,16 +3966,16 @@ zeroing the data up to selected values </string>
             </palette>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="text">
             <string>B:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4043,7 +3991,7 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4093,16 +4041,16 @@ zeroing the data up to selected values </string>
             </palette>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="text">
             <string>G2:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4118,7 +4066,7 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4134,7 +4082,7 @@ zeroing the data up to selected values </string>
             <string>Defects:   </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4184,16 +4132,16 @@ zeroing the data up to selected values </string>
             </palette>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="text">
             <string>Points:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4209,7 +4157,7 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4259,16 +4207,16 @@ zeroing the data up to selected values </string>
             </palette>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="text">
             <string>Columns:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4284,7 +4232,7 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4334,16 +4282,16 @@ zeroing the data up to selected values </string>
             </palette>
            </property>
            <property name="frameShape">
-            <enum>QFrame::NoFrame</enum>
+            <enum>QFrame::Shape::NoFrame</enum>
            </property>
            <property name="frameShadow">
-            <enum>QFrame::Sunken</enum>
+            <enum>QFrame::Shadow::Sunken</enum>
            </property>
            <property name="text">
             <string>Rows:</string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
@@ -4359,14 +4307,14 @@ zeroing the data up to selected values </string>
             <string>0    </string>
            </property>
            <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+            <set>Qt::AlignmentFlag::AlignBottom|Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft</set>
            </property>
           </widget>
          </item>
          <item>
           <spacer name="horizontalSpacer_1">
            <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+            <enum>Qt::Orientation::Horizontal</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -4389,7 +4337,7 @@ zeroing the data up to selected values </string>
      <x>0</x>
      <y>0</y>
      <width>850</width>
-     <height>20</height>
+     <height>33</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -4426,7 +4374,7 @@ zeroing the data up to selected values </string>
     <string>Open Imager File...</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionSave">
@@ -4434,7 +4382,7 @@ zeroing the data up to selected values </string>
     <string>Save Remap...</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionDiscard_changes">
@@ -4442,7 +4390,7 @@ zeroing the data up to selected values </string>
     <string>Reset</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionQuit">
@@ -4450,7 +4398,7 @@ zeroing the data up to selected values </string>
     <string>Quit</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::QuitRole</enum>
+    <enum>QAction::MenuRole::QuitRole</enum>
    </property>
   </action>
   <action name="actionLoad_raw">
@@ -4458,7 +4406,7 @@ zeroing the data up to selected values </string>
     <string>Load RAW(s)...</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionHelp_web">
@@ -4466,7 +4414,7 @@ zeroing the data up to selected values </string>
     <string>Help</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
   <action name="actionAbout">
@@ -4474,7 +4422,7 @@ zeroing the data up to selected values </string>
     <string>About DCS Remap</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::AboutRole</enum>
+    <enum>QAction::MenuRole::AboutRole</enum>
    </property>
   </action>
   <action name="actionAuto_remap">
@@ -4482,7 +4430,7 @@ zeroing the data up to selected values </string>
     <string>Auto remap</string>
    </property>
    <property name="menuRole">
-    <enum>QAction::NoRole</enum>
+    <enum>QAction::MenuRole::NoRole</enum>
    </property>
   </action>
  </widget>

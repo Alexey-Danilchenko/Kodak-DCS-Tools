@@ -10,7 +10,8 @@ Download links for binary versions for the supported platforms:
 
 * [Windows 64 bits](https://drive.google.com/file/d/1E4xMdT4q6NbYUC1muru0rStydMT_4ZEM/view?usp=sharing)
 * [Windows 32 bits](https://drive.google.com/open?id=0Bw2ZohnbXtyASWw1a0ljbG5FX28) - old, not maintained anymore
-* [MacOS Catalina 10.15 and higher](https://drive.google.com/file/d/1d8HCUBk3FgQYRc0xLg7GC38sBOyC2wL2/view?usp=sharing) - may work with older MacOS versions before 10.15 but was not tested
+* [macOS Catalina 10.15 and higher - Intel binary](https://drive.google.com/file/d/1d8HCUBk3FgQYRc0xLg7GC38sBOyC2wL2/view?usp=sharing) - may work with older macOS versions before 10.15 but was not tested
+* [macOS Tahoe 26 and higher - Apple Silicon binary](https://drive.google.com/file/d/1BcdvEo2HGfFXgJqaK_xpoDMhmXaW3m6Z/view?usp=sharing) - may work with older macOS versions for Apple Silicon hardware before 26.0 but was not tested
 
 
 ## [Total Commander](http://www.ghisler.com/) Archive Plugin for firmware exploration

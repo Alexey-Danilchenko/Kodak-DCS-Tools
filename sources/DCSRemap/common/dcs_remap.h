@@ -29,7 +29,6 @@
 #include <QSettings>
 #include <QString>
 #include <QStringList>
-#include <QTranslator>
 
 #include "ifdata.h"
 #include "defects.h"
@@ -169,8 +168,6 @@ class DCSRemap : public QMainWindow
     // member variables
     Ui::DCSRemap ui;
 
-    QTranslator translator;
-
     DCSImagerFile *imagerFile;
     DCSDefects    *defects;
     bool unsavedChanges;
@@ -206,7 +203,6 @@ class DCSRemap : public QMainWindow
     double scale;
     int rawIsoSpeed;
 
-    int language;
     bool lockModeChange;
     bool lockThresChange;
     bool overrideCursorSet;
@@ -260,9 +256,6 @@ private:
     void init();
 
 private Q_SLOTS:
-
-    void setRussianLanguage();
-    void setEnglishLanguage();
 
     void openImagerFile();
     bool saveImagerFile();

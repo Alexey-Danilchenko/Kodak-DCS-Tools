@@ -56,7 +56,7 @@
 #include "defects.h"
 #include "raw_image.h"
 
-#define APP_VERSION " v1.2"
+#define APP_VERSION " v1.3"
 
 #define MAIN_TITLE APP_NAME APP_VERSION
 
@@ -74,7 +74,7 @@
 #define RCF_CROP_ROW_1      34
 #define RCF_CROP_ROW_2      10
 
-#if defined( Q_OS_MACX )
+#if defined( Q_OS_MACOS )
 #define BUNDLE_ID CFSTR("DCSRemap")
 #if defined(_QT_STATIC_) && QT_VERSION >= 0x050000
 #include <QtPlugin>
@@ -178,7 +178,6 @@ DCSRemap::DCSRemap()
       unsavedChanges(false), overrideCursorSet(false),
       imagerFile(0), defects(0), rawIsoSpeed(0)
 {
-    language = QLocale::system().language();
     curRawPath = "./";
 
 	// init statics
@@ -199,8 +198,6 @@ DCSRemap::DCSRemap()
     expControls[C_GREEN2] = new SpinBoxSliderIntegrator(ui.expGreen2Spin, ui.expGreen2);
 
     // buttons
-    connect(ui.btnRussian, SIGNAL(clicked()), this, SLOT(setRussianLanguage()));
-    connect(ui.btnEnglish, SIGNAL(clicked()), this, SLOT(setEnglishLanguage()));
     connect(ui.btnLoadRaws, SIGNAL(clicked()), this, SLOT(loadRaw()));
     connect(ui.btnLoadIF, SIGNAL(clicked()), this, SLOT(openImagerFile()));
     connect(ui.btnSave, SIGNAL(clicked()), this, SLOT(saveImagerFile()));
@@ -297,14 +294,6 @@ DCSRemap::DCSRemap()
     ui.cbAdaptiveBlock->setCurrentIndex(settings.value("Adaptive Block", 14).toInt());
     ui.chkAdaptiveRemap->setCheckState(Qt::CheckState(settings.value("Adaptive Remap", Qt::Unchecked).toInt()));
 
-    int savedLanguage = settings.value("Language", language).toInt();
-
-    if (savedLanguage != language)
-    {
-        language = savedLanguage;
-        retranslate();
-    }
-
     if (!pos.isNull())
         move(pos);
 
@@ -372,7 +361,6 @@ void DCSRemap::closeEvent(QCloseEvent *event)
     settings.setValue("Curent Raw Path", curRawPath);
     settings.setValue("Curent IF Path", curIFPath);
     settings.setValue("Maximized", isMaximized());
-    settings.setValue("Language", language);
     settings.setValue("Defect Colour", defectColour);
     settings.setValue("Adaptive Remap", ui.chkAdaptiveRemap->checkState());
     settings.setValue("Adaptive Block", ui.cbAdaptiveBlock->currentIndex());
@@ -381,38 +369,6 @@ void DCSRemap::closeEvent(QCloseEvent *event)
         event->accept();
     else
         event->ignore();
-}
-
-void DCSRemap::retranslate()
-{
-    if (language == QLocale::Russian)
-    {
-        translator.load(QStringLiteral(":/MainForm/dcs_remap_ru.qm"));
-        QApplication::installTranslator(&translator);
-    }
-    else
-       QApplication::removeTranslator(&translator);
-
-    ui.retranslateUi(this);
-    ui.cboxZoomLevel->setItemText(0, tr("Fit to Window"));
-    ui.rawImage->retranslate();
-    updateRawStats();
-    updateDefectStats();
-    updateThresholdStats(C_ALL);
-    updateWidgets();
-    ui.cboxZoomLevel->updateGeometry();
-}
-
-void DCSRemap::setRussianLanguage()
-{
-    language = QLocale::Russian;
-    retranslate();
-}
-
-void DCSRemap::setEnglishLanguage()
-{
-    language = QLocale::English;
-    retranslate();
 }
 
 void DCSRemap::init()
@@ -1193,22 +1149,19 @@ void DCSRemap::help()
 {
     QDir dir(QApplication::applicationDirPath());
 
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
     dir.cdUp();
 #endif
 
     if (dir.cd("help"))
     {
-        if (language == QLocale::Russian)
-            QDesktopServices::openUrl(QUrl::fromLocalFile(dir.filePath("help_ru.html")));
-        else
-            QDesktopServices::openUrl(QUrl::fromLocalFile(dir.filePath("help_en.html")));
+        QDesktopServices::openUrl(QUrl::fromLocalFile(dir.filePath("help_en.html")));
     }
 }
 
 void DCSRemap::about()
 {
-    About about(language);
+    About about;
 
     about.exec();
 }
@@ -1755,7 +1708,7 @@ public:
 
     void polish (QWidget *w)
     {
-#ifdef Q_OS_MACX
+#ifdef Q_OS_MACOS
         QMenu* mn = qobject_cast<QMenu*>(w);
         if (!mn && !w->testAttribute(Qt::WA_MacNormalSize))
             w->setAttribute(Qt::WA_MacSmallSize);
